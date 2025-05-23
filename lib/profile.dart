@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/myprofile.dart';
+import 'package:home/screen/kycui.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -25,8 +27,8 @@ class ProfileScreen extends StatelessWidget {
                Padding(
             padding: const EdgeInsets.only(left: 16),
             child: Container(
-              height: 48,
-              width: 48,
+              height: 40,
+              width: 40,
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -107,13 +109,22 @@ class ProfileScreen extends StatelessWidget {
                             children: [
                               const Icon(Icons.edit, size: 16, color: Colors.white),
                               const SizedBox(width: 6),
-                              Text(
-                                "Edit Profile",
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                              ),
+                          GestureDetector(
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MyProfileScreen()),
+    );
+  },
+  child: Text(
+    "Edit Profile",
+    style: GoogleFonts.inter(
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
+  ),
+),
                             ],
                           ),
                         ),
@@ -146,14 +157,27 @@ class ProfileScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 children: [
-                  ListTile(
-                    leading: const Icon(Icons.person,size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
-                    title: Text("My Profile",   style: GoogleFonts.inter(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),),
-                  ),
+                 ListTile(
+               leading: const Icon(
+              Icons.person,
+                size: 30,
+               color: Color.fromARGB(255, 68, 128, 106),
+                                                  ),
+                                    title: Text(
+                                "My Profile",
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                         fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                                     ),
+                                                 ),
+                                   onTap: () {
+                                  Navigator.push(
+                                    context,
+             MaterialPageRoute(builder: (context) => MyProfileScreen()),
+    );
+  },
+),
                   ListTile(
                     leading: const Icon(Icons.badge_outlined,size: 30,
                         color: Color.fromARGB(255, 68, 128, 106)),
@@ -161,6 +185,12 @@ class ProfileScreen extends StatelessWidget {
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black),),
+                                    onTap: () {
+                                  Navigator.push(
+                                    context,
+             MaterialPageRoute(builder: (context) => KYCVerificationScreen()),
+    );
+  },
                   ),
                   ListTile(
                     leading: const Icon(Icons.history,size: 30,

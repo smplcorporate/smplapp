@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 
 void main() {
@@ -36,6 +37,30 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     });
   }
 
+  void _viewFullImage() {
+    if (_profileImage != null) {
+      showDialog(
+        context: context,
+        builder: (_) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(10),
+          child: GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: FileImage(_profileImage!),
+                  // fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   Widget genderOption(String gender) {
     bool isSelected = _selectedGender == gender;
     return Expanded(
@@ -46,9 +71,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isSelected ? Colors.green : Colors.grey,
+             color: const Color.fromARGB(255, 125, 125, 125)
             ),
-            color: isSelected ? Colors.green.shade50 : Colors.white,
+            // color: isSelected ? Colors.green.shade50 : Colors.white,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -59,14 +84,17 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.grey),
-                  color: isSelected ? Colors.green : Colors.transparent,
+                  color: isSelected ? const Color.fromARGB(255,  68, 128, 106) : Colors.transparent,
                 ),
               ),
               const SizedBox(width: 6),
               Text(
                 gender,
-                style: TextStyle(
-                  color: isSelected ? Colors.green.shade800 : Colors.black,
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  
+                      
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -79,30 +107,51 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 223, 236, 226),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with circular back arrow
-              Row(
+              // Centered Header Row
+              Stack(
+                alignment: Alignment.center,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey,
+              Align(
+  alignment: Alignment.centerLeft,
+  child: GestureDetector(
+    onTap: () {
+      Navigator.pop(context);
+    },
+    child: Container(
+      height: 40,
+      width: 40,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(10),
+        child: Icon(
+          Icons.arrow_back_ios_new,
+          size: 20,
+          color: Colors.black,
+        ),
+      ),
+    ),
+  ),
+),
+
+                  Center(
+                    child: Text(
+                      "My Profile",
+                      style: GoogleFonts.inter(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    child: const Icon(Icons.arrow_back_ios,
-                        size: 16, color: Colors.white),
-                  ),
-                  const SizedBox(width: 90),
-                  const Text(
-                    "My Profile",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ],
               ),
@@ -113,16 +162,19 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 child: Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.green,
-                      backgroundImage: _profileImage != null
-                          ? FileImage(_profileImage!)
-                          : null,
-                      child: _profileImage == null
-                          ? const Icon(Icons.person,
-                              size: 40, color: Colors.white)
-                          : null,
+                    GestureDetector(
+                      onTap: _profileImage != null ? _viewFullImage : null,
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        backgroundImage:
+                            _profileImage != null ? FileImage(_profileImage!) : null,
+                        child: _profileImage == null
+                            ? const Icon(Icons.person,
+                                size: 40,
+                                color: Color.fromARGB(255, 68, 128, 106))
+                            : null,
+                      ),
                     ),
                     Positioned(
                       bottom: 0,
@@ -131,8 +183,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         onTap: _pickImage,
                         child: const CircleAvatar(
                           radius: 12,
-                          backgroundColor: Colors.white,
-                          child: Icon(Icons.camera_alt, size: 14),
+                          backgroundColor: Colors.transparent,
+                          child: Icon(Icons.camera_alt,
+                              size: 18,
+                              color: Color.fromARGB(255, 68, 128, 106)),
                         ),
                       ),
                     )
@@ -140,15 +194,25 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              const Center(
+              Center(
                 child: Text(
                   "Ankit Sharma",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: GoogleFonts.inter(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              const Center(
-                child:
-                    Text("+91 1234567879", style: TextStyle(color: Colors.grey)),
+              Center(
+                child: Text(
+                  "+91 1234567879",
+                  style: GoogleFonts.inter(
+                    fontSize:15,
+                    color: const Color.fromARGB(255, 126, 126, 126),
+                 
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
 
@@ -156,82 +220,167 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
+                  color: Colors.white,
                   border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Basic Details",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    const SizedBox(height: 10),
-
-                    const Text("Full Name"),
-                    const TextField(
-                        decoration: InputDecoration(border: OutlineInputBorder())),
-                    const SizedBox(height: 10),
-
-                    const Text("Date of Birth"),
-                    const TextField(
-                        decoration: InputDecoration(border: OutlineInputBorder())),
-                    const SizedBox(height: 10),
-
-                    const Text("Gender"),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        genderOption("Male"),
-                        const SizedBox(width: 10),
-                        genderOption("Female"),
-                        const SizedBox(width: 10),
-                        genderOption("Other"),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    const Text("Address"),
-                    const TextField(
-                      maxLines: 2,
-                      decoration: InputDecoration(border: OutlineInputBorder()),
-                    ),
-                    const SizedBox(height: 20),
-
-                    const Text(
-                      "Contact Details",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    const SizedBox(height: 10),
-
-                    const Text("Mobile Number"),
-                    const TextField(
-                        decoration: InputDecoration(border: OutlineInputBorder())),
-                    const SizedBox(height: 10),
-
-                    const Text("Email ID"),
-                    const TextField(
-                        decoration: InputDecoration(border: OutlineInputBorder())),
-                    const SizedBox(height: 20),
-
-                    // Save Button
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Save logic
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          minimumSize: const Size(double.infinity, 45),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Basic Details",
+                        style: GoogleFonts.inter(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
-                        child: const Text("Save",
-                            style: TextStyle(color: Colors.white)),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 10),
+                  
+                      Text("Full Name",
+                          style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                                  SizedBox(height: 5,),
+                   const TextField(
+  decoration: InputDecoration(
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color.fromARGB(255, 125, 125, 125)), // Default border color
+    ),
+    focusedBorder: OutlineInputBorder(
+      // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
+    ),
+    border: OutlineInputBorder(), // Fallback default
+  ),
+),
+                      const SizedBox(height: 10),
+                  
+                      Text("Date of Birth",
+                          style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                                  SizedBox(height: 5,),
+                                     const TextField(
+  decoration: InputDecoration(
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color.fromARGB(255, 125, 125, 125)), // Default border color
+    ),
+    focusedBorder: OutlineInputBorder(
+      // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
+    ),
+    border: OutlineInputBorder(), // Fallback default
+  ),
+),
+                      const SizedBox(height: 10),
+                  
+                      Text("Gender",
+                          style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          genderOption("Male"),
+                          const SizedBox(width: 10),
+                          genderOption("Female"),
+                          const SizedBox(width: 10),
+                          genderOption("Other"),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                  
+                      Text("Address",
+                          style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                                  SizedBox(height: 5,),
+                                   const TextField(
+  decoration: InputDecoration(
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color.fromARGB(255, 125, 125, 125)), // Default border color
+    ),
+    focusedBorder: OutlineInputBorder(
+      // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
+    ),
+    border: OutlineInputBorder(), // Fallback default
+  ),
+),
+                      const SizedBox(height: 20),
+                  
+                      Text("Contact Details",
+                          style: GoogleFonts.inter(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 10),
+                  
+                      Text("Mobile Number",
+                          style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                                  SizedBox(height: 5,),
+                                  const TextField(
+  decoration: InputDecoration(
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color.fromARGB(255, 125, 125, 125)), // Default border color
+    ),
+    focusedBorder: OutlineInputBorder(
+      // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
+    ),
+    border: OutlineInputBorder(), // Fallback default
+  ),
+),
+                      const SizedBox(height: 10),
+                  
+                      Text("Email ID",
+                          style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                              SizedBox(height: 5,),
+                                 const TextField(
+  decoration: InputDecoration(
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color.fromARGB(255, 125, 125, 125)), // Default border color
+    ),
+    focusedBorder: OutlineInputBorder(
+      // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
+    ),
+    border: OutlineInputBorder(), // Fallback default
+  ),
+),
+                      const SizedBox(height: 20),
+                  
+                      // Save Button
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Save logic
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 68, 128, 106),
+                            minimumSize: const Size(double.infinity, 45),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
+                          child: Text("Save",
+                              style: GoogleFonts.inter(
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
