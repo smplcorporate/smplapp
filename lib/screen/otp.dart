@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:home/config/auth/auth.dart';
 import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
+import 'package:home/data/controller/login.notider.dart';
 import 'package:home/data/controller/register.notifer.dart';
 import 'package:home/data/model/register.body.validate.dart';
 
@@ -51,8 +52,9 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
   }
 
   String? otp;
-  void verifyOtp(String request_id) async {
+  void verifyOtp(String request_id, bool runType) async {
     final userBody = ref.watch(userRegisterBodyProvider);
+    final loginState = ref.watch(loginBodyRequestProvider);
     String otp = _otpControllers.map((c) => c.text).join();
     if (otp.length == 6 && otp.runes.every((r) => r >= 48 && r <= 57)) {
       final data = RegisterBodyValidate(
@@ -114,6 +116,7 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
     final userBodyNotifier = ref.read(userRegisterBodyProvider.notifier);
     if (args is Map<String, dynamic>) {
       final requestId = args['@register_token'];
+      final callType = args["@login"];
       return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -162,7 +165,7 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () => verifyOtp(requestId),
+                        onPressed: () => verifyOtp(requestId, callType),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 68, 128, 106),
                           minimumSize: Size(double.infinity, 48),
@@ -219,5 +222,7 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
         ),
       );
     }
+    // Add a fallback widget or throw to satisfy the return type
+    return Scaffold(body: Center(child: Text('Invalid arguments provided.')));
   }
 }

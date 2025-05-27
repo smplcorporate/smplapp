@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:home/creditap1.dart';
 import 'package:home/profile.dart';
 import 'package:home/rechargebill.dart';
@@ -13,8 +14,6 @@ import 'package:home/screen/notification2.dart';
 import 'package:home/screen/openaccount.dart';
 import 'package:home/screen/wallet.dart';
 import 'package:home/screen/screen2.dart';
-
-void main() => runApp(MaterialApp(home: HomePage()));
 
 class HomePage extends StatelessWidget {
   Widget buildBanner(String path) {
@@ -33,17 +32,32 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildIconColumn(String label, IconData icon, double iconSize, double containerSize, BuildContext context) {
+  Widget buildIconColumn(
+    String label,
+    IconData icon,
+    double iconSize,
+    double containerSize,
+    BuildContext context,
+  ) {
     return Column(
       children: [
         GestureDetector(
           onTap: () {
             if (label == "Mobile") {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => contact()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => contact()),
+              );
             } else if (label == "Wallet") {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => MyWalletPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => MyWalletPage()),
+              );
             } else if (label == "History") {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => TransactionPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => TransactionPage()),
+              );
             }
           },
           child: Container(
@@ -79,10 +93,34 @@ class HomePage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          buildIconColumn("Scan & Pay", Icons.qr_code, iconSize, containerSize, context),
-          buildIconColumn("Mobile", Icons.person, iconSize, containerSize, context),
-          buildIconColumn("Wallet", Icons.account_balance_wallet, iconSize, containerSize, context),
-          buildIconColumn("History", Icons.history, iconSize, containerSize, context),
+          buildIconColumn(
+            "Scan & Pay",
+            Icons.qr_code,
+            iconSize,
+            containerSize,
+            context,
+          ),
+          buildIconColumn(
+            "Mobile",
+            Icons.person,
+            iconSize,
+            containerSize,
+            context,
+          ),
+          buildIconColumn(
+            "Wallet",
+            Icons.account_balance_wallet,
+            iconSize,
+            containerSize,
+            context,
+          ),
+          buildIconColumn(
+            "History",
+            Icons.history,
+            iconSize,
+            containerSize,
+            context,
+          ),
         ],
       ),
     );
@@ -109,23 +147,42 @@ class HomePage extends StatelessWidget {
           onTap: () {
             String label = items[index][0].replaceAll('\n', ' ').toLowerCase();
 
-      if (label.contains("electricity")) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => Biller()));
-} else if (label.contains("lic")) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => LoanAccountScreen()));
-} else if (label.contains("acount")) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => OpenBankAccountScreen()));
-} else if (label.contains("mobile")) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => RechargeBillPage()));
-} else if (label.contains("dth")) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => Dth1()));
-} else if (label.contains("loan")) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => LenderSelectionScreen()));
-} else if (label.contains("credit")) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => CreditCardApplyPage()));
-}
-
-            
+            if (label.contains("electricity")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => Biller()),
+              );
+            } else if (label.contains("lic")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => LoanAccountScreen()),
+              );
+            } else if (label.contains("acount")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => OpenBankAccountScreen()),
+              );
+            } else if (label.contains("mobile")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => RechargeBillPage()),
+              );
+            } else if (label.contains("dth")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => Dth1()),
+              );
+            } else if (label.contains("loan")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => LenderSelectionScreen()),
+              );
+            } else if (label.contains("credit")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => CreditCardApplyPage()),
+              );
+            }
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -162,6 +219,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final box = Hive.box('userdata');
+    final name = box.get('@name');
+    final mobile = box.get('@mobile');
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 232, 243, 235),
       body: SafeArea(
@@ -170,29 +230,42 @@ class HomePage extends StatelessWidget {
             children: [
               ListTile(
                 leading: GestureDetector(
-  onTap: () {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
-  },
-  child: CircleAvatar(
-    backgroundColor: Colors.white, // Optional: set a background color
-    radius: 20, // Adjust the size
-    child: Icon(
-      Icons.person,
-      color: Color.fromARGB(255, 51, 129, 53),
-      size: 24,
-    ),
-  ),
-),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => ProfileScreen()),
+                    );
+                  },
+                  child: CircleAvatar(
+                    backgroundColor:
+                        Colors.white, // Optional: set a background color
+                    radius: 20, // Adjust the size
+                    child: Icon(
+                      Icons.person,
+                      color: Color.fromARGB(255, 51, 129, 53),
+                      size: 24,
+                    ),
+                  ),
+                ),
 
                 title: Text(
-                  "Ankit Sharma",
-                  style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold),
+                  "$name",
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                subtitle: Text("+91 8890236723"),
+                subtitle: Text("+91 $mobile"),
                 trailing: IconButton(
-                  icon: Icon(Icons.notifications, color: Color.fromARGB(255, 51, 129, 53)),
+                  icon: Icon(
+                    Icons.notifications,
+                    color: Color.fromARGB(255, 51, 129, 53),
+                  ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => NotificationScreen2()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => NotificationScreen2()),
+                    );
                   },
                 ),
               ),
@@ -200,19 +273,34 @@ class HomePage extends StatelessWidget {
               buildQuickActions(context),
               SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25,
+                  vertical: 5,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Recharge & Bill Payments",
-                        style: GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.bold)),
+                    Text(
+                      "Recharge & Bill Payments",
+                      style: GoogleFonts.inter(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => RechargeOrBill()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => RechargeOrBill()),
+                        );
                       },
-                      child: Text("See All",
-                          style: GoogleFonts.inter(
-                              color: Color.fromARGB(255, 68, 128, 106), fontWeight: FontWeight.w600)),
+                      child: Text(
+                        "See All",
+                        style: GoogleFonts.inter(
+                          color: Color.fromARGB(255, 68, 128, 106),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -237,35 +325,52 @@ class HomePage extends StatelessWidget {
               ),
               buildBanner("assets/banner.png"),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25,
+                  vertical: 5,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Banking / Loan Services",
-                        style: GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.bold)),
-                    Text("See All",
-                        style: GoogleFonts.inter(
-                            color: Color.fromARGB(255, 68, 128, 106), fontWeight: FontWeight.w600)),
+                    Text(
+                      "Banking / Loan Services",
+                      style: GoogleFonts.inter(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "See All",
+                      style: GoogleFonts.inter(
+                        color: Color.fromARGB(255, 68, 128, 106),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(horizontal:22,vertical: 22),
+                margin: EdgeInsets.symmetric(horizontal: 22, vertical: 22),
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: buildGridSection([
-                  ["Credit Card\n Apply", "assets/credit.png"],
-                  ["Personal\n Loan", "assets/ploan.png"],
-                  ["Business \n Loan", "assets/bloan.png"],
-                  ["Home\n Loan", "assets/hloan.png"],
-                  ["Bank acount\nOpen", "assets/bank.png"],
-                  ["Insurance \nServices", "assets/eservice.png"],
-                  ["Mutual \nFund", "assets/mutul1.png"],
-                  ["Credit\n Builder", "assets/crib.png"],
-                ], context, borderColor: const Color.fromARGB(255, 235, 235, 235), borderRadius: 12),
+                child: buildGridSection(
+                  [
+                    ["Credit Card\n Apply", "assets/credit.png"],
+                    ["Personal\n Loan", "assets/ploan.png"],
+                    ["Business \n Loan", "assets/bloan.png"],
+                    ["Home\n Loan", "assets/hloan.png"],
+                    ["Bank acount\nOpen", "assets/bank.png"],
+                    ["Insurance \nServices", "assets/eservice.png"],
+                    ["Mutual \nFund", "assets/mutul1.png"],
+                    ["Credit\n Builder", "assets/crib.png"],
+                  ],
+                  context,
+                  borderColor: const Color.fromARGB(255, 235, 235, 235),
+                  borderRadius: 12,
+                ),
               ),
             ],
           ),

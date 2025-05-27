@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/config/auth/auth.dart';
+import 'package:home/data/controller/login.notider.dart';
+import 'package:home/data/model/login.body.model.dart';
 import 'package:home/screen/otp.dart';
 import 'package:home/screen/sincreate.dart'; // Your signup screen
 
 // Your main App entry point
-void main() {
-  runApp(const PaymentApp());
-}
-
 class PaymentApp extends StatelessWidget {
   const PaymentApp({super.key});
 
@@ -20,40 +20,73 @@ class PaymentApp extends StatelessWidget {
   }
 }
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final TextEditingController _mobileController = TextEditingController();
-
+  bool btnLoder = false;
+  final _authService = AuthService();
   // Navigate to sign-up screen when button is clicked
   void _createAccount() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CreateAccountScreen()), // This is your CreateAccountScreen
+      MaterialPageRoute(
+        builder: (context) => CreateAccountScreen(),
+      ), // This is your CreateAccountScreen
     );
   }
 
   // Submit mobile and navigate to the next screen (e.g., OTP screen)
-  void _submitMobile() {
+  void _submitMobile() async {
     if (_mobileController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter your mobile number', style: GoogleFonts.inter(fontSize:12 ,color:const Color.fromARGB(255, 149, 149, 149)))),
+        SnackBar(
+          content: Text(
+            'Please enter your mobile number',
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: const Color.fromARGB(255, 149, 149, 149),
+            ),
+          ),
+        ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP sent to ${_mobileController.text}')),
-      );
-      
+      setState(() {
+        btnLoder = false;
+      });
+      final loginNotifier = ref.read(loginBodyRequestProvider.notifier);
+
+      loginNotifier.setIpAddress("127.0.0.1");
+      loginNotifier.setLatitude("26.917979");
+      loginNotifier.setLongitude("75.814593");
+      loginNotifier.setMacAddress("not found");
+      loginNotifier.setUserMobile(_mobileController.text);
+      try {
+        await _authService.loginInit(
+          LoginBodyRequest(
+            userMobile: _mobileController.text,
+            ipAddress: "127.0.0.1",
+            macAddress: "not found",
+            latitude: "26.917979",
+            longitude: "75.814593",
+          ),
+        );
+      } catch (e) {
+        setState(() {
+          btnLoder = false;
+        });
+      }
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('OTP sent to ${_mobileController.text}')),
+      // );
+
       // Add navigation to the next screen, for example, OTP screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => VerifyOtpScreen()), // Assuming OtpScreen is the next screen
-      );
     }
   }
 
@@ -102,10 +135,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                  Image.asset(
-                    'assets/aaplogin.png',
-                    height: 350,
-                  ),
+                  Image.asset('assets/aaplogin.png', height: 350),
 
                   // Half-moon with shadow and content
                   Stack(
@@ -136,7 +166,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Container(
                           width: double.infinity,
                           height: 600,
-                          padding: const EdgeInsets.symmetric(vertical: 65, horizontal: 30),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 65,
+                            horizontal: 30,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.grey.shade300),
@@ -164,9 +197,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                               const SizedBox(height: 30),
                               ElevatedButton(
-                                onPressed: _createAccount, // Navigate to SignUp screen
+                                onPressed:
+                                    _createAccount, // Navigate to SignUp screen
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color.fromARGB(255, 68, 128, 106),
+                                  backgroundColor: const Color.fromARGB(
+                                    255,
+                                    68,
+                                    128,
+                                    106,
+                                  ),
                                   minimumSize: const Size(double.infinity, 50),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
@@ -218,7 +257,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   border: Border.all(color: Colors.black26),
                                   borderRadius: BorderRadius.circular(30),
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
                                 child: Row(
                                   children: [
                                     Padding(
@@ -227,7 +268,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         '91+ ',
                                         style: GoogleFonts.inter(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 10),
@@ -239,8 +281,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           hintText: 'Enter your mobile number',
                                           hintStyle: GoogleFonts.inter(
                                             fontSize: 14,
-                                            color: const Color.fromARGB(255, 149, 149, 149),
-                                          ), 
+                                            color: const Color.fromARGB(
+                                              255,
+                                              149,
+                                              149,
+                                              149,
+                                            ),
+                                          ),
                                           border: InputBorder.none,
                                         ),
                                       ),
@@ -249,12 +296,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       padding: const EdgeInsets.all(8),
                                       child: Container(
                                         decoration: const BoxDecoration(
-                                          color: Color.fromARGB(255, 68, 128, 106),
+                                          color: Color.fromARGB(
+                                            255,
+                                            68,
+                                            128,
+                                            106,
+                                          ),
                                           shape: BoxShape.circle,
                                         ),
                                         child: IconButton(
-                                          icon: const Icon(Icons.arrow_forward, color: Colors.white),
-                                          onPressed: _submitMobile, // Navigate on mobile submit
+                                          icon: const Icon(
+                                            Icons.arrow_forward,
+                                            color: Colors.white,
+                                          ),
+                                          onPressed:
+                                              _submitMobile, // Navigate on mobile submit
                                         ),
                                       ),
                                     ),
@@ -272,7 +328,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       text: 'Terms of Services',
                                       style: GoogleFonts.inter(
                                         fontSize: 12,
-                                        color: const Color.fromARGB(255, 68, 128, 106),
+                                        color: const Color.fromARGB(
+                                          255,
+                                          68,
+                                          128,
+                                          106,
+                                        ),
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -313,4 +374,3 @@ class HalfMoonClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
-

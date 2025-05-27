@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:home/screen/home_page.dart';
 import 'package:home/sinupui.dart';
-
-
 
 class PaymentIntroScreen extends StatefulWidget {
   @override
   _PaymentIntroScreenState createState() => _PaymentIntroScreenState();
 }
 
-class _PaymentIntroScreenState extends State<PaymentIntroScreen> with TickerProviderStateMixin {
+class _PaymentIntroScreenState extends State<PaymentIntroScreen>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _slideAnimation;
 
@@ -21,7 +22,7 @@ class _PaymentIntroScreenState extends State<PaymentIntroScreen> with TickerProv
       duration: const Duration(seconds: 7),
       vsync: this,
     );
-    
+
     _slideAnimation = Tween<Offset>(
       begin: Offset(1, 0), // Start off-screen to the right
       end: Offset.zero, // End at the center
@@ -29,12 +30,13 @@ class _PaymentIntroScreenState extends State<PaymentIntroScreen> with TickerProv
 
     // Start the animation when the screen is loaded
     _controller.forward();
-
+    final box = Hive.box('userdata');
+   final token = box.get('@token');
     // Start splash screen timer to navigate after 5 seconds
     Future.delayed(Duration(seconds: 8), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => PaymentApp()),
+        MaterialPageRoute(builder: (context) => token == null?  PaymentApp() : HomePage()),
       );
     });
   }
@@ -52,13 +54,62 @@ class _PaymentIntroScreenState extends State<PaymentIntroScreen> with TickerProv
       body: Stack(
         children: [
           // Decorative background circles
-          Positioned(top: 180, left: 30, child: Circle(color: const Color.fromARGB(255, 68, 128, 106), size: 20)),
-          Positioned(top: 200, left: -40, child: Circle(color: const Color.fromARGB(255, 68, 128, 106), size: 80)),
-          Positioned(top: 350, left: 45, child: Circle(color: const Color.fromARGB(255, 68, 128, 106), size: 14)),
-          Positioned(top: 480, left: 180, child: Circle(color: const Color.fromARGB(255, 68, 128, 106), size: 14)),
-          Positioned(top: 280, right: 60, child: Circle(color: const Color.fromARGB(255, 68, 128, 106), size: 14)),
-          Positioned(bottom: 390, right: -30, child: Circle(color: const Color.fromARGB(255, 68, 128, 106), size: 80)),
-          Positioned(bottom: 470, right: 50, child: Circle(color: const Color.fromARGB(255, 68, 128, 106), size: 15)),
+          Positioned(
+            top: 180,
+            left: 30,
+            child: Circle(
+              color: const Color.fromARGB(255, 68, 128, 106),
+              size: 20,
+            ),
+          ),
+          Positioned(
+            top: 200,
+            left: -40,
+            child: Circle(
+              color: const Color.fromARGB(255, 68, 128, 106),
+              size: 80,
+            ),
+          ),
+          Positioned(
+            top: 350,
+            left: 45,
+            child: Circle(
+              color: const Color.fromARGB(255, 68, 128, 106),
+              size: 14,
+            ),
+          ),
+          Positioned(
+            top: 480,
+            left: 180,
+            child: Circle(
+              color: const Color.fromARGB(255, 68, 128, 106),
+              size: 14,
+            ),
+          ),
+          Positioned(
+            top: 280,
+            right: 60,
+            child: Circle(
+              color: const Color.fromARGB(255, 68, 128, 106),
+              size: 14,
+            ),
+          ),
+          Positioned(
+            bottom: 390,
+            right: -30,
+            child: Circle(
+              color: const Color.fromARGB(255, 68, 128, 106),
+              size: 80,
+            ),
+          ),
+          Positioned(
+            bottom: 470,
+            right: 50,
+            child: Circle(
+              color: const Color.fromARGB(255, 68, 128, 106),
+              size: 15,
+            ),
+          ),
 
           // Main content with nested circles behind image
           Center(
@@ -68,17 +119,18 @@ class _PaymentIntroScreenState extends State<PaymentIntroScreen> with TickerProv
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    SizedBox(height: 70,),
-                    Image.asset(
-                      'assets/group.png',
-                      height: 350,
-                    ),
+                    SizedBox(height: 70),
+                    Image.asset('assets/group.png', height: 350),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Text(
                   "Pay Smart. Live Easy.",
-                  style: GoogleFonts.inter(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.inter(
+                    fontSize: 25,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -165,13 +217,9 @@ class Circle extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }
 
 // Next Screen (After Splash)
-

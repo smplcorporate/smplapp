@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class RegisterBodyValidate {
   final String userMobile;
   final String userFirstname;
@@ -37,72 +39,87 @@ class RegisterBodyValidate {
 }
 
 
+// To parse this JSON data, do
+//
+//     final registerResponseValidate = registerResponseValidateFromJson(jsonString);
+
+
+RegisterResponseValidate registerResponseValidateFromJson(String str) => RegisterResponseValidate.fromJson(json.decode(str));
+
+String registerResponseValidateToJson(RegisterResponseValidate data) => json.encode(data.toJson());
+
 class RegisterResponseValidate {
-  final bool status;
-  final String statusDesc;
-  final List<UserDetail> userDetails;
-  final List<UserBalance> userBalance;
-  final String sessionToken;
+    bool status;
+    String statusDesc;
+    UserDetails userDetails;
 
-  RegisterResponseValidate({
-    required this.status,
-    required this.statusDesc,
-    required this.userDetails,
-    required this.userBalance,
-    required this.sessionToken,
-  });
+    String sessionToken;
 
-  factory RegisterResponseValidate.fromJson(Map<String, dynamic> json) {
-    return RegisterResponseValidate(
-      status: json['status'],
-      statusDesc: json['status_desc'],
-      userDetails: (json['user_details'] as List)
-          .map((e) => UserDetail.fromJson(e))
-          .toList(),
-      userBalance: (json['user_balance'] as List)
-          .map((e) => UserBalance.fromJson(e))
-          .toList(),
-      sessionToken: json['session_token'],
+    RegisterResponseValidate({
+        required this.status,
+        required this.statusDesc,
+        required this.userDetails,
+
+        required this.sessionToken,
+    });
+
+    factory RegisterResponseValidate.fromJson(Map<String, dynamic> json) => RegisterResponseValidate(
+        status: json["status"],
+        statusDesc: json["status_desc"],
+        userDetails: UserDetails.fromJson(json["user_details"]),
+
+        sessionToken: json["session_token"],
     );
-  }
-}
 
-class UserDetail {
-  final String id;
-  final String mobile;
-  final String name;
-  final String kycStatus;
+    Map<String, dynamic> toJson() => {
+        "status": status,
+        "status_desc": statusDesc,
+        "user_details": userDetails.toJson(),
 
-  UserDetail({
-    required this.id,
-    required this.mobile,
-    required this.name,
-    required this.kycStatus,
-  });
-
-  factory UserDetail.fromJson(Map<String, dynamic> json) {
-    return UserDetail(
-      id: json['id'],
-      mobile: json['mobile'],
-      name: json['name'],
-      kycStatus: json['kyc_status'],
-    );
-  }
+        "session_token": sessionToken,
+    };
 }
 
 class UserBalance {
-  final String type;
-  final String amount;
+    int balanceMain;
 
-  UserBalance({
-    required this.type,
-    required this.amount,
-  });
+    UserBalance({
+        required this.balanceMain,
+    });
 
-  factory UserBalance.fromJson(Map<String, dynamic> json) {
-    return UserBalance(
-      type: json['type'],
-      amount: json['amount'],
+    factory UserBalance.fromJson(Map<String, dynamic> json) => UserBalance(
+        balanceMain: json["balance_main"],
     );
-  }
+
+    Map<String, dynamic> toJson() => {
+        "balance_main": balanceMain,
+    };
+}
+
+class UserDetails {
+    String userId;
+    String userMobile;
+    String userName;
+    int userKycStatus;
+
+    UserDetails({
+        required this.userId,
+        required this.userMobile,
+        required this.userName,
+        required this.userKycStatus,
+    });
+
+    factory UserDetails.fromJson(Map<String, dynamic> json) => UserDetails(
+        userId: json["user_id"],
+        userMobile: json["user_mobile"],
+        userName: json["user_name"],
+        userKycStatus: json["user_kyc_status"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "user_id": userId,
+        "user_mobile": userMobile,
+        "user_name": userName,
+        "user_kyc_status": userKycStatus,
+    };
 }
