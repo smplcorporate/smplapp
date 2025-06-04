@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:home/config/sizes.dart';
+import 'package:home/screen/home_page.dart';
+import 'package:home/screen/lender2.dart';
 
-class MuthootSummaryPage extends StatelessWidget {
-  final String accountNumber;
+void main() {
+  runApp(const MyApp());
+}
 
-  MuthootSummaryPage({required this.accountNumber});
-
-  final Color buttonColor = Color.fromARGB(255, 68, 128, 106);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MuthootSummaryPage(accountNumber: 'ACC123456789'),
+    );
+  }
+}
+
+class MuthootSummaryPage extends StatelessWidget {
+  final String accountNumber;
+  final Color buttonColor = const Color.fromARGB(255, 68, 128, 106);
+
+  MuthootSummaryPage({required this.accountNumber});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = screenWidth / 375;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -20,107 +39,140 @@ class MuthootSummaryPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Back arrow and title (moved down)
+              // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20), // Increase the vertical padding here
+                padding: EdgeInsets.symmetric(
+                    horizontal: 16.0 * scale, vertical: 20 * scale),
                 child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(8 * scale),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: Icon(Icons.arrow_back_ios_new,
+                              color: Colors.black, size: 18 * scale),
                         ),
-                        child: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
                       ),
                     ),
-                    SizedBox(width: 10),
                     Center(
                       child: Text(
                         "Muthoot Finance",
-                      style:GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 20)
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18 * scale,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              // Card with billing details
+              // Billing Card
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0 * scale),
                 child: Card(
+                  color: Colors.white,
                   elevation: 4,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12 * scale),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16.0 * scale),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Image + Name
                         Row(
                           children: [
                             Image.asset(
                               'assets/mutooth.png',
-                              height: 40,
+                              height: 40 * scale,
                             ),
-                            const SizedBox(width: 10),
+                            SizedBox(width: 10 * scale),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Muthoot Finance', style:GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 17)),
-                                Text(accountNumber),
+                                Text(
+                                  'Muthoot Finance',
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15 * scale,
+                                  ),
+                                ),
+                                Text(accountNumber,
+                                    style: GoogleFonts.inter(
+                                        fontSize: 13 * scale)),
                               ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
-                            Text(
+
+                        SizedBox(height: 20 * scale),
+
+                        Text(
                           'Billing Details',
-                             style: GoogleFonts.inter(
-                                      fontSize: 17,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
+                          style: GoogleFonts.inter(
+                            fontSize: 15 * scale,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
-                        SizedBox(height: 5,),
+
+                        SizedBox(height: 10 * scale),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Customer Name',           style:GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 11)),SizedBox(height: 5,),
-                                Text('Bill Number',           style:GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 11)),SizedBox(height: 5,),
-                                Text('Bill Date', style:GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 11)),SizedBox(height: 5,),
+                                _infoLabel("Customer Name", scale),
+                                _infoLabel("Bill Number", scale),
+                                _infoLabel("Bill Date", scale),
                               ],
                             ),
-                            SizedBox(height: 5,),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text('Shreya Goyal', style:GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 11)),SizedBox(height: 5,),
-                                Text('23876549-tdgklkmh', style:GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 11)),SizedBox(height: 5,),
-                                Text('12-04-2024', style:GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 11)),SizedBox(height: 5,),
+                                _infoValue("Shreya Goyal", scale),
+                                _infoValue("23876549-tdgklkmh", scale),
+                                _infoValue("12-04-2024", scale),
                               ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+
+                        SizedBox(height: 20 * scale),
+
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          padding: EdgeInsets.symmetric(vertical: 12 * scale),
                           decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 232, 243, 235),
                             border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10 * scale),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: TextField(
-                              decoration: InputDecoration.collapsed(hintText: '₹3100'),
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              controller: TextEditingController(text: '₹2100'),
+                              readOnly: true,
+                              showCursor: false,
+                              style: TextStyle(
+                                fontSize: 22 * scale,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                               textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.none,
+                              decoration:
+                                  const InputDecoration.collapsed(hintText: ''),
                             ),
                           ),
                         ),
@@ -132,40 +184,98 @@ class MuthootSummaryPage extends StatelessWidget {
 
               const Spacer(),
 
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              // Proceed to Pay Button
+             
+             Padding(
+                padding: EdgeInsets.all(16.0 * scale),
                 child: ElevatedButton(
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (ctx) => AlertDialog(
-                        title: const Text('Payment Successful'),
-                        content: const Text('Your payment has been successfully processed.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(ctx).pop(),
-                            child: const Text('OK'),
-                          )
-                        ],
-                      ),
+                      builder: (ctx) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          title: Text(
+                            'Payment Successful',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.bold,
+                              // color: const Color.fromARGB(255, 68, 128, 106),
+                            ),
+                          ),
+                          content: Text(
+                            'Your payment has been successfully processed.',
+                            style: GoogleFonts.inter(),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => LenderSelectionScreen()),
+                                  (route) => false,
+                                );
+                              },
+                              child: Text(
+                                'OK',
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  // color: const Color.fromARGB(255, 68, 128, 106),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: buttonColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(25 * scale),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    minimumSize: const Size(double.infinity, 45),
+                    padding: EdgeInsets.symmetric(vertical: 14 * scale),
+                    minimumSize: Size(double.infinity, 45 * scale),
                   ),
                   child: Text(
                     'Proceed to pay',
-                    style: GoogleFonts.inter(fontSize: 22, color:Colors.white,),
+                    style: GoogleFonts.inter(
+                      fontSize: 18 * scale,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _infoLabel(String label, double scale) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6 * scale),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(
+          fontWeight: FontWeight.bold,
+          fontSize: 11 * scale,
+        ),
+      ),
+    );
+  }
+
+  Widget _infoValue(String value, double scale) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6 * scale),
+      child: Text(
+        value,
+        style: GoogleFonts.inter(
+          fontWeight: FontWeight.w500,
+          fontSize: 11 * scale,
         ),
       ),
     );

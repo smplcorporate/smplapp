@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
@@ -81,33 +82,54 @@ class AuthService {
     }
   }
 
-  Future<void> loginInit(LoginBodyRequest user) async {
+  Future<void> loginInit(LoginBodyRequest user, context) async {
     final dio = await createDio();
     final service = APIStateNetwork(dio);
     final response = await service.login(user);
-
-    try {
-      _loginResponse = LoginResponse.fromJson(response.response.data);
+    if (response.response.data['status'] == false) {
       Fluttertoast.showToast(
-        msg: "OTP sent successfully",
-        backgroundColor: Colors.green,
-      );
-      navigatorKey.currentState?.pushNamed(
-        '/otp',
-        arguments: {
-          '@register_token': _otpResponseRegister!.requestId,
-          '@login': true,
-        },
-      );
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Error: ${e.toString()}",
+        msg: "${response.response.data['status']}",
         backgroundColor: Colors.red,
       );
+    } else {
+      try {
+        _loginResponse = LoginResponse.fromJson(response.response.data);
+        // Fluttertoast.showToast(
+        //   msg: "OTP sent successfully",
+        //   backgroundColor: Colors.green,
+        // );
+        Flushbar(
+          message: 'OTP sent to +91 ${user.userMobile}',
+          duration: const Duration(seconds: 2),
+          margin: const EdgeInsets.all(12),
+          borderRadius: BorderRadius.circular(8),
+          backgroundColor: Colors.black87,
+          flushbarPosition: FlushbarPosition.TOP,
+          icon: const Icon(Icons.check_circle, color: Colors.white),
+          messageColor: Colors.white,
+        ).show(context).then((_) {
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => VerifyOtpScreen()),
+          // );
+          navigatorKey.currentState?.pushNamed(
+            '/otp',
+            arguments: {
+              '@register_token': _loginResponse!.requestId,
+              '@login': true,
+            },
+          );
+        });
+      } catch (e) {
+        Fluttertoast.showToast(
+          msg: "Error: ${e.toString()}",
+          backgroundColor: Colors.red,
+        );
+      }
     }
   }
 
-  Future<void> loginalidate(VerfiyOtpBody body) async {
+  Future<void> loginalidate(VerfiyOtpBody body, context) async {
     final dio = await createDio();
 
     final service = APIStateNetwork(dio);
@@ -116,23 +138,25 @@ class AuthService {
     try {
       _verfiyOtpResponse = VerfiyOtpResponse.fromJson(response.response.data);
       final box = Hive.box('userdata');
-      await box.put('@token', _registerResponseValidate!.sessionToken);
-      await box.put('@name', _registerResponseValidate!.userDetails.userName);
-      await box.put(
-        '@mobile',
-        _registerResponseValidate!.userDetails.userMobile,
-      );
-
-      Fluttertoast.showToast(
-        msg: "Login successful",
-        backgroundColor: Colors.green,
-      );
+      await box.put('@token', _verfiyOtpResponse!.sessionToken);
+      await box.put('@name', _verfiyOtpResponse!.userDetails.userName);
+      await box.put('@mobile', _verfiyOtpResponse!.userDetails.userMobile);
+      Flushbar(
+        message: "Login successful",
+        duration: const Duration(seconds: 1),
+        backgroundColor: Colors.black,
+        margin: const EdgeInsets.all(10),
+        borderRadius: BorderRadius.circular(8),
+        flushbarPosition: FlushbarPosition.TOP,
+      ).show(context);
       navigatorKey.currentState?.pushNamed('/home');
     } catch (e) {
+      
       Fluttertoast.showToast(
         msg: "Error: ${e.toString()}",
         backgroundColor: Colors.red,
       );
+      throw Exception("Otp not vefiye");
     }
   }
 

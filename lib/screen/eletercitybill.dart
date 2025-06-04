@@ -25,14 +25,14 @@ class _LoanAccountScreenState extends State<Eletercitybill> {
     if (_isValid) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => elebillsum(accountNumber: _controller.text,)),
+        MaterialPageRoute(builder: (context) => EleBillSummary(accountNumber: _controller.text,)),
       );
     } else {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text("Invalid Input"),
-          content: const Text("Please enter a valid 12-digit loan account number."),
+          content: const Text("Please enter a valid 12-digit number."),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -136,7 +136,7 @@ class _LoanAccountScreenState extends State<Eletercitybill> {
                   backgroundColor:  const Color.fromARGB(255, 68, 128, 106),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-                child: Text("Confirm", style: GoogleFonts.inter(fontSize: 25, color: Colors.white)),
+                child: Text("Confirm", style: GoogleFonts.inter(fontSize: 20, color: Colors.white)),
               ),
             ),
           ],

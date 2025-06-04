@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/screen/home_page.dart';
 import 'package:home/screen/licsumarry.dart'; // Make sure this file exists and accepts the accountNumber parameter
 
 class LoanAccountScreen extends StatefulWidget {
@@ -63,7 +64,12 @@ class _LoanAccountScreenState extends State<LoanAccountScreen> {
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+    Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => HomePage(), // 🔁 Replace this with your actual destination widget
+    ),
+  );
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8),
@@ -78,7 +84,7 @@ class _LoanAccountScreenState extends State<LoanAccountScreen> {
                   Center(
                     child: Text(
                       "LIC Insurance",
-                      style:GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                      style:GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                   ),
                 ],
@@ -138,7 +144,7 @@ class _LoanAccountScreenState extends State<LoanAccountScreen> {
                   backgroundColor: Color.fromARGB(255, 68, 128, 106),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-                child: Text("Confirm", style: GoogleFonts.inter(fontSize:22, color: Colors.white,)),
+                child: Text("Confirm", style: GoogleFonts.inter(fontSize:20, color: Colors.white,)),
               ),
             ),
           ],

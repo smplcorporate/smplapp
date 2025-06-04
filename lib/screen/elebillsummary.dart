@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:home/config/sizes.dart';
+import 'package:home/screen/biller.dart';
+import 'package:home/screen/home_page.dart';
 
-class elebillsum extends StatelessWidget {
+class EleBillSummary extends StatelessWidget {
   final String accountNumber;
 
-  elebillsum({required this.accountNumber});
+  EleBillSummary({required this.accountNumber});
 
-  final Color buttonColor =  Color.fromARGB(255, 68, 128, 106);
+  final Color buttonColor = const Color.fromARGB(255, 68, 128, 106);
 
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = screenWidth / 375;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -20,9 +24,10 @@ class elebillsum extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Centered title with back button
+              // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                padding: EdgeInsets.symmetric(
+                    horizontal: 16.0 * scale, vertical: 10 * scale),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -31,13 +36,15 @@ class elebillsum extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: Container(
-                          height: 40,width: 40,
-                          padding: const EdgeInsets.all(8),
+                          height: 40 * scale,
+                          width: 40 * scale,
+                          padding: EdgeInsets.all(8 * scale),
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.white,
                           ),
-                          child: const Icon(Icons.arrow_back_ios_new, color: Colors.black,size: 21,),
+                          child: Icon(Icons.arrow_back_ios_new,
+                              color: Colors.black, size: 21 * scale),
                         ),
                       ),
                     ),
@@ -45,7 +52,7 @@ class elebillsum extends StatelessWidget {
                       child: Text(
                         "BILL Summary",
                         style: GoogleFonts.inter(
-                          fontSize: 20,
+                          fontSize: 16 * scale,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -57,14 +64,15 @@ class elebillsum extends StatelessWidget {
 
               // Card with billing details
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0 * scale),
                 child: Card(
+                  color: Colors.white,
                   elevation: 4,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12 * scale),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16.0 * scale),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -72,66 +80,78 @@ class elebillsum extends StatelessWidget {
                           children: [
                             Image.asset(
                               'assets/elect.png',
-                              height: 40,
+                              height: 40 * scale,
                             ),
-                            const SizedBox(width: 10),
+                            SizedBox(width: 10 * scale),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'JVVNL Bill Payment',
-                                style: GoogleFonts.inter(fontSize: 16, color: Colors.black,fontWeight: FontWeight.bold)
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14 * scale,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                Text(accountNumber),
+                                Text(accountNumber,
+                                    style: GoogleFonts.inter(
+                                        fontSize: 13 * scale)),
                               ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
-                            Text(
+                        SizedBox(height: 20 * scale),
+                        Text(
                           'Billing Details',
-                             style: GoogleFonts.inter(
-                                      fontSize: 17,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
+                          style: GoogleFonts.inter(
+                            fontSize: 15 * scale,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        SizedBox(height: 5,),
+                        SizedBox(height: 10 * scale),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Customer Name',style: GoogleFonts.inter(fontSize: 11, color: Colors.black,fontWeight: FontWeight.bold)),SizedBox(height: 5,),
-                                Text('Bill Number',style: GoogleFonts.inter(fontSize: 11, color: Colors.black,fontWeight: FontWeight.bold)),SizedBox(height: 5,),
-                                Text('Bill Date',style: GoogleFonts.inter(fontSize: 11, color: Colors.black,fontWeight: FontWeight.bold)),SizedBox(height: 5,),
-                              ],
+                            _infoColumn(
+                              ["Customer Name", "Bill Number", "Bill Date"],
+                              scale,
                             ),
-                            SizedBox(height: 5,),
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text('Shreya Goyal'),SizedBox(height: 5,),
-                                Text('23876549-tdgklkmh'),SizedBox(height: 5,),
-                                Text('12-04-2024'),SizedBox(height: 5,),
+                            _infoColumn(
+                              [
+                                "Shreya Goyal",
+                                "23876549-tdgklkmh",
+                                "12-04-2024"
                               ],
+                              scale,
+                              alignRight: true,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20 * scale),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          padding: EdgeInsets.symmetric(vertical: 12 * scale),
                           decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 232, 243, 235),
                             border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10 * scale),
                           ),
                           child: Center(
                             child: TextField(
-                              decoration: InputDecoration.collapsed(hintText: '₹1600'),
-                              style: GoogleFonts.inter(fontSize:25, ),
+                              controller: TextEditingController(text: '₹2100'),
+                              readOnly: true,
+                              showCursor: false,
+                              decoration: const InputDecoration.collapsed(
+                                  hintText: ''),
+                              style: TextStyle(
+                                fontSize: 22 * scale,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                               textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.none,
                             ),
                           ),
                         ),
@@ -144,34 +164,61 @@ class elebillsum extends StatelessWidget {
               const Spacer(),
 
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0 * scale),
                 child: ElevatedButton(
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (ctx) => AlertDialog(
-                        title: const Text('Payment Successful'),
-                        content: const Text('Your payment has been successfully processed.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(ctx).pop(),
-                            child: const Text('OK'),
-                          )
-                        ],
-                      ),
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(
+                            'Payment Successful',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: Text(
+                            'Your payment has been successfully processed.',
+                            style: GoogleFonts.inter(),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => Biller()),
+                                  (route) => false,
+                                );
+                              },
+                              child: Text(
+                                'OK',
+                                style: GoogleFonts.inter(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: buttonColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(25 * scale),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    minimumSize: const Size(double.infinity, 45),
+                    padding: EdgeInsets.symmetric(vertical: 14 * scale),
+                    minimumSize: Size(double.infinity, 45 * scale),
                   ),
                   child: Text(
                     'Proceed to pay',
-                   style: GoogleFonts.inter(fontSize:22, color: Colors.white,)
+                    style: GoogleFonts.inter(
+                      fontSize: 18 * scale,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -179,6 +226,27 @@ class elebillsum extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _infoColumn(List<String> items, double scale,
+      {bool alignRight = false}) {
+    return Column(
+      crossAxisAlignment:
+          alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: items
+          .map((item) => Padding(
+                padding: EdgeInsets.only(bottom: 6 * scale),
+                child: Text(
+                  item,
+                  style: GoogleFonts.inter(
+                    fontSize: 11 * scale,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ))
+          .toList(),
     );
   }
 }

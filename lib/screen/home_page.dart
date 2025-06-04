@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
-import 'package:home/creditap1.dart';
-import 'package:home/profile.dart';
-import 'package:home/rechargebill.dart';
-import 'package:home/rechargeorbillpayment.dart';
+import 'package:hive_flutter/adapters.dart';
+
+
+
+
+import 'package:home/screen/bankingservice.dart';
 import 'package:home/screen/biller.dart';
-import 'package:home/screen/contact.dart';
+import 'package:home/screen/businessloan.dart';
+import 'package:home/screen/cashbackoffer.dart';
+import 'package:home/screen/creditap1.dart';
+import 'package:home/screen/creditbuilder.dart';
 import 'package:home/screen/dth1.dart';
-import 'package:home/screen/lender2.dart';
-import 'package:home/screen/lic%20insurance.dart';
+import 'package:home/screen/fastag1.dart';
+import 'package:home/screen/homeloan.dart';
+import 'package:home/screen/insurancebank.dart';
+import 'package:home/screen/invitefriend.dart';
+import 'package:home/screen/lic insurance.dart';
 import 'package:home/screen/notification2.dart';
 import 'package:home/screen/openaccount.dart';
+import 'package:home/screen/personalloan.dart';
+import 'package:home/screen/profile.dart';
+import 'package:home/screen/qrcode.dart';
+import 'package:home/screen/rechargebill.dart';
+import 'package:home/screen/rechargeorbillpayment.dart';
 import 'package:home/screen/wallet.dart';
 import 'package:home/screen/screen2.dart';
+import 'package:home/screen/waterbill1.dart';
 
 class HomePage extends StatelessWidget {
   Widget buildBanner(String path) {
@@ -21,7 +34,7 @@ class HomePage extends StatelessWidget {
       builder: (context, constraints) {
         double height = MediaQuery.of(context).size.height * 0.23;
         return Container(
-          margin: EdgeInsets.all(10),
+          margin: EdgeInsets.all(8),
           height: height,
           decoration: BoxDecoration(
             image: DecorationImage(image: AssetImage(path)),
@@ -29,6 +42,92 @@ class HomePage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget buildAssetIconColumn(
+    String label,
+    String assetPath,
+    double containerSize,
+    BuildContext context,
+  ) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(2),
+          child: Container(
+            height: 90,
+            width: 100,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Image.asset(
+                    assetPath,
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildNewOptions(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double containerSize = width * 0.22;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Wrap(
+            spacing: 23,
+            runSpacing: 10,
+            alignment: WrapAlignment.spaceBetween,
+            children: [
+              buildAssetIconColumn(
+                "APES\nWithdrawal",
+                "assets/apes.png",
+                containerSize,
+                context,
+              ),
+              buildAssetIconColumn(
+                "mATM\nWithdrawal",
+                "assets/matm.png",
+                containerSize,
+                context,
+              ),
+              buildAssetIconColumn(
+                "Business UPI\nSoundbox",
+                "assets/upi.png",
+                containerSize,
+                context,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -44,10 +143,7 @@ class HomePage extends StatelessWidget {
         GestureDetector(
           onTap: () {
             if (label == "Mobile") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => contact()),
-              );
+              // Navigator.push(context, MaterialPageRoute(builder: (_) => ContactApp()));
             } else if (label == "Wallet") {
               Navigator.push(
                 context,
@@ -57,6 +153,11 @@ class HomePage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => TransactionPage()),
+              );
+            } else if (label == "Scan & Pay") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ScanPayScreen()),
               );
             }
           },
@@ -70,7 +171,7 @@ class HomePage extends StatelessWidget {
             child: Icon(icon, size: iconSize, color: Colors.white),
           ),
         ),
-        SizedBox(height: 6),
+        SizedBox(height: 5),
         Text(
           label,
           style: GoogleFonts.inter(
@@ -129,7 +230,7 @@ class HomePage extends StatelessWidget {
   Widget buildGridSection(
     List<List<String>> items,
     BuildContext context, {
-    Color borderColor = const Color.fromARGB(255, 68, 128, 106),
+    Color borderColor = const Color.fromARGB(255, 235, 235, 235),
     double borderRadius = 10,
   }) {
     return GridView.builder(
@@ -172,15 +273,45 @@ class HomePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (_) => Dth1()),
               );
-            } else if (label.contains("loan")) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => LenderSelectionScreen()),
-              );
             } else if (label.contains("credit")) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => CreditCardApplyPage()),
+              );
+            } else if (label.contains("water bill")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => WaterBill()),
+              );
+            } else if (label.contains("fastag")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => FastagScreen()),
+              );
+            } else if (label.contains("personal")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => PersonalLoanApplyPage()),
+              );
+            } else if (label.contains("business")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => BusinessLoanApplyPage()),
+              );
+            } else if (label.contains("home")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => HomeLoanApplyPage()),
+              );
+            } else if (label.contains("insurance")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => InsuranceApplyPage()),
+              );
+            } else if (label.contains("Builder")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => CreditBuilderApplyPage()),
               );
             }
           },
@@ -217,11 +348,122 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget buildCashbackAndReferContainers(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double containerPadding = width * 0.04;
+    double containerMargin = width * 0.025;
+    double containerBorderRadius = 12;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: containerMargin,
+        vertical: containerMargin,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => CashbackOffersPage()),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Container(
+                  padding: EdgeInsets.all(containerPadding),
+                  // Remove margin here to avoid extra left space
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 206, 231, 213),
+                    border: BoxBorder.all(
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
+                    borderRadius: BorderRadius.circular(containerBorderRadius),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Cashback",
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Image.asset(
+                          "assets/Cashback.png",
+                          height: width * 0.18,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: containerMargin), // spacing between containers
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => InviteFriendsScreen()),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Container(
+                  padding: EdgeInsets.all(containerPadding),
+                  // Remove margin here as well
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 206, 231, 213),
+                    border: BoxBorder.all(
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
+                    borderRadius: BorderRadius.circular(containerBorderRadius),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Refer & Earn",
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Image.asset(
+                          "assets/refer.png",
+                          height: width * 0.18,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final box = Hive.box('userdata');
-    final name = box.get('@name');
-    final mobile = box.get('@mobile');
+    double width = MediaQuery.of(context).size.width;
+    double bannerHeight = MediaQuery.of(context).size.height * 0.23;
+    final box = Hive.box("userdata");
+    final name = box.get("@name");
+    final mobile = box.get("@mobile");
+
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 232, 243, 235),
       body: SafeArea(
@@ -237,9 +479,8 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   child: CircleAvatar(
-                    backgroundColor:
-                        Colors.white, // Optional: set a background color
-                    radius: 20, // Adjust the size
+                    backgroundColor: Colors.white,
+                    radius: 20,
                     child: Icon(
                       Icons.person,
                       color: Color.fromARGB(255, 51, 129, 53),
@@ -247,9 +488,8 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 title: Text(
-                  "$name",
+                  name,
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -259,6 +499,7 @@ class HomePage extends StatelessWidget {
                 trailing: IconButton(
                   icon: Icon(
                     Icons.notifications,
+                    size: 30,
                     color: Color.fromARGB(255, 51, 129, 53),
                   ),
                   onPressed: () {
@@ -271,11 +512,29 @@ class HomePage extends StatelessWidget {
               ),
               buildBanner("assets/banner.png"),
               buildQuickActions(context),
-              SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                  vertical: 5,
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.065,
+                  vertical: width * 0.025,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Transactional Services",
+                      style: GoogleFonts.inter(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              buildNewOptions(context),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.065,
+                  vertical: width * 0.012,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -306,15 +565,15 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 22),
-                padding: EdgeInsets.all(15),
+                margin: EdgeInsets.symmetric(horizontal: width * 0.055),
+                padding: EdgeInsets.all(width * 0.035),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: buildGridSection([
                   ["Mobile\n Recharge", "assets/mre.png"],
-                  ["Electricity \nBill", "assets/elect.png"],
+                  ["Electricity \nBill", "assets/ele.png"],
                   ["FASTag \nRecharge", "assets/fastag1.jpeg"],
                   ["Insurance \nLIC", "assets/lic1.png"],
                   ["DTH \nRecharge", "assets/dth.png"],
@@ -323,11 +582,22 @@ class HomePage extends StatelessWidget {
                   ["Credit Card \nBill", "assets/creditb.png"],
                 ], context),
               ),
-              buildBanner("assets/banner.png"),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
+              SizedBox(height: 20),
+              buildCashbackAndReferContainers(context),
+
+              // Reduced vertical padding in banner margin to reduce spacing
+              Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: 10,
                   vertical: 5,
+                ), // smaller vertical margin here
+                child: buildBanner("assets/banner.png"),
+              ),
+
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.065,
+                  vertical: width * 0.012,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -339,19 +609,27 @@ class HomePage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      "See All",
-                      style: GoogleFonts.inter(
-                        color: Color.fromARGB(255, 68, 128, 106),
-                        fontWeight: FontWeight.w600,
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => BankingService()),
+                        );
+                      },
+                      child: Text(
+                        "See All",
+                        style: GoogleFonts.inter(
+                          color: Color.fromARGB(255, 68, 128, 106),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 22, vertical: 22),
-                padding: EdgeInsets.all(15),
+                margin: EdgeInsets.symmetric(horizontal: width * 0.055),
+                padding: EdgeInsets.all(width * 0.035),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -372,6 +650,7 @@ class HomePage extends StatelessWidget {
                   borderRadius: 12,
                 ),
               ),
+              SizedBox(height: width * 0.05),
             ],
           ),
         ),

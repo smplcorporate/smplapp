@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+void main() {
+  runApp(MyWalletApp());
+}
+
 class MyWalletApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,166 +29,280 @@ class _MyWalletPageState extends State<MyWalletPage> {
     {'type': 'Debit', 'amount': 900, 'date': '13 April 2024'},
     {'type': 'Credit', 'amount': 65, 'date': '13 April 2024'},
     {'type': 'Debit', 'amount': 75, 'date': '13 April 2024'},
-    {'type': 'Credit', 'amount': 1000, 'date': '13 April 2024'},
-    {'type': 'Debit', 'amount': 900, 'date': '13 April 2024'},
-    {'type': 'Credit', 'amount': 65, 'date': '13 April 2024'},
-    {'type': 'Debit', 'amount': 75, 'date': '13 April 2024'},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-        color:  const Color.fromARGB(255, 232, 243, 235)
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 232, 243, 235),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 2,
-                                offset: Offset(0, 2),
-                              )
-                            ],
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(size.width * 0.04),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 2),
+                                )
+                              ],
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.arrow_back_ios_new, size: 25),
+                              onPressed: () => Navigator.pop(context),
+                            ),
                           ),
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_back_ios_new, size: 25),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              "My Wallet",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                "My Wallet",
+                                style: GoogleFonts.inter(
+                                  fontSize: size.width * 0.045,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 44), // to balance the row layout
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          const Icon(Icons.account_balance_wallet, size: 40,color: Color.fromARGB(255, 68, 128, 106),),
-                          Text("Your Balance Is", style:GoogleFonts.inter(fontSize: 13,fontWeight: FontWeight.bold)),
-                          Text(
-                            "₹$balance.00",
-                            style: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color.fromARGB(255, 246,139, 33),
-                                  foregroundColor: Colors.white,
-                                ),
-                                onPressed: () {},
-                                child: const Text("Add Money"),
-                              ),
-                              const SizedBox(width: 10),
-                              OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.orange,
-                                  backgroundColor: Colors.white,
-                                  side: const BorderSide(color: Color.fromARGB(255, 246, 139, 33)),
-                                ),
-                                onPressed: () {},
-                                child: const Text("Withdraw"),
-                              ),
-                            ],
-                          )
+                          const SizedBox(width: 44),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildTabButton('All'),
-                        _buildTabButton('Credit'),
-                        _buildTabButton('Debit'),
-                      ],
-                    )
-                  ],
+                      SizedBox(height: size.height * 0.02),
+                      Container(
+                        padding: EdgeInsets.all(size.width * 0.05),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.account_balance_wallet,
+                              size: 40,
+                              color: Color.fromARGB(255, 68, 128, 106),
+                            ),
+                            SizedBox(height: size.height * 0.01),
+                            Text(
+                              "Your Balance Is",
+                              style: GoogleFonts.inter(
+                                fontSize: size.width * 0.035,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "₹$balance.00",
+                              style: GoogleFonts.inter(
+                                fontSize: size.width * 0.07,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: size.height * 0.015),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(255, 246, 139, 33),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: () {},
+                                  child: Text(
+                                    "Add Money",
+                                    style: GoogleFonts.inter(
+                                      fontSize: size.width * 0.035,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.orange,
+                                    backgroundColor: Colors.white,
+                                    side: const BorderSide(
+                                        color: Color.fromARGB(255, 246, 139, 33)),
+                                  ),
+                                  onPressed: () {},
+                                  child: Text(
+                                    "Withdraw",
+                                    style: GoogleFonts.inter(
+                                      fontSize: size.width * 0.035,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: size.height * 0.02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildTabButton('All', size),
+                          _buildTabButton('Credit', size),
+                          _buildTabButton('Debit', size),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: transactions
-                      .where((tx) => selectedTab == 'All' || tx['type'] == selectedTab)
-                      .map((tx) => _buildTransactionTile(tx))
-                      .toList(),
+                ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+                  itemCount: transactions
+                      .where((tx) =>
+                          selectedTab == 'All' || tx['type'] == selectedTab)
+                      .length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final filteredTx = transactions
+                        .where((tx) => selectedTab == 'All' || tx['type'] == selectedTab)
+                        .toList()[index];
+                    return _buildTransactionTile(filteredTx, size);
+                  },
                 ),
-              )
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTabButton(String label) {
+  Widget _buildTabButton(String label, Size size) {
     bool isSelected = selectedTab == label;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: ElevatedButton( 
+
+    return SizedBox(
+      width: size.width * 0.28,
+      child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           foregroundColor: isSelected ? Colors.white : Colors.black,
-          backgroundColor: isSelected ?  Color.fromARGB(255, 68, 128, 106) : Colors.white,
+          backgroundColor: isSelected
+              ? const Color.fromARGB(255, 68, 128, 106)
+              : Colors.white,
+          padding: EdgeInsets.symmetric(vertical: size.height * 0.015),
         ),
         onPressed: () {
           setState(() {
             selectedTab = label;
           });
         },
-        child: Text(label),
+        child: Text(label, style: GoogleFonts.inter(fontSize: size.width * 0.04)),
       ),
     );
   }
 
-  Widget _buildTransactionTile(Map<String, dynamic> tx) {
+  Widget _buildTransactionTile(Map<String, dynamic> tx, Size size) {
     bool isCredit = tx['type'] == 'Credit';
+
     return Card(
-      child: ListTile(
-        leading: Icon(
-          isCredit ? Icons.call_received : Icons.call_made,
-          color: const Color.fromARGB(255, 68, 128, 106),
-        ),
-        title: Text(
-          isCredit ? 'Received From Shreya Goyal' : 'Paid to Shreya Goyal',
-        ),
-        subtitle: Text(tx['date']),
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: size.width * 0.04, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("₹${tx['amount']}", style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text(isCredit ? 'Credited to' : 'Debited to')
+            // Icon + Date column
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: size.height * 0.06,
+                  width: size.height * 0.06,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 68, 128, 106),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    isCredit ? Icons.call_received : Icons.call_made,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  tx['date'],
+                  style: GoogleFonts.inter(
+                    fontSize: size.width * 0.027,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(width: size.width * 0.04),
+
+            // Title and subtitle column
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isCredit ? 'Received From' : 'Paid To',
+                    style: GoogleFonts.inter(
+                      fontSize: size.width * 0.038,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Shreya Goyal',
+                    style: GoogleFonts.inter(
+                      fontSize: size.width * 0.032,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Amount and bank info column
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "₹${tx['amount']}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.width * 0.04,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      isCredit ? 'Credited to' : 'Debited to',
+                      style: GoogleFonts.inter(fontSize: size.width * 0.03),
+                    ),
+                    SizedBox(width: 5),
+                    Image.asset(
+                      'assets/sbi1.png', // Ensure this asset exists
+                      width: size.width * 0.04,
+                      height: size.width * 0.04,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
       ),

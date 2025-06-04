@@ -56,7 +56,7 @@ class _OpenAccount2State extends State<OpenAccount2> {
                       'Open Bank Account',
                       style: GoogleFonts.inter(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

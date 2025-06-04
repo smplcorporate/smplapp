@@ -76,7 +76,7 @@ class _OpenBankAccountScreenState extends State<OpenBankAccountScreen> {
                       'Open Bank Account',
                       style: GoogleFonts.inter(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -126,7 +126,7 @@ class _OpenBankAccountScreenState extends State<OpenBankAccountScreen> {
                   child: Text(
                     'Select Bank',
                     style: GoogleFonts.inter(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 ListView.builder(
@@ -143,7 +143,7 @@ class _OpenBankAccountScreenState extends State<OpenBankAccountScreen> {
                           title: Text(
                             bank.name,
                             style: GoogleFonts.inter(
-                                fontSize: 17, fontWeight: FontWeight.bold),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           onTap: () {
                             Navigator.push(

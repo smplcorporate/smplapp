@@ -44,7 +44,7 @@ class TransactionDetailsPage extends StatelessWidget {
                         child: Text(
                           'Transaction Details',
                           style: GoogleFonts.inter(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

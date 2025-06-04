@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/screen/dth2.dart';
+import 'package:home/screen/home_page.dart';
 import 'package:home/screen/openaccount2.dart';
 
 class Bank {
@@ -59,7 +60,12 @@ class _Dth1State extends State<Dth1> {
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+                         Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => HomePage(), // 🔁 Replace this with your actual destination widget
+    ),
+  );
                       },
                       child: Container(
                         padding: const EdgeInsets.all(5),
@@ -77,7 +83,7 @@ class _Dth1State extends State<Dth1> {
                       'Select Provider',
                       style: GoogleFonts.inter(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -136,7 +142,7 @@ class _Dth1State extends State<Dth1> {
                           title: Text(
                             bank.name,
                             style: GoogleFonts.inter(
-                                fontSize: 17, fontWeight: FontWeight.bold),
+                                fontSize: 15, fontWeight: FontWeight.bold),
                           ),
                           onTap: () {
                             Navigator.push(

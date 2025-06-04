@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/screen/loanservice.dart';
 
-class smartloan extends StatelessWidget {
-  const smartloan({super.key});
+class SmartLoan extends StatelessWidget {
+  const SmartLoan({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class LoanIntroScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
-                        border: Border.all(color: const Color.fromARGB(255, 240, 240, 240)), // grey border
+                        border: Border.all(color: const Color.fromARGB(255, 240, 240, 240)),
                       ),
                       child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
                     ),
@@ -86,9 +87,9 @@ class LoanIntroScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () {
-                    // TODO: Replace this with actual navigation logic
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Navigating to next page...')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoanServicesScreen()),
                     );
                   },
                   child: Text(

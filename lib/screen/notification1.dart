@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(NotificationApp());
 
@@ -27,29 +28,48 @@ class _NotificationScreenState extends State<NotificationScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0.5,
+        elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {},
+        leading: Padding(
+          padding: const EdgeInsets.only(top: 20,left: 20),
+          child: Container(
+            height: 40,width: 40,decoration: BoxDecoration(
+shape: BoxShape.circle,color: Colors.white
+
+            ),
+            child: IconButton(
+              icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+              onPressed: () {},
+            ),
+          ),
         ),
-        title: Text(
-          'Notification',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Text(
+            'Notification',
+            style: GoogleFonts.inter
+            ( fontSize: 20,
+              color: Colors.black, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
       body: notifications.isEmpty
           ? Center(
               child: Column(
                 
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Icon(Icons.notifications_none,
-                      size: 400, color: Colors.blue.shade100),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 80),
+                    child: Icon(Icons.notifications_active_outlined,
+                        size: 400, color: Colors.blue.shade100),
+                  ),
                   SizedBox(height: 16),
                   Text(
                     'Nothing to Display Here!',
-                    style: TextStyle(fontSize: 25, color: Colors.black),
+                  style: GoogleFonts.inter
+          ( fontSize: 20,
+            color: Colors.black, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

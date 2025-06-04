@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+void main() => runApp(CashbackOffersApp());
 
 class CashbackOffersApp extends StatelessWidget {
   @override
@@ -12,112 +15,190 @@ class CashbackOffersApp extends StatelessWidget {
 
 class CashbackOffersPage extends StatelessWidget {
   final List<OfferData> offers = [
-    OfferData('Nike', 'assets/nike.png', '6% cashback', 'welcome offers'),
+    OfferData('Nike', 'assets/nike.png', '6% cashback', 'Welcome offers'),
     OfferData('Uber', 'assets/uber.png', '12% cashback', '+5% with PayPal Debit'),
-    OfferData('Myntra', 'assets/myntra.png', '6% cashback', 'welcome offers'),
+    OfferData('Myntra', 'assets/myntra.png', '6% cashback', 'Welcome offers'),
     OfferData('Amazon', 'assets/amazon.png', '12% cashback', '+5% with PayPal Debit'),
-    OfferData('Flipkart', 'assets/flipkart.png', '6% cashback', 'welcome offers'),
-    OfferData('Airtel', 'assets/airtel.png', '12% cashback', '+5% with PayPal Debit'),
+    OfferData('Flipkart', 'assets/flipkart.png', '6% cashback', 'Welcome offers'),
+    OfferData('Airtel', 'assets/airt.png', '12% cashback', '+5% with PayPal Debit'),
   ];
 
   void _showBottomSheet(BuildContext context, OfferData offer) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (_) => OfferDetailsSheet(offer: offer),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back, color: Colors.black),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text('Cashback & offers', style: TextStyle(color: Colors.black)),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                _buildTab('Popular Brands'),
-                _buildTab('Top Offers'),
-                _buildTab('Exclusive'),
-              ],
+        leading: Padding(
+          padding: EdgeInsets.all(width * 0.025),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+            ),
+            child: IconButton(
+              icon: Icon(Icons.arrow_back_ios_new,
+                  color: Colors.black, size: width * 0.045),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: offers.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 3 / 2.7,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+        ),
+        backgroundColor: Color.fromARGB(255, 232, 243, 235),
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Cashback & offers',
+          style: GoogleFonts.inter(
+            fontSize: width * 0.045,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      body: Container(
+        color: Color.fromARGB(255, 232, 243, 235),
+        child: Column(
+          children: [
+            SizedBox(height: width * 0.04),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.015),
+              child: Row(
+                children: [
+                  _buildTab(context, 'Popular Brands'),
+                  _buildTab(context, 'Top Offers'),
+                  _buildTab(context, 'Exclusive'),
+                ],
               ),
-              itemBuilder: (context, index) {
-                final offer = offers[index];
-                return GestureDetector(
-                  onTap: () => _showBottomSheet(context, offer),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.grey[100],
-                    ),
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage(offer.image),
-                          radius: 20,
-                          backgroundColor: Colors.white,
-                        ),
-                        SizedBox(height: 12),
-                        Text(offer.title, style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text(offer.cashback, style: TextStyle(color: Colors.black87)),
-                        Text(offer.description, style: TextStyle(color: Colors.grey)),
-                        Spacer(),
-                        ElevatedButton(
-                          onPressed: () => _showBottomSheet(context, offer),
-                          child: Text('Apply Now'),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 36),
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            side: BorderSide(color: Colors.grey.shade300),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            SizedBox(height: width * 0.04),
+            Expanded(
+              child: LayoutBuilder(builder: (context, constraints) {
+                int crossAxisCount = constraints.maxWidth < 600 ? 2 : 3;
+                return GridView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                  itemCount: offers.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    mainAxisSpacing: width * 0.05,
+                    crossAxisSpacing: width * 0.04,
+                    childAspectRatio: 0.78,
+                  ),
+                  itemBuilder: (context, index) {
+                    final offer = offers[index];
+                    return GestureDetector(
+                      onTap: () => _showBottomSheet(context, offer),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: width * 0.01),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(width * 0.025),
+                            color: Colors.white,
+                          ),
+                          padding: EdgeInsets.all(width * 0.025),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: AssetImage(offer.image),
+                                radius: width * 0.06,
+                              ),
+                              SizedBox(height: width * 0.03),
+                              Text(
+                                offer.title,
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: width * 0.035,
+                                ),
+                              ),
+                              SizedBox(height: width * 0.02),
+                              Text(
+                                offer.cashback,
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: width * 0.03,
+                                ),
+                              ),
+                              SizedBox(height: width * 0.02),
+                              Text(
+                                offer.description,
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: width * 0.03,
+                                  color: Color.fromARGB(255, 141, 157, 255),
+                                ),
+                              ),
+                              SizedBox(height: width * 0.02),
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: () => _showBottomSheet(context, offer),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.black,
+                                    elevation: 0,
+                                    side: BorderSide(
+                                      color: Color.fromARGB(255, 68, 128, 106),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(width * 0.05),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: width * 0.07,
+                                      vertical: width * 0.03,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Apply Now',
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 68, 128, 106),
+                                      fontSize: width * 0.032,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 );
-              },
+              }),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildTab(String label) {
+  Widget _buildTab(BuildContext context, String label) {
+    final width = MediaQuery.of(context).size.width;
     return Expanded(
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8),
+        height: width * 0.1,
+        margin: EdgeInsets.symmetric(horizontal: width * 0.01),
         decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(width * 0.05),
         ),
-        margin: EdgeInsets.only(right: 8),
-        child: Center(child: Text(label, style: TextStyle(fontWeight: FontWeight.w500))),
+        child: Center(
+          child: Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: width * 0.03,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -139,60 +220,97 @@ class OfferDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    final width = MediaQuery.of(context).size.width;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      child: Container(
+        color: Colors.white,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: width * 0.06, vertical: width * 0.08),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(backgroundImage: AssetImage(offer.image), radius: 20),
-              SizedBox(width: 12),
-              Text(offer.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Spacer(),
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
+              Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: AssetImage(offer.image),
+                    radius: width * 0.06,
+                  ),
+                  SizedBox(width: width * 0.03),
+                  Expanded(
+                    child: Text(
+                      offer.title,
+                      style: GoogleFonts.inter(
+                        fontSize: width * 0.045,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              SizedBox(height: width * 0.03),
+              Text(
+                offer.cashback,
+                style: GoogleFonts.inter(
+                  fontSize: width * 0.04,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: width * 0.05),
+              _offerStep(context),
+              _offerStep(context),
+              _offerStep(context),
+              SizedBox(height: width * 0.06),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, width * 0.12),
+                  backgroundColor: Color.fromARGB(255, 68, 128, 106),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(width * 0.04),
+                  ),
+                ),
+                child: Text(
+                  'Shop Now',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: width * 0.035,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Text(offer.cashback, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-          SizedBox(height: 20),
-          _offerStep('shopping'),
-          _offerStep('shopping'),
-          _offerStep('shopping'),
-          SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {},
-            child: Center(child: Text('Shop Now')),
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(double.infinity, 48),
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
 
-  Widget _offerStep(String action) {
+  Widget _offerStep(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: EdgeInsets.symmetric(vertical: width * 0.015),
       child: Row(
         children: [
-          Icon(Icons.shopping_cart_outlined, size: 20),
-          SizedBox(width: 8),
+          Icon(Icons.shopping_cart_outlined, size: width * 0.05),
+          SizedBox(width: width * 0.02),
           Expanded(
             child: RichText(
               text: TextSpan(
-                text: 'Find a cashback offer and start ',
-                style: TextStyle(color: Colors.black),
-                children: [
+                text: 'Find a cashback offer and start \nshopping',
+                style: GoogleFonts.inter(
+                  color: Colors.black,
+                  fontSize: width * 0.035,
+                  fontWeight: FontWeight.bold,
+                ),
+                children: const [
                   TextSpan(
-                    text: '$action. Terms apply',
+                    text: ' Terms apply',
                     style: TextStyle(color: Colors.blue),
                   ),
                 ],

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/screen/kycui.dart'; // Make sure this file contains KYCVerificationScreen
 
 class FullKycCompletedScreen extends StatelessWidget {
-  const FullKycCompletedScreen({Key? key}) : super(key: key);
+  FullKycCompletedScreen({Key? key}) : super(key: key);
 
   void _onBackPressed(BuildContext context) {
-    Navigator.pop(context); // Custom navigation logic
+    Navigator.pop(context);
   }
 
-  void _onViewKycPressed() {
-    // Logic to view KYC details
-    print("View KYC pressed");
+  void _onViewKycPressed(BuildContext context) {
+    // Navigates to KYC screen and replaces the current screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => KYCVerificationScreen()),
+    );
   }
 
   @override
@@ -20,7 +24,6 @@ class FullKycCompletedScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Top row with circular back button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
               child: Row(
@@ -46,13 +49,9 @@ class FullKycCompletedScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            const SizedBox(height:100),
-
-            // Checkmark icon centered
+            const SizedBox(height: 100),
             Expanded(
               child: Column(
-           
                 children: [
                   const Icon(
                     Icons.check_circle,
@@ -62,8 +61,11 @@ class FullKycCompletedScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   Text(
                     "Full KYC Completed",
-                    style:GoogleFonts.inter (fontSize: 25,color: Colors.green,
-                     fontWeight: FontWeight.bold),
+                    style: GoogleFonts.inter(
+                      fontSize: 20,
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Padding(
@@ -71,21 +73,20 @@ class FullKycCompletedScreen extends StatelessWidget {
                     child: Text(
                       "Congrats, You have successfully Completed\n Full KYC Process",
                       textAlign: TextAlign.center,
-                      style:GoogleFonts.inter(fontSize: 15,fontWeight: FontWeight.bold,
-                       color: Colors.black),
+                      style: GoogleFonts.inter(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-
-            // View KYC button at bottom
             Padding(
-              padding: const EdgeInsets.only(bottom:20
-              ),
-              
+              padding: const EdgeInsets.only(bottom: 20),
               child: ElevatedButton(
-                onPressed: _onViewKycPressed,
+                onPressed: () => _onViewKycPressed(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 68, 128, 106),
                   shape: RoundedRectangleBorder(
@@ -95,8 +96,11 @@ class FullKycCompletedScreen extends StatelessWidget {
                 ),
                 child: Text(
                   'View KYC',
-                  style: GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 20,
-                    color: Colors.white),
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

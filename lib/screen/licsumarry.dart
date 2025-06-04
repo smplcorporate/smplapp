@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/screen/home_page.dart';
+import 'package:home/screen/lic%20insurance.dart';
 
 class BillingSummaryPage extends StatelessWidget {
   final String accountNumber;
 
   BillingSummaryPage({required this.accountNumber});
 
-  final Color buttonColor = Color.fromARGB(255, 68, 128, 106);
+  final Color buttonColor = const Color.fromARGB(255, 68, 128, 106);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = screenWidth / 375;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(255, 232, 243, 235),
-        ),
+        color: const Color.fromARGB(255, 232, 243, 235),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Centered title with back button
+              // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 10 * scale),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -30,12 +33,12 @@ class BillingSummaryPage extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(8 * scale),
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.white,
                           ),
-                          child: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+                          child: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20 * scale),
                         ),
                       ),
                     ),
@@ -43,7 +46,7 @@ class BillingSummaryPage extends StatelessWidget {
                       child: Text(
                         "BILL Summary",
                         style: GoogleFonts.inter(
-                          fontSize: 20,
+                          fontSize: 18 * scale,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -53,52 +56,52 @@ class BillingSummaryPage extends StatelessWidget {
                 ),
               ),
 
-              // Card with billing details
+              // Billing Card
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16 * scale),
                 child: Card(
                   elevation: 4,
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12 * scale),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16 * scale),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Header row with icon and account
                         Row(
                           children: [
-                            Image.asset(
-                              'assets/lic.png',
-                              height: 40,
-                            ),
-                            const SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'LIC Life Insurance',
-                                  style: GoogleFonts.inter(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(accountNumber),
-                              ],
+                            Image.asset('assets/lic.png', height: 40 * scale),
+                            SizedBox(width: 10 * scale),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'LIC Life Insurance',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 15 * scale,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(accountNumber, style: GoogleFonts.inter(fontSize: 12 * scale)),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20 * scale),
 
-                        // Billing Details text added above customer info
                         Text(
                           'Billing Details',
-                             style: GoogleFonts.inter(
-                                      fontSize: 17,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
+                          style: GoogleFonts.inter(
+                            fontSize: 15 * scale,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(height: 10), // Adds space between "Billing Details" and customer info
+                        SizedBox(height: 10 * scale),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,56 +109,40 @@ class BillingSummaryPage extends StatelessWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Customer Name',
-                                  style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  'Bill Number',
-                                  style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  'Bill Date',
-                                  style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 5),
+                                _labelText('Customer Name', scale),
+                                _labelText('Bill Number', scale),
+                                _labelText('Bill Date', scale),
                               ],
                             ),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text('Shreya Goyal'),     const SizedBox(height: 5),
-                                Text('23876549-tdgklkmh'),     const SizedBox(height: 5),
-                                Text('12-04-2024'),
+                                _valueText('Shreya Goyal', scale),
+                                _valueText('23876549-tdgklkmh', scale),
+                                _valueText('12-04-2024', scale),
                               ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20 * scale),
+
+                        // Amount Box
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          padding: EdgeInsets.symmetric(vertical: 12 * scale),
                           decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 232, 243, 235),
                             border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10 * scale),
                           ),
-                          child: const Center(
-                            child: TextField(
-                              decoration: InputDecoration.collapsed(hintText: '₹2100'),
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
+                          child: Center(
+                            child: Text(
+                              '₹2100',
+                              style: TextStyle(
+                                fontSize: 22 * scale,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
@@ -167,40 +154,99 @@ class BillingSummaryPage extends StatelessWidget {
 
               const Spacer(),
 
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              // Proceed to Pay Button
+       
+             Padding(
+                padding: EdgeInsets.all(16.0 * scale),
                 child: ElevatedButton(
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (ctx) => AlertDialog(
-                        title: const Text('Payment Successful'),
-                        content: const Text('Your payment has been successfully processed.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(ctx).pop(),
-                            child: const Text('OK'),
-                          )
-                        ],
-                      ),
+                      builder: (ctx) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          title: Text(
+                            'Payment Successful',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.bold,
+                              // color: const Color.fromARGB(255, 68, 128, 106),
+                            ),
+                          ),
+                          content: Text(
+                            'Your payment has been successfully processed.',
+                            style: GoogleFonts.inter(),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => LoanAccountScreen()),
+                                  (route) => false,
+                                );
+                              },
+                              child: Text(
+                                'OK',
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  // color: const Color.fromARGB(255, 68, 128, 106),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: buttonColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(25 * scale),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    minimumSize: const Size(double.infinity, 45),
+                    padding: EdgeInsets.symmetric(vertical: 14 * scale),
+                    minimumSize: Size(double.infinity, 45 * scale),
                   ),
                   child: Text(
                     'Proceed to pay',
-                    style: GoogleFonts.inter(fontSize: 22, color: Colors.white),
+                    style: GoogleFonts.inter(
+                      fontSize: 18 * scale,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _labelText(String text, double scale) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6 * scale),
+      child: Text(
+        text,
+        style: GoogleFonts.inter(
+          fontSize: 11 * scale,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget _valueText(String text, double scale) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6 * scale),
+      child: Text(
+        text,
+        style: GoogleFonts.inter(
+          fontSize: 11 * scale,
+          color: Colors.black,
         ),
       ),
     );

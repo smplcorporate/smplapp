@@ -1,6 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:home/data/model/dthPrepaid.res.dart';
 import 'package:home/data/model/electritysityModel.dart';
+import 'package:home/data/model/lic.res.dart';
+import 'package:home/data/model/loadRepayment.res.dart';
 import 'package:home/data/model/login.body.model.dart';
+import 'package:home/data/model/lpgBillerList.model.dart';
+import 'package:home/data/model/mobilePrepaid.res.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
 import 'package:home/data/model/register.body.validate.dart';
 import 'package:home/data/model/register.model1.dart';
@@ -23,10 +28,31 @@ abstract class APIStateNetwork {
   Future<HttpResponse<ElectricityModel>> getElectritcity(
     @Body() ElectricityBody body,
   );
+  @POST('bbps/b2c_bills_lpg/get_billers')
+  Future<HttpResponse<LpgResponseModel>> getGasBillers(
+    @Body() ElectricityBody body,
+  );
+  @POST('bbps/b2c_bills_Insurance/get_billers')
+  Future<HttpResponse<LicModelResponse>> getLicBillers(
+    @Body() ElectricityBody body,
+  );
+  @POST('bbps/b2c_bills_Insurance/get_billers')
+  Future<HttpResponse<LoanRepaymentResponse>> getLoanRepaymentBillers(
+    @Body() ElectricityBody body,
+  );
+  @POST('recharges/b2c_prepaid_mobile/get_billers')
+  Future<HttpResponse<MobilePrepaidResponse>> getMoblePrepaidBillers(
+    @Body() ElectricityBody body,
+  );
+  @POST('recharges/b2c_prepaid_dth/get_billers')
+  Future<HttpResponse<DthPrepaidResponse>> getDTHPrepaidBillers(
+    @Body() ElectricityBody body,
+  );
   // Login api
   @POST('outlet/b2c_login/otp_initiate')
   Future<HttpResponse<LoginResponse>> login(@Body() LoginBodyRequest body);
   @POST('outlet/b2c_login/otp_validate')
-  Future<HttpResponse<VerfiyOtpResponse>> verfyiLogin(@Body() VerfiyOtpBody body);
-
+  Future<HttpResponse<VerfiyOtpResponse>> verfyiLogin(
+    @Body() VerfiyOtpBody body,
+  );
 }

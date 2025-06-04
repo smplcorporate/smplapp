@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/screen/home_page.dart';
 import 'package:home/screen/muthoothfin.dart'; // Replace with correct path
 
 void main() {
@@ -68,7 +69,12 @@ class _LenderSelectionScreenState extends State<LenderSelectionScreen> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+     Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => HomePage(), // 🔁 Replace this with your actual destination widget
+    ),
+  );
                   },
                   child: const CircleAvatar(
                     backgroundColor: Colors.white,
@@ -81,7 +87,7 @@ class _LenderSelectionScreenState extends State<LenderSelectionScreen> {
                     child: Text(
                       'Select Your Lender',
                       style: GoogleFonts.inter(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -185,7 +191,7 @@ class _LenderSelectionScreenState extends State<LenderSelectionScreen> {
                         ),
                         title: Text(
                           lender,
-                          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         onTap: () {
                           setState(() {
@@ -276,7 +282,7 @@ class _LenderSelectionScreenState extends State<LenderSelectionScreen> {
                       ),
                       child: Text(
                         'Apply Filter',
-                        style: GoogleFonts.inter(color: Colors.white, fontSize: 17),
+                        style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
                       ),
                     ),
                   ),

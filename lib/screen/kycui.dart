@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(KYCApp());
-}
+import 'package:home/screen/bankkyc.dart';
+import 'package:home/screen/fullkyc.dart';
+import 'package:home/screen/home_page.dart';
+import 'package:home/screen/minikyc.dart';
+import 'package:home/screen/profile.dart';
 
 class KYCApp extends StatelessWidget {
   @override
@@ -25,45 +27,45 @@ class KYCVerificationScreen extends StatelessWidget {
     required VoidCallback? onTap,
     required bool isCompleted,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
+    return GestureDetector(
+      onTap: isCompleted ? null : onTap, // entire card tappable if not completed
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+          ),
+          border: Border.all(color: const Color.fromARGB(255, 166, 192, 173)),
         ),
-        border: Border.all(color: const Color.fromARGB(255, 166, 192, 173)),
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with title and custom button
-          Container(
-            height: 55,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 212, 238, 219),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.inter(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 68, 128, 106),
-                  ),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with title and custom button
+            Container(
+              height: 55,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 212, 238, 219),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
                 ),
-                GestureDetector(
-                  onTap: isCompleted ? null : onTap,
-                  child: Container(
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 68, 128, 106),
+                    ),
+                  ),
+                  Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 8,
@@ -87,77 +89,76 @@ class KYCVerificationScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Required Document:',
-                        style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold)),
-                    Text(
-                      document,
-                      style: GoogleFonts.inter(
-                          fontSize: 12, color: Colors.black),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text('Validity:',
-                        style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold)),
-                    Text(validity),
-                  ],
-                ),
-              ],
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Required Document:',
+                          style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                      Text(
+                        document,
+                        style: GoogleFonts.inter(fontSize: 12, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('Validity:',
+                          style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                      Text(validity),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text('Benefits:',
-                style: GoogleFonts.inter(
-                    fontSize: 14, fontWeight: FontWeight.bold)),
-          ),
-          ...benefits.map(
-            (b) => Padding(
-              padding: const EdgeInsets.only(left: 16.0, top: 2),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text('Benefits:',
+                  style:
+                      GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold)),
+            ),
+            ...benefits.map(
+              (b) => Padding(
+                padding: const EdgeInsets.only(left: 16.0, top: 2),
+                child: Text(
+                  '• $b',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: const Color.fromARGB(255, 68, 128, 106),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Text(
-                '• $b',
+                '* Select to change based on the bank\'s risk categorization',
                 style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: const Color.fromARGB(255, 68, 128, 106),
+                  fontSize: 11,
+                  color: const Color.fromARGB(255, 103, 103, 103),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '* Select to change based on the bank\'s risk categorization',
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                color: const Color.fromARGB(255, 103, 103, 103),
-              ),
-            ),
-          ),
-          const SizedBox(height: 6),
-        ],
+            const SizedBox(height: 6),
+          ],
+        ),
       ),
     );
   }
@@ -174,7 +175,16 @@ class KYCVerificationScreen extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.all(10.0),
           child: GestureDetector(
-            onTap: () => Navigator.pop(context),
+                onTap: () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.pop(context);
+              } else {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => ProfileScreen()), // fallback
+                );
+              }
+            },
             child: Container(
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
@@ -224,7 +234,7 @@ class KYCVerificationScreen extends StatelessWidget {
                       child: Text(
                         'KYC Verification',
                         style: GoogleFonts.inter(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -234,7 +244,7 @@ class KYCVerificationScreen extends StatelessWidget {
                     Image.asset(
                       'assets/kyc.png',
                       height: 97,
-                      width: 155,
+                      width: 140,
                       fit: BoxFit.contain,
                     ),
                   ],
@@ -258,7 +268,7 @@ class KYCVerificationScreen extends StatelessWidget {
               // KYC Cards
               kycCard(
                 title: 'Mini KYC',
-                document: 'Pan Card',
+                document: 'Aaadhar Card',
                 validity: 'Lifetime',
                 benefits: [
                   'Wallet Balance up to ₹10,000',
@@ -266,24 +276,33 @@ class KYCVerificationScreen extends StatelessWidget {
                 ],
                 isCompleted: false,
                 onTap: () {
-                  print('Mini KYC tapped');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => MiniKYCPage()),
+                  );
                 },
               ),
               kycCard(
                 title: 'Full KYC',
-                document: 'Pan Card',
+                document: 'PAN Card & Aadhaar Card',
                 validity: 'Lifetime',
                 benefits: [
                   'Wallet Balance up to ₹100,000',
                   'Pay to merchants',
                   'Send money to others',
                 ],
-                isCompleted: true,
-                onTap: null,
+                isCompleted: false,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => FullKYCPage()),
+                  );
+                },
               ),
+
               kycCard(
                 title: 'Bank KYC',
-                document: 'Pan Card',
+                document: 'Bank Passbook, Cancel Cheque, Bank Statement', // <-- Updated here
                 validity: 'Lifetime',
                 benefits: [
                   'Wallet Balance up to ₹10,000',
@@ -291,7 +310,10 @@ class KYCVerificationScreen extends StatelessWidget {
                 ],
                 isCompleted: false,
                 onTap: () {
-                  print('Bank KYC tapped');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => BankKYCPage()),
+                  );
                 },
               ),
             ],

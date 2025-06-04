@@ -80,7 +80,7 @@ class _Dth2State extends State<Dth2> {
                   Center(
                     child: Text(
                       "Tata sky",
-                      style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                      style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                   ),
                 ],
@@ -151,7 +151,7 @@ class _Dth2State extends State<Dth2> {
                 ),
                 child: Text(
                   "Confirm",
-                  style: GoogleFonts.inter(fontSize: 23, color: Colors.white),
+                  style: GoogleFonts.inter(fontSize: 18, color: Colors.white),
                 ),
               ),
             ),

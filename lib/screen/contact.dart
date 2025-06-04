@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
+import 'package:home/screen/sendamount.dart';
 
 
 
@@ -11,18 +12,6 @@ class Contact {
   Contact(this.name, this.upiId);
 }
 
-class contact extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'UPI Contact List',
-      theme: ThemeData(primarySwatch: Colors.green),
-      home: ContactListScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
 class ContactListScreen extends StatefulWidget {
   @override
   _ContactListScreenState createState() => _ContactListScreenState();
@@ -31,7 +20,7 @@ class ContactListScreen extends StatefulWidget {
 class _ContactListScreenState extends State<ContactListScreen> {
   final List<Contact> contacts = List.generate(
     10,
-    (index) => Contact('Shreya Goyal', '98765432${index}'),
+    (index) => Contact('Shreya Goyal', '98765432$index@upi'),
   );
 
   String searchQuery = '';
@@ -45,19 +34,19 @@ class _ContactListScreenState extends State<ContactListScreen> {
         .toList();
 
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color:  const Color.fromARGB(255, 232, 243, 235),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 232, 243, 235),
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Search by name, number or UPI id',
-                  prefixIcon: Icon(Icons.search),
+                  hintText: 'Search by name, number or UPI ID',
+                  prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -77,16 +66,18 @@ class _ContactListScreenState extends State<ContactListScreen> {
                 itemBuilder: (context, index) {
                   final contact = filteredContacts[index];
                   return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Color.fromARGB(255,68, 128, 106),
+                    leading: const CircleAvatar(
+                      backgroundColor: Color.fromARGB(255, 68, 128, 106),
                       child: Icon(Icons.person, color: Colors.white),
                     ),
                     title: Text(contact.name),
                     subtitle: Text(contact.upiId),
                     onTap: () {
-                      // Add navigation or payment logic here
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Selected ${contact.name}')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => UPIChatApp(),
+                        ),
                       );
                     },
                   );
@@ -99,3 +90,5 @@ class _ContactListScreenState extends State<ContactListScreen> {
     );
   }
 }
+
+

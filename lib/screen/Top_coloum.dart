@@ -6,6 +6,7 @@ import 'package:home/screen/contact.dart';
 import 'package:home/screen/notification2.dart';
 import 'package:home/screen/offere_bar.dart';
 import 'package:home/screen/screen2.dart';
+import 'package:home/screen/sendamount.dart';
 import 'package:home/screen/success.dart';
 import 'package:home/screen/wallet.dart';
 
@@ -96,7 +97,7 @@ class TopColume extends StatelessWidget {
                 buildTopButton(Icons.person, "Mobile Number", onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => contact()),
+                    MaterialPageRoute(builder: (context) => UPIChatApp()),
                   );
                 }),
               ],

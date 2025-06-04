@@ -79,7 +79,7 @@ class _MuthootFinScreenState extends State<MuthootFinScreen> {
                     child: Text(
                       "Muthoot Finance",
                       style: GoogleFonts.inter(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -102,7 +102,7 @@ class _MuthootFinScreenState extends State<MuthootFinScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         "Loan Number",
-                        style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -178,7 +178,7 @@ class _MuthootFinScreenState extends State<MuthootFinScreen> {
                   ),
                   child: Text(
                     "Confirm",
-                    style: GoogleFonts.inter(fontSize: 25, color: Colors.white),
+                    style: GoogleFonts.inter(fontSize: 20, color: Colors.white),
                   ),
                 ),
               ),

@@ -79,7 +79,7 @@ class _GasNumberScreenState extends State<GasNumberScreen> {
                   Center(
                     child: Text(
                       " Bharat Gas ",
-                      style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                      style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                   ),
                 ],
@@ -88,7 +88,7 @@ class _GasNumberScreenState extends State<GasNumberScreen> {
             const SizedBox(height: 80),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Registered Contact Number",   style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),),
+              child: Text("Registered Contact Number",   style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),),
             ),
             const SizedBox(height: 8),
             Container(
@@ -145,7 +145,7 @@ class _GasNumberScreenState extends State<GasNumberScreen> {
                   backgroundColor:  Color.fromARGB(255, 68, 128, 106),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-                child: Text("Confirm", style: GoogleFonts.inter(fontSize: 23, color: Colors.white)),
+                child: Text("Confirm", style: GoogleFonts.inter(fontSize: 20, color: Colors.white)),
               ),
             ),
           ],
