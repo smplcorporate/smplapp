@@ -10,8 +10,6 @@ import 'package:home/screen/home_page.dart';
 import 'package:home/screen/otp.dart';
 import 'package:home/screen/splashscreen.dart';
 
-// ✅ Import splash screen
-
 void main() async {
   // Ensures all Flutter bindings are initialized before any other code runs.
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +25,7 @@ void main() async {
   // Initializes time zones for working with time zone-specific notifications.
 
   // Run the app after initializing.
-    runApp(ProviderScope(child: const MyApp()));
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -37,6 +35,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final box = Hive.box("userdata");
     final token = box.get("@token");
+    log("Token FCM: $token");
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       minTextAdapt: true,
@@ -46,16 +45,18 @@ class MyApp extends StatelessWidget {
           navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,
           title: 'Bank Aap',
+          home: token == null? PaymentIntroScreen() : HomePage(),
+          
           theme: ThemeData(
             primarySwatch: Colors.green,
             scaffoldBackgroundColor: Colors.white,
             useMaterial3: true,
           ),
           routes: {
+
             '/otp': (context) => VerifyOtpScreen(),
             '/home': (context) => HomePage(),
           },
-          home: token ==null? PaymentIntroScreen() : HomePage(), 
         );
       },
     );

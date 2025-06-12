@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:home/data/model/dthPrepaid.res.dart';
 import 'package:home/data/model/electritysityModel.dart';
+import 'package:home/data/model/fastTag.res.dart';
+import 'package:home/data/model/fetchBill.model.dart';
+import 'package:home/data/model/fetchBiller.res.model.dart';
 import 'package:home/data/model/lic.res.dart';
 import 'package:home/data/model/loadRepayment.res.dart';
 import 'package:home/data/model/login.body.model.dart';
@@ -9,6 +12,7 @@ import 'package:home/data/model/mobilePrepaid.res.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
 import 'package:home/data/model/register.body.validate.dart';
 import 'package:home/data/model/register.model1.dart';
+import 'package:home/data/model/watterBillers.res.dart';
 import 'package:retrofit/retrofit.dart' hide Headers;
 
 part 'api.state.g.dart';
@@ -48,6 +52,10 @@ abstract class APIStateNetwork {
   Future<HttpResponse<DthPrepaidResponse>> getDTHPrepaidBillers(
     @Body() ElectricityBody body,
   );
+  @POST('bbps/b2c_bills_fastag/get_billers')
+  Future<HttpResponse<FastTagmodel>> getFastTagBillers(
+    @Body() ElectricityBody body,
+  );
   // Login api
   @POST('outlet/b2c_login/otp_initiate')
   Future<HttpResponse<LoginResponse>> login(@Body() LoginBodyRequest body);
@@ -55,4 +63,11 @@ abstract class APIStateNetwork {
   Future<HttpResponse<VerfiyOtpResponse>> verfyiLogin(
     @Body() VerfiyOtpBody body,
   );
+  @POST('bbps/b2c_bills_water/get_billers')
+  Future<HttpResponse<WatterBilersModel>>  fetchWaterList(@Body() ElectricityBody body );
+  // fetch bill
+  @POST('bbps/{path}/fetchnow')
+  Future<HttpResponse<FetchResponseModel>> ferchBill(
+    @Path('path') String path,
+    @Body() FetchBillModel body);
 }

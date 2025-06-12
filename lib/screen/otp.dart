@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/config/auth/auth.dart';
 import 'package:home/data/controller/login.notider.dart';
+import 'package:home/data/controller/register.notifer.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
+import 'package:home/data/model/register.body.validate.dart';
 import 'package:home/screen/home_page.dart';
 import 'package:another_flushbar/flushbar.dart';
 
@@ -66,29 +70,81 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
 
   bool _btnLoder = false;
   void verifyOtp(bool isLogin, String requestId) async {
+    log(isLogin.toString());
     String otp = _otpControllers.map((c) => c.text).join();
 
     if (otp.length == 6 && otp.runes.every((r) => r >= 48 && r <= 57)) {
-      setState(() {
-        _btnLoder = true;
-      });
-      final userData = ref.watch(loginBodyRequestProvider);
+      if (isLogin == true) {
+        setState(() {
+          _btnLoder = true;
+        });
+        final userData = ref.watch(loginBodyRequestProvider);
 
-      try {
-        await _authService.loginalidate(
-          VerfiyOtpBody(
-            userMobile: userData.userMobile,
-            ipAddress: userData.ipAddress,
-            macAddress: userData.macAddress,
-            latitude: userData.latitude,
-            longitude: userData.longitude,
-            otpCheck: otp,
-            requestId: requestId,
-          ),
-          context,
-        );
-      } catch (e) {
-        _btnLoder = false;
+        try {
+          await _authService.loginValidate(
+            VerfiyOtpBody(
+              userMobile: userData.userMobile,
+              ipAddress: userData.ipAddress,
+              macAddress: userData.macAddress,
+              latitude: userData.latitude,
+              longitude: userData.longitude,
+              otpCheck: otp,
+              requestId: requestId,
+            ),
+            context,
+          );
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) => HomePage()),
+          );
+          log("first save - 4");
+        } catch (e) {
+          log(e.toString());
+          setState(() {
+            _btnLoder = false;
+          });
+          log("first save - 5");
+        }
+      }
+      if (isLogin == false) {
+        log(" jhhhhhhb");
+        setState(() {
+          _btnLoder = true;
+        });
+        final registrBody = ref.watch(userRegisterBodyProvider);
+        log("${registrBody?.userMobile.toString}");
+        log("${registrBody?.userFirstname.toString}");
+        log("${registrBody?.userLastname.toString}");
+        log("${registrBody?.ipAddress.toString}");
+        try {
+          log("12345678i");
+          await _authService.registerValidate(
+            RegisterBodyValidate(
+              userMobile: registrBody!.userMobile.toString(),
+              userFirstname: registrBody.userFirstname,
+              userLastname: registrBody.userLastname,
+              ipAddress: registrBody.ipAddress,
+              macAddress: registrBody.macAddress,
+              latitude: registrBody.latitude,
+              longitude: registrBody.longitude,
+              otpCheck: otp,
+              requestId: requestId,
+            ),
+            context,
+          );
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) => HomePage()),
+          );
+          log("lovde");
+        } catch (e) {
+          log(e.toString());
+          log("09987");
+          setState(() {
+
+            _btnLoder = false;
+          });
+        }
       }
     } else {
       showTopMessage("Enter a valid 6-digit OTP", Colors.red);

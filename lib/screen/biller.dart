@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/data/controller/electirtyBiller.provider.dart';
 import 'package:home/screen/eletercitybill.dart';
 import 'package:home/screen/home_page.dart';
+
+// Search query provider
+final searchQueryProvider = StateProvider.autoDispose<String>((ref) => '');
 
 class BillerProvider {
   final String name;
@@ -10,38 +15,46 @@ class BillerProvider {
   BillerProvider({required this.name, required this.logo});
 }
 
-class Biller extends StatefulWidget {
+class Biller extends ConsumerStatefulWidget {
   const Biller({Key? key}) : super(key: key);
 
   @override
   _BillerState createState() => _BillerState();
 }
 
-class _BillerState extends State<Biller> {
+class _BillerState extends ConsumerState<Biller> {
   List<BillerProvider> allBillers = [
-    BillerProvider(name: 'Jaipur Vidyut Vitran Nigam (JVVNL)', logo: 'assets/jv.png'),
-    BillerProvider(name: 'Ajmer Vidyut Vitran Nigam (AVVNL)', logo: 'assets/av.png'),
-    BillerProvider(name: 'Jodhpur Vidyut Vitran Nigam (JDVVNL)', logo: 'assets/jodhpur.png'),
-    BillerProvider(name: 'Bikaner Vidyut vitrain Nigam Limited', logo: 'assets/bkesl.png'),
+    BillerProvider(
+      name: 'Jaipur Vidyut Vitran Nigam (JVVNL)',
+      logo: 'assets/jv.png',
+    ),
+    BillerProvider(
+      name: 'Ajmer Vidyut Vitran Nigam (AVVNL)',
+      logo: 'assets/av.png',
+    ),
+    BillerProvider(
+      name: 'Jodhpur Vidyut Vitran Nigam (JDVVNL)',
+      logo: 'assets/jodhpur.png',
+    ),
+    BillerProvider(
+      name: 'Bikaner Vidyut vitrain Nigam Limited',
+      logo: 'assets/bkesl.png',
+    ),
     BillerProvider(name: 'UIT Udaipur', logo: 'assets/jv.png'),
   ];
 
-  String searchQuery = '';
-
   @override
   Widget build(BuildContext context) {
+    final electricityProvider = ref.watch(electricityBillerProvider);
+    final searchQuery = ref.watch(searchQueryProvider);
     final width = MediaQuery.of(context).size.width;
-
-    List<BillerProvider> filteredBillers = allBillers
-        .where((biller) => biller.name.toLowerCase().contains(searchQuery.toLowerCase()))
-        .toList();
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 232, 243, 235),
       body: SafeArea(
         child: Column(
           children: [
-            // Custom header with back button and title
+            // Header
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: width * 0.04,
@@ -50,15 +63,12 @@ class _BillerState extends State<Biller> {
               child: Row(
                 children: [
                   GestureDetector(
-               onTap: () {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => HomePage(), // 🔁 Replace this with your actual destination widget
-    ),
-  );
-},
-
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
+                    },
                     child: Container(
                       height: width * 0.1,
                       width: width * 0.1,
@@ -85,12 +95,12 @@ class _BillerState extends State<Biller> {
                       ),
                     ),
                   ),
-                  SizedBox(width: width * 0.1), // For balance with leading icon
+                  SizedBox(width: width * 0.1),
                 ],
               ),
             ),
 
-            // Search Bar
+            // Search bar
             Padding(
               padding: EdgeInsets.symmetric(horizontal: width * 0.04),
               child: SizedBox(
@@ -111,15 +121,13 @@ class _BillerState extends State<Biller> {
                     ),
                   ),
                   onChanged: (value) {
-                    setState(() {
-                      searchQuery = value;
-                    });
+                    ref.read(searchQueryProvider.notifier).state = value;
                   },
                 ),
               ),
             ),
 
-            // Billers list
+            // Section label
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: width * 0.05,
@@ -137,47 +145,58 @@ class _BillerState extends State<Biller> {
               ),
             ),
 
+            // List of billers
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(bottom: width * 0.05),
-                itemCount: filteredBillers.length,
-                itemBuilder: (context, index) {
-                  final biller = filteredBillers[index];
-                  return Column(
-                    children: [
-                      ListTile(
-                        leading: Image.asset(
-                          biller.logo,
-                          height: width * 0.12,
-                          width: width * 0.1,
-                          fit: BoxFit.contain,
-                        ),
-                        title: Text(
-                          biller.name,
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.bold,
-                            fontSize: width * 0.038,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Eletercitybill(),
+              child: electricityProvider.when(
+                data: (snapshot) {
+                  final filteredList = snapshot.billersList
+                      .where((biller) => biller.billerName
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase()))
+                      .toList();
+
+                  return ListView.builder(
+                    padding: EdgeInsets.only(bottom: width * 0.05),
+                    itemCount: filteredList.length,
+                    itemBuilder: (context, index) {
+                      final biller = filteredList[index];
+                      return Column(
+                        children: [
+                          ListTile(
+                            title: Text(
+                              biller.billerName,
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.bold,
+                                fontSize: width * 0.038,
+                              ),
                             ),
-                          );
-                        },
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-                        child: const Divider(
-                          color: Color.fromARGB(255, 221, 221, 221),
-                          thickness: 1,
-                        ),
-                      ),
-                    ],
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => Eletercitybill(),
+                                ),
+                              );
+                            },
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: width * 0.05,
+                            ),
+                            child: const Divider(
+                              color: Color.fromARGB(255, 221, 221, 221),
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
+                error: (err, stack) {
+                  return const Center(child: Text("Something went wrong"));
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
               ),
             ),
           ],

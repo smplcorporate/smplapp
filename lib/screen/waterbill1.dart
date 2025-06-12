@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/data/controller/watterBillers.provider.dart';
 import 'package:home/screen/home_page.dart';
 import 'package:home/screen/watelbill2.dart';
-
-
 
 class BillerProvider {
   final String name;
@@ -12,18 +12,21 @@ class BillerProvider {
   BillerProvider({required this.name, required this.logo});
 }
 
-class WaterBill extends StatefulWidget {
+class WaterBill extends ConsumerStatefulWidget {
   const WaterBill({Key? key}) : super(key: key);
 
   @override
   _WaterBillState createState() => _WaterBillState();
 }
 
-class _WaterBillState extends State<WaterBill> {
+class _WaterBillState extends ConsumerState<WaterBill> {
   List<BillerProvider> allBillers = [
     BillerProvider(name: 'Jaipur Municipal Corporation', logo: 'assets/jv.png'),
     BillerProvider(name: 'PHED- Rajasthan', logo: 'assets/av.png'),
-    BillerProvider(name: 'Udaipur Municipal Corporation', logo: 'assets/jodhpur.png'),
+    BillerProvider(
+      name: 'Udaipur Municipal Corporation',
+      logo: 'assets/jodhpur.png',
+    ),
     BillerProvider(name: 'Kota Nagar Nigam', logo: 'assets/bkesl.png'),
     BillerProvider(name: 'Bikaner Municipal Corpoation', logo: 'assets/jv.png'),
   ];
@@ -34,10 +37,14 @@ class _WaterBillState extends State<WaterBill> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    List<BillerProvider> filteredBillers = allBillers
-        .where((biller) => biller.name.toLowerCase().contains(searchQuery.toLowerCase()))
-        .toList();
-
+    List<BillerProvider> filteredBillers =
+        allBillers
+            .where(
+              (biller) =>
+                  biller.name.toLowerCase().contains(searchQuery.toLowerCase()),
+            )
+            .toList();
+    final watterBiller = ref.watch(wattersBillerProvider);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(width * 0.5),
@@ -58,16 +65,18 @@ class _WaterBillState extends State<WaterBill> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                   onTap: () {
-              if (Navigator.of(context).canPop()) {
-                Navigator.pop(context);
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => HomePage()), // fallback
-                );
-              }
-            },
+                    onTap: () {
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.pop(context);
+                      } else {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HomePage(),
+                          ), // fallback
+                        );
+                      }
+                    },
                     child: Container(
                       height: width * 0.1,
                       width: width * 0.1,
@@ -100,7 +109,12 @@ class _WaterBillState extends State<WaterBill> {
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(width * 0.2),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(width * 0.04, 0, width * 0.04, width * 0.05),
+              padding: EdgeInsets.fromLTRB(
+                width * 0.04,
+                0,
+                width * 0.04,
+                width * 0.05,
+              ),
               child: SizedBox(
                 height: width * 0.15,
                 child: TextField(
@@ -129,68 +143,78 @@ class _WaterBillState extends State<WaterBill> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(bottom: width * 0.05),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: width * 0.05,
-                vertical: width * 0.025,
-              ),
-              child: Text(
-                'Billers in Rajasthan',
-                style: GoogleFonts.inter(
-                  fontSize: width * 0.04,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: filteredBillers.length,
-              itemBuilder: (context, index) {
-                final biller = filteredBillers[index];
-                return Column(
-                  children: [
-                    ListTile(
-                      leading: Image.asset(
-                        biller.logo,
-                        height: width * 0.12,
-                        width: width * 0.1,
-                        fit: BoxFit.contain,
-                      ),
-                      title: Text(
-                        biller.name,
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.bold,
-                          fontSize: width * 0.035,
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => WaterBill2(), // Replace if needed
-                          ),
-                        );
-                      },
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-                      child: const Divider(
-                        color: Color.fromARGB(255, 221, 221, 221),
-                        thickness: 1,
-                      ),
-                    ),
-                  ],
+      body: watterBiller.when(
+        data: (snap) {
+          // Filter list using searchQuery
+          final filteredBillers =
+              snap.billersList.where((biller) {
+                return biller.billerName.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
                 );
-              },
+              }).toList();
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: width * 0.05),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: width * 0.05,
+                    vertical: width * 0.025,
+                  ),
+                  child: Text(
+                    'Billers',
+                    style: GoogleFonts.inter(
+                      fontSize: width * 0.04,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: filteredBillers.length,
+                  itemBuilder: (context, index) {
+                    final biller = filteredBillers[index];
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            biller.billerName,
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.bold,
+                              fontSize: width * 0.035,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => WaterBill2(billerCode: biller.billerName, billerName: biller.billerCode,)),
+                            );
+                          },
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: width * 0.05,
+                          ),
+                          child: const Divider(
+                            color: Color.fromARGB(255, 221, 221, 221),
+                            thickness: 1,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
+        error: (err, stack) {
+          return Center(child: Text("Something went wrong"));
+        },
+        loading: () => Center(child: CircularProgressIndicator()),
       ),
     );
   }

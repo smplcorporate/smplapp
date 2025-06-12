@@ -49,6 +49,12 @@ class VerfiyOtpBody {
 }
 
 
+// To parse this JSON data, do
+//
+//     final verfiyOtpResponse = verfiyOtpResponseFromJson(jsonString);
+
+
+
 VerfiyOtpResponse verfiyOtpResponseFromJson(String str) => VerfiyOtpResponse.fromJson(json.decode(str));
 
 String verfiyOtpResponseToJson(VerfiyOtpResponse data) => json.encode(data.toJson());
@@ -105,7 +111,7 @@ class UserDetails {
     String userId;
     String userMobile;
     String userName;
-    int userKycStatus;
+    String userKycStatus;
 
     UserDetails({
         required this.userId,
@@ -128,4 +134,3 @@ class UserDetails {
         "user_kyc_status": userKycStatus,
     };
 }
-

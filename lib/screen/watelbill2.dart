@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/screen/elebillsummary.dart';
 import 'package:home/screen/waterbill3.dart';
 
 
-class WaterBill2 extends StatefulWidget {
-  const WaterBill2({super.key});
+class WaterBill2 extends ConsumerStatefulWidget {
+  final String billerCode;
+  final String billerName;
+  const WaterBill2({super.key, required this.billerCode, required this.billerName});
 
   @override
-  State<WaterBill2> createState() => _WaterBill2State();
+  ConsumerState<WaterBill2> createState() => _WaterBill2State();
 }
 
-class _WaterBill2State extends State<WaterBill2> {
+class _WaterBill2State extends ConsumerState<WaterBill2> {
   final TextEditingController _controller = TextEditingController();
   bool _isValid = true; // Start as true to avoid red border initially
   String? _errorText;
@@ -30,7 +33,7 @@ class _WaterBill2State extends State<WaterBill2> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => WaterBill3(accountNumber: cidCode),
+          builder: (context) => WaterBill3(accountNumber: cidCode, billerName: widget.billerName, bilerCode: widget.billerCode,),
         ),
       );
     } else {
@@ -43,6 +46,7 @@ class _WaterBill2State extends State<WaterBill2> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -78,7 +82,7 @@ class _WaterBill2State extends State<WaterBill2> {
                   ),
                   Center(
                     child: Text(
-                      "PHED - Rajasthan",
+                      "${widget.billerName}",
                       style: GoogleFonts.inter(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

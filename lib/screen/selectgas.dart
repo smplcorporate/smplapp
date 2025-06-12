@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/data/controller/gasBiller.provider.dart';
 import 'package:home/screen/gasno.dart'; // Ensure this file exists
 
 class GasProviderApp extends StatelessWidget {
@@ -12,7 +14,14 @@ class GasProviderApp extends StatelessWidget {
   }
 }
 
-class SelectGasProviderScreen extends StatelessWidget {
+class SelectGasProviderScreen extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<SelectGasProviderScreen> createState() =>
+      _SelectGasProviderScreenState();
+}
+
+class _SelectGasProviderScreenState
+    extends ConsumerState<SelectGasProviderScreen> {
   final List<Map<String, String>> gasProviders = [
     {'name': 'Bharat Gas', 'icon': 'assets/bhgas.png'},
     {'name': 'Bharat Gas-Commercial', 'icon': 'assets/bhgas.png'},
@@ -24,7 +33,7 @@ class SelectGasProviderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
+    final gasDataProvider = ref.watch(getGasBillerProvider);
     return Scaffold(
       body: Container(
         width: screenWidth,
@@ -45,7 +54,8 @@ class SelectGasProviderScreen extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Container(
-                        height: 40,width: 40,
+                        height: 40,
+                        width: 40,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
@@ -87,7 +97,7 @@ class SelectGasProviderScreen extends StatelessWidget {
                   // fit: BoxFit.cover,
                 ),
               ),
-SizedBox(height: 15,),
+              SizedBox(height: 15),
               // Gas Provider List
               Expanded(
                 child: Padding(
@@ -106,18 +116,19 @@ SizedBox(height: 15,),
                         ),
                       ],
                     ),
-                    child: ListView.builder(
+                    child: gasDataProvider.when(data: (snap){
+                      return ListView.builder(
                       itemCount: gasProviders.length,
                       itemBuilder: (context, index) {
-                        final provider = gasProviders[index];
+                        final provider = snap.billersList[index];
                         return ListTile(
-                          leading: Image.asset(
-                            provider['icon']!,
-                            width: screenWidth * 0.1,
-                            height: screenWidth * 0.1,
-                          ),
+                          // leading: Image.asset(
+                          //   provider['icon']!,
+                          //   width: screenWidth * 0.1,
+                          //   height: screenWidth * 0.1,
+                          // ),
                           title: Text(
-                            provider['name']!,
+                            provider.billerName!,
                             style: GoogleFonts.inter(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -127,15 +138,23 @@ SizedBox(height: 15,),
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => GasNumberScreen(
-                                  providerName: provider['name']!,
-                                ),
+                                builder:
+                                    (context) => GasNumberScreen(
+                                      providerName: provider.billerName!,
+                                    ),
                               ),
                             );
                           },
                         );
                       },
-                    ),
+                    );
+                    }, error: (err, stack){
+                      return Center(
+                        child: Text("$err"),
+                      );
+                    }, loading: () => Center(
+                      child: CircularProgressIndicator(),
+                    )),
                   ),
                 ),
               ),

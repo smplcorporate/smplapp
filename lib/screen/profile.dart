@@ -1,8 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:home/screen/cashbackoffer.dart';
-import 'package:home/screen/fullkyc.dart';
 import 'package:home/screen/helpsupport.dart';
 import 'package:home/screen/home_page.dart';
 import 'package:home/screen/kycui.dart';
@@ -11,6 +11,7 @@ import 'package:home/screen/myprofile.dart';
 import 'package:home/screen/notification2.dart';
 import 'package:home/screen/screen2.dart';
 import 'package:home/screen/setting.dart';
+import 'package:home/screen/splashscreen.dart';
 
 // Adjust the path accordingly
 
@@ -19,6 +20,9 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final box = Hive.box('userdata');
+    final name = box.get("@name");
+    final mobile = box.get("@mobile");
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 232, 243, 235),
       body: SafeArea(
@@ -37,7 +41,9 @@ class ProfileScreen extends StatelessWidget {
                       } else {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => HomePage()), // fallback
+                          MaterialPageRoute(
+                            builder: (_) => HomePage(),
+                          ), // fallback
                         );
                       }
                     },
@@ -51,7 +57,11 @@ class ProfileScreen extends StatelessWidget {
                           BoxShadow(blurRadius: 4, color: Colors.grey.shade300),
                         ],
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+                      child: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.black,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -60,9 +70,9 @@ class ProfileScreen extends StatelessWidget {
                   child: Text(
                     "Profile",
                     style: GoogleFonts.inter(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.black
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -92,16 +102,19 @@ class ProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Ankit Sharma",
+                          "$name",
                           style: GoogleFonts.inter(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          "+91 1234567879",
-                          style: TextStyle(color: Color.fromARGB(255, 126, 126, 126)),
+                         Text(
+                          "+91 $mobile",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 126, 126, 126),
+                          ),
                         ),
                         const SizedBox(height: 4),
                         ElevatedButton(
@@ -109,23 +122,37 @@ class ProfileScreen extends StatelessWidget {
                             // Add edit profile logic here
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 68, 128, 106),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              68,
+                              128,
+                              106,
+                            ),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.edit, size: 16, color: Colors.white),
+                              const Icon(
+                                Icons.edit,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                               const SizedBox(width: 6),
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => MyProfileScreen()),
+                                    MaterialPageRoute(
+                                      builder: (context) => MyProfileScreen(),
+                                    ),
                                   );
                                 },
                                 child: Text(
@@ -163,7 +190,7 @@ class ProfileScreen extends StatelessWidget {
                     color: Colors.grey.shade200,
                     blurRadius: 6,
                     offset: const Offset(0, 3),
-                  )
+                  ),
                 ],
               ),
               child: ListView(
@@ -186,122 +213,164 @@ class ProfileScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MyProfileScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => MyProfileScreen(),
+                        ),
                       );
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.badge_outlined, size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
+                    leading: const Icon(
+                      Icons.badge_outlined,
+                      size: 30,
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
                     title: Text(
                       "KYC",
                       style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => KYCVerificationScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => KYCVerificationScreen(),
+                        ),
                       );
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.history, size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
+                    leading: const Icon(
+                      Icons.history,
+                      size: 30,
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
                     title: Text(
                       "Transaction History",
                       style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => TransactionPage()),
+                        MaterialPageRoute(
+                          builder: (context) => TransactionPage(),
+                        ),
                       );
                     },
                   ),
                   // My Commission tile added here
                   ListTile(
-                    leading: const Icon(Icons.trending_up, size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
+                    leading: const Icon(
+                      Icons.trending_up,
+                      size: 30,
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
                     title: Text(
                       "My Commission",
                       style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MyCommissionPage()),
+                        MaterialPageRoute(
+                          builder: (context) => MyCommissionPage(),
+                        ),
                       );
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.card_giftcard, size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
+                    leading: const Icon(
+                      Icons.card_giftcard,
+                      size: 30,
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
                     title: Text(
                       "Cashback & Offers",
                       style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CashbackOffersPage()),
+                        MaterialPageRoute(
+                          builder: (context) => CashbackOffersPage(),
+                        ),
                       );
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.notifications, size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
+                    leading: const Icon(
+                      Icons.notifications,
+                      size: 30,
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
                     title: Text(
                       "Notification",
                       style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => NotificationScreen2()),
+                        MaterialPageRoute(
+                          builder: (context) => NotificationScreen2(),
+                        ),
                       );
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.help, size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
+                    leading: const Icon(
+                      Icons.help,
+                      size: 30,
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
                     title: Text(
                       "Help & Support",
                       style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => HelpSupportPage()),
+                        MaterialPageRoute(
+                          builder: (context) => HelpSupportPage(),
+                        ),
                       );
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.settings, size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
+                    leading: const Icon(
+                      Icons.settings,
+                      size: 30,
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
                     title: Text(
                       "Setting",
                       style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     onTap: () {
                       Navigator.push(
@@ -312,21 +381,33 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 15),
                   const Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Color.fromARGB(255, 241, 241, 241)),
+                    height: 1,
+                    thickness: 1,
+                    color: Color.fromARGB(255, 241, 241, 241),
+                  ),
                   const SizedBox(height: 10),
                   ListTile(
-                    leading: const Icon(Icons.logout, size: 30,
-                        color: Color.fromARGB(255, 68, 128, 106)),
+                    leading: const Icon(
+                      Icons.logout,
+                      size: 30,
+                      color: Color.fromARGB(255, 68, 128, 106),
+                    ),
                     title: Text(
                       "Logout",
                       style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black, 
+                      ),
                     ),
-                    onTap: () {
+                    onTap: () async {
+                      final box = Hive.box("userdata");
+                      await box.clear();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        CupertinoPageRoute(builder: (context) => PaymentIntroScreen()),
+                        (route) => false,
+                      );
                       // Add logout logic here
                     },
                   ),

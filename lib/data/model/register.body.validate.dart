@@ -39,9 +39,10 @@ class RegisterBodyValidate {
 }
 
 
-// To parse this JSON data, do
+/// To parse this JSON data, do
 //
 //     final registerResponseValidate = registerResponseValidateFromJson(jsonString);
+
 
 
 RegisterResponseValidate registerResponseValidateFromJson(String str) => RegisterResponseValidate.fromJson(json.decode(str));
@@ -52,14 +53,14 @@ class RegisterResponseValidate {
     bool status;
     String statusDesc;
     UserDetails userDetails;
-
+    UserBalance userBalance;
     String sessionToken;
 
     RegisterResponseValidate({
         required this.status,
         required this.statusDesc,
         required this.userDetails,
-
+        required this.userBalance,
         required this.sessionToken,
     });
 
@@ -67,7 +68,7 @@ class RegisterResponseValidate {
         status: json["status"],
         statusDesc: json["status_desc"],
         userDetails: UserDetails.fromJson(json["user_details"]),
-
+        userBalance: UserBalance.fromJson(json["user_balance"]),
         sessionToken: json["session_token"],
     );
 
@@ -75,13 +76,13 @@ class RegisterResponseValidate {
         "status": status,
         "status_desc": statusDesc,
         "user_details": userDetails.toJson(),
-
+        "user_balance": userBalance.toJson(),
         "session_token": sessionToken,
     };
 }
 
 class UserBalance {
-    int balanceMain;
+    dynamic balanceMain;
 
     UserBalance({
         required this.balanceMain,
@@ -100,7 +101,7 @@ class UserDetails {
     String userId;
     String userMobile;
     String userName;
-    int userKycStatus;
+    String userKycStatus;
 
     UserDetails({
         required this.userId,

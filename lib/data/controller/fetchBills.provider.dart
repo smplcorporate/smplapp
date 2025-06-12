@@ -1,0 +1,24 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home/config/network/api.state.dart';
+import 'package:home/config/utils/preety.dio.dart';
+import 'package:home/data/model/fetchBill.model.dart';
+import 'package:home/data/model/fetchBiller.res.model.dart';
+
+
+final fetchBillDataProvider = FutureProvider.family<FetchResponseModel, FetchBodymodel>((ref, body) async {
+  final service = APIStateNetwork(await createDio());
+  final data = await service.ferchBill(
+    body.path,
+    body.data,
+  );
+  return data.data;
+});
+
+
+class FetchBodymodel{
+  final String path;
+  final FetchBillModel data;
+
+  FetchBodymodel({required this.path, required this.data});
+
+}

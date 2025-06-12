@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For input formatters
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/config/auth/auth.dart';
+import 'package:home/data/controller/register.notifer.dart';
+import 'package:home/data/model/register.model1.dart';
 import 'package:home/screen/otp.dart';
 
-class CreateAccountScreen extends StatefulWidget {
+class CreateAccountScreen extends ConsumerStatefulWidget {
   @override
-  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
+  ConsumerState<CreateAccountScreen> createState() =>
+      _CreateAccountScreenState();
 }
 
-class _CreateAccountScreenState extends State<CreateAccountScreen> {
+class _CreateAccountScreenState extends ConsumerState<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
@@ -18,10 +23,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
-
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final AuthService _auth = AuthService();
+  bool _btnLoder = false;
   @override
   Widget build(BuildContext context) {
+    final regiterNotifier = ref.read(userRegisterBodyProvider.notifier);
+    final registerBody = ref.watch(userRegisterBodyProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -64,7 +73,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         SizedBox(height: 8),
                         Text(
                           "Create Your Account & Start Paying Securely!",
-                          style: GoogleFonts.inter(fontSize: 15, color: Colors.black),
+                          style: GoogleFonts.inter(
+                            fontSize: 15,
+                            color: Colors.black,
+                          ),
                         ),
                         SizedBox(height: 30),
                         Row(
@@ -75,21 +87,32 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 decoration: InputDecoration(
                                   hintText: "First name",
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                                    borderSide: const BorderSide(
+                                      color: Color.fromARGB(255, 230, 230, 230),
+                                    ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   hintStyle: GoogleFonts.inter(
                                     fontSize: 14,
-                                    color: const Color.fromARGB(255, 184, 184, 184),
+                                    color: const Color.fromARGB(
+                                      255,
+                                      184,
+                                      184,
+                                      184,
+                                    ),
                                   ),
                                   filled: true,
                                   fillColor: Colors.white,
                                   border: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                                    borderSide: const BorderSide(
+                                      color: Color.fromARGB(255, 230, 230, 230),
+                                    ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                validator: (value) => value!.isEmpty ? "Required" : null,
+                                validator:
+                                    (value) =>
+                                        value!.isEmpty ? "Required" : null,
                               ),
                             ),
                             SizedBox(width: 10),
@@ -98,22 +121,33 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 controller: lastNameController,
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                                    borderSide: const BorderSide(
+                                      color: Color.fromARGB(255, 230, 230, 230),
+                                    ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   hintText: "Last name",
                                   hintStyle: GoogleFonts.inter(
                                     fontSize: 14,
-                                    color: const Color.fromARGB(255, 184, 184, 184),
+                                    color: const Color.fromARGB(
+                                      255,
+                                      184,
+                                      184,
+                                      184,
+                                    ),
                                   ),
                                   filled: true,
                                   fillColor: Colors.white,
                                   border: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                                    borderSide: const BorderSide(
+                                      color: Color.fromARGB(255, 230, 230, 230),
+                                    ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                validator: (value) => value!.isEmpty ? "Required" : null,
+                                validator:
+                                    (value) =>
+                                        value!.isEmpty ? "Required" : null,
                               ),
                             ),
                           ],
@@ -128,7 +162,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           ],
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 230, 230, 230),
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             prefixIcon: Icon(
@@ -143,7 +179,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 230, 230, 230),
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
@@ -165,7 +203,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           ],
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 230, 230, 230),
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             prefixIcon: Icon(
@@ -174,10 +214,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: const Color.fromARGB(255, 68, 128, 106),
                               ),
-                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                              onPressed:
+                                  () => setState(
+                                    () => _obscurePassword = !_obscurePassword,
+                                  ),
                             ),
                             hintText: "Password",
                             hintStyle: GoogleFonts.inter(
@@ -187,7 +232,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 230, 230, 230),
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
@@ -209,7 +256,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           ],
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 230, 230, 230)),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 230, 230, 230),
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             prefixIcon: Icon(
@@ -218,10 +267,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                                _obscureConfirm
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: const Color.fromARGB(255, 68, 128, 106),
                               ),
-                              onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                              onPressed:
+                                  () => setState(
+                                    () => _obscureConfirm = !_obscureConfirm,
+                                  ),
                             ),
                             hintText: "Confirm Password",
                             hintStyle: GoogleFonts.inter(
@@ -232,13 +286,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: const Color.fromARGB(255, 230, 230, 230)),
+                              borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 230, 230, 230),
+                              ),
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) return "Required";
-                            if (value.length != 8) return "Password must be exactly 8 characters";
-                            if (value != passwordController.text) return "Passwords do not match";
+                            if (value == null || value.isEmpty)
+                              return "Required";
+                            if (value.length != 8)
+                              return "Password must be exactly 8 characters";
+                            if (value != passwordController.text)
+                              return "Passwords do not match";
                             return null;
                           },
                         ),
@@ -246,7 +305,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         Row(
                           children: [
                             Checkbox(
-                              checkColor: const Color.fromARGB(255, 68, 128, 106),
+                              checkColor: const Color.fromARGB(
+                                255,
+                                68,
+                                128,
+                                106,
+                              ),
                               focusColor: Colors.white,
                               hoverColor: Colors.white,
                               activeColor: Colors.white,
@@ -261,7 +325,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     text: '  terms & condition',
                                     style: GoogleFonts.inter(
                                       fontSize: 12,
-                                      color: const Color.fromARGB(255, 68, 128, 106),
+                                      color: const Color.fromARGB(
+                                        255,
+                                        68,
+                                        128,
+                                        106,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -276,30 +345,64 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           width: double.infinity,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 68, 128, 106),
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                68,
+                                128,
+                                106,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               padding: EdgeInsets.symmetric(vertical: 16),
                             ),
-                            child: Text(
-                              "Sign Up",
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: () {
+                            child:
+                                _btnLoder == false
+                                    ? Text(
+                                      "Sign Up",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                    : CircularProgressIndicator(strokeWidth: 2),
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 if (_agree) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => VerifyOtpScreen()),
-                                  );
+                                  try {
+                                    setState(() {
+                                      _btnLoder = true;
+                                    });
+                                  final body =UserRegisterBody(
+                                        userMobile: int.parse(
+                                          mobileController.text,
+                                        ),
+                                        userFirstname: firstNameController.text,
+                                        userLastname: lastNameController.text,
+                                        ipAddress: "152.59.109.59",
+                                        macAddress: "not found",
+                                        latitude: "26.917979",
+                                        longitude: "75.814593",
+                                      );
+                                    ref.read(userRegisterBodyProvider.notifier).setUserRegisterBody(body);
+                                    print(ref.read(userRegisterBodyProvider));
+                                    await _auth.registerInit(
+                                      body, context);
+                                  } catch (e) {
+                                    setState(() {
+                                      _btnLoder = false;
+                                    });
+                                  }
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => VerifyOtpScreen()),
+                                  // );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text("You must agree to terms")),
+                                    SnackBar(
+                                      content: Text("You must agree to terms"),
+                                    ),
                                   );
                                 }
                               }

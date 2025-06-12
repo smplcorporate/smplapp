@@ -1,18 +1,46 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:home/screen/home_page.dart';
-import 'package:home/screen/rechargebill2.dart'; // Fallback if no previous page
+import 'package:home/screen/rechargebill2.dart';// Fallback if no previous page
 
-class RechargeBillPage extends StatelessWidget {
-  final List<Map<String, String>> contacts = List.generate(
-    8,
-    (index) => {
-      'name': 'Shreya Goyal',
-      'number': '9875867346',
-    },
-  );
+class RechargeBillPage extends StatefulWidget {
+  @override
+  State<RechargeBillPage> createState() => _RechargeBillPageState();
+}
 
+class _RechargeBillPageState extends State<RechargeBillPage> {
+  // final List<Map<String, String>> contacts = List.generate(
+  //   8,
+  //   (index) => {
+  //     'name': 'Shreya Goyal',
+  //     'number': '9875867346',
+  //   },
+  // );
+  List<Contact> contacts = [];
+  @override
+  void initState() {
+    super.initState();
+    fetchContacts();
+  }
+
+  Future<void> fetchContacts() async {
+    if (await FlutterContacts.requestPermission()) {
+      final result = await FlutterContacts.getContacts(
+        withProperties: true,
+        withPhoto: true,
+      );
+      setState(() {
+        contacts = result;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Contacts permission denied')),
+      );
+      await FlutterContacts.requestPermission();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +78,11 @@ class RechargeBillPage extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: const Center(
-                child: Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.black,
+                  size: 20,
+                ),
               ),
             ),
           ),
@@ -112,12 +144,14 @@ class RechargeBillPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Recent Bill",
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      )),
+                  Text(
+                    "Recent Bill",
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -126,18 +160,22 @@ class RechargeBillPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Airtel",
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              )),
-                          Text("9875867346",
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: Color(0xFFB3B3B3),
-                                fontWeight: FontWeight.bold,
-                              )),
+                          Text(
+                            "Airtel",
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "9875867346",
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: Color(0xFFB3B3B3),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -157,7 +195,10 @@ class RechargeBillPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(40),
               ),
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 12,
+                ),
                 itemCount: contacts.length,
                 itemBuilder: (context, index) {
                   final contact = contacts[index];
@@ -169,7 +210,7 @@ class RechargeBillPage extends StatelessWidget {
                       child: Icon(Icons.person, color: Colors.white, size: 30),
                     ),
                     title: Text(
-                      contact['name']!,
+                      contact.displayName ?? 'No name',
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         color: Colors.black,
@@ -177,7 +218,7 @@ class RechargeBillPage extends StatelessWidget {
                       ),
                     ),
                     subtitle: Text(
-                      contact['number']!,
+                     contact.phones[0].toString(),
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         color: Color(0xFFB3B3B3),
@@ -187,9 +228,7 @@ class RechargeBillPage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => RechargePlansPage(),
-                        ),
+                        MaterialPageRoute(builder: (_) => RechargePlansPage()),
                       );
                     },
                   );
