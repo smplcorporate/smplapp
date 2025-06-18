@@ -4,7 +4,9 @@ import 'package:home/screen/gasbill.dart';
 import 'package:home/screen/licsumarry.dart'; // Make sure this file and class exist
 
 class GasNumberScreen extends StatefulWidget {
-  const GasNumberScreen({super.key, required String providerName});
+  final String providerName;
+  final String billerCode;
+  const GasNumberScreen({super.key, required  this.providerName, required this.billerCode});
 
   @override
   State<GasNumberScreen> createState() => _GasNumberScreenState();
@@ -25,7 +27,7 @@ class _GasNumberScreenState extends State<GasNumberScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => GasBillPage(accountNumber: _controller.text),
+          builder: (context) => GasBillPage(accountNumber: _controller.text, billerName: widget.providerName, billerCode: widget.billerCode,),
         ),
       );
     } else {
@@ -78,7 +80,7 @@ class _GasNumberScreenState extends State<GasNumberScreen> {
                   ),
                   Center(
                     child: Text(
-                      " Bharat Gas ",
+                      "${widget.providerName}",
                       style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                   ),

@@ -140,7 +140,7 @@ class _SelectGasProviderScreenState
                               MaterialPageRoute(
                                 builder:
                                     (context) => GasNumberScreen(
-                                      providerName: provider.billerName!,
+                                      providerName: provider.billerName!, billerCode: provider.billerCode,
                                     ),
                               ),
                             );

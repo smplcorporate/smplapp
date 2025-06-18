@@ -5,7 +5,9 @@ import 'package:home/screen/elebillsummary.dart';
  // Make sure this file exists
 
 class Eletercitybill extends StatefulWidget {
-  const Eletercitybill({super.key});
+  final String billerName;
+  final String billerCode;
+  const Eletercitybill({super.key, required this.billerName, required this.billerCode});
 
   @override
   State<Eletercitybill> createState() => _LoanAccountScreenState();
@@ -25,7 +27,7 @@ class _LoanAccountScreenState extends State<Eletercitybill> {
     if (_isValid) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => EleBillSummary(accountNumber: _controller.text,)),
+        MaterialPageRoute(builder: (context) => EleBillSummary(accountNumber: _controller.text, billerCode: widget.billerCode, billerName: widget.billerName,)),
       );
     } else {
       showDialog(
@@ -78,7 +80,7 @@ class _LoanAccountScreenState extends State<Eletercitybill> {
                   ),
                   Center(
                     child: Text(
-                      "Ajmer Vidyut vitrain Nigam \nLimited",
+                      widget.billerName,
                       style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                   ),

@@ -10,8 +10,11 @@ import 'package:home/data/model/login.body.model.dart';
 import 'package:home/data/model/lpgBillerList.model.dart';
 import 'package:home/data/model/mobilePrepaid.res.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
+import 'package:home/data/model/paynow.model.dart';
 import 'package:home/data/model/register.body.validate.dart';
 import 'package:home/data/model/register.model1.dart';
+import 'package:home/data/model/wallet.statementBody.dart';
+import 'package:home/data/model/walletModel.res.dart';
 import 'package:home/data/model/watterBillers.res.dart';
 import 'package:retrofit/retrofit.dart' hide Headers;
 
@@ -64,10 +67,27 @@ abstract class APIStateNetwork {
     @Body() VerfiyOtpBody body,
   );
   @POST('bbps/b2c_bills_water/get_billers')
-  Future<HttpResponse<WatterBilersModel>>  fetchWaterList(@Body() ElectricityBody body );
+  Future<HttpResponse<WatterBilersModel>> fetchWaterList(
+    @Body() ElectricityBody body,
+  );
   // fetch bill
   @POST('bbps/{path}/fetchnow')
   Future<HttpResponse<FetchResponseModel>> ferchBill(
     @Path('path') String path,
-    @Body() FetchBillModel body);
+    @Body() FetchBillModel body,
+  );
+  @POST('bbps/{path}/paynow')
+  Future<HttpResponse> payNow(
+    @Path('path') String path,
+    @Body() PayNowModel body,
+  );
+
+  // Wallet 
+  @POST('profile/b2c_wallet/wallet_balance')
+  Future<WalletBalancemodel> getWallet();
+  @POST('profile/b2c_wallet/wallet_statement_main')
+  Future<WalletStateMentRes> getWalleStatement(@Body() WalletStateMentBody body);
+  @POST('request/b2c_wallet/addwallet_request_pageload')
+  Future<> 
+  
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/config/network/api.state.dart';
+import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/controller/fetchBills.provider.dart';
 import 'package:home/data/model/fetchBill.model.dart';
+import 'package:home/data/model/paynow.model.dart';
 import 'package:home/screen/waterbill1.dart';
 import 'package:intl/intl.dart';
 
@@ -25,7 +28,7 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
   final Color buttonColor = const Color.fromARGB(255, 68, 128, 106);
 
   late final FetchBodymodel fetchRequest;
-
+  bool btnLoder = false;
   @override
   void initState() {
     super.initState();
@@ -52,8 +55,10 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
     final screenWidth = MediaQuery.of(context).size.width;
     final scale = screenWidth / 375;
 
-    final fetchBillerData = ref.watch(fetchBillDataProvider(fetchRequest));  
-    final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    final fetchBillerData = ref.watch(fetchBillDataProvider(fetchRequest));
+    final String formattedDate = DateFormat(
+      'dd-MM-yyyy',
+    ).format(DateTime.now());
     return Scaffold(
       body: fetchBillerData.when(
         data: (snap) {
@@ -133,8 +138,12 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      truncateString(widget.bilerCode, 26, addEllipsis: true),
-                                      
+                                      truncateString(
+                                        widget.bilerCode,
+                                        26,
+                                        addEllipsis: true,
+                                      ),
+
                                       style: GoogleFonts.inter(
                                         fontSize: 14 * scale,
                                         color: Colors.black,
@@ -193,7 +202,7 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
                               ),
                               child: Center(
                                 child: Text(
-                                  '₹${ snap.billAmount ?? 0}', // Replace with: '₹${snap.amount}'
+                                  '₹${snap.billAmount ?? 0}', // Replace with: '₹${snap.amount}'
                                   style: TextStyle(
                                     fontSize: 22 * scale,
                                     fontWeight: FontWeight.bold,
@@ -215,47 +224,123 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
                   Padding(
                     padding: EdgeInsets.all(16.0 * scale),
                     child: ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) {
-                            return AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              title: Text(
-                                'Payment Successful',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              content: Text(
-                                'Your payment has been successfully processed.',
-                                style: GoogleFonts.inter(),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(ctx).pop();
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => WaterBill(),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                  child: Text(
-                                    'OK',
-                                    style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                      onPressed: () async {
+                        setState(() {
+                          btnLoder = true;
+                        });
+                        final service = APIStateNetwork(await createDio());
+                        final reponse = await service.payNow(
+                          'b2c_bills_water',
+                          PayNowModel(
+                            ipAddress: "152.59.109.59",
+                            macAddress: "not found",
+                            latitude: "26.917979",
+                            longitude: "75.814593",
+                            billerCode: widget.billerName,
+                            billerName: widget.billerName,
+                            circleCode: "",
+                            param1: widget.accountNumber,
+                            param2: "",
+                            param3: "",
+                            param4: "",
+                            param5: "",
+                            customerName: snap.customerName ?? "",
+                            billNo: snap.billNo,
+                            dueDate: snap.dueDate,
+                            billDate: snap.billDate,
+                            billAmount: snap.billAmount.toString(),
+                            returnTransid: snap.returnTransid.toString(),
+                            returnFetchid: snap.returnFetchid,
+                            returnBillid: snap.returnBillid,
+                            couponCode: "",
+                            userMpin: "123456",
+                          ),
+                        );
+                        if (reponse.response.data["status"] == false) {
+                          setState(() {
+                            btnLoder = false;
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Payment Faild',
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ],
-                            );
-                          },
-                        );
+                                content: Text(
+                                  '${reponse.response.data["status_desc"]}',
+                                  style: GoogleFonts.inter(),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => WaterBill(),
+                                        ),
+                                        (route) => false,
+                                      );
+                                    },
+                                    child: Text(
+                                      'OK',
+                                      style: GoogleFonts.inter(
+                                        color: Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          setState(() {
+                            btnLoder = false;
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Payment Successful',
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: Text(
+                                  '${reponse.response.data["status_desc"]}',
+                                  style: GoogleFonts.inter(),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => WaterBill(),
+                                        ),
+                                        (route) => false,
+                                      );
+                                    },
+                                    child: Text(
+                                      'OK',
+                                      style: GoogleFonts.inter(
+                                        color: Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: buttonColor,
@@ -265,13 +350,20 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
                         padding: EdgeInsets.symmetric(vertical: 14 * scale),
                         minimumSize: Size(double.infinity, 45 * scale),
                       ),
-                      child: Text(
-                        'Proceed to pay',
-                        style: GoogleFonts.inter(
-                          fontSize: 18 * scale,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child:
+                          btnLoder == false
+                              ? Text(
+                                'Proceed to pay',
+                                style: GoogleFonts.inter(
+                                  fontSize: 18 * scale,
+                                  color: Colors.white,
+                                ),
+                              )
+                              : Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
                     ),
                   ),
                 ],
@@ -295,25 +387,25 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
     return Column(
       crossAxisAlignment:
           alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: items
-          .map(
-            (item) => Padding(
-              padding: EdgeInsets.only(bottom: 6 * scale),
-              child: Text(
-                item,
-                style: GoogleFonts.inter(
-                  fontSize: 11 * scale,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      children:
+          items
+              .map(
+                (item) => Padding(
+                  padding: EdgeInsets.only(bottom: 6 * scale),
+                  child: Text(
+                    item,
+                    style: GoogleFonts.inter(
+                      fontSize: 11 * scale,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          )
-          .toList(),
+              )
+              .toList(),
     );
   }
 }
-
 
 String truncateString(String text, int maxLength, {bool addEllipsis = true}) {
   if (text.length <= maxLength) {

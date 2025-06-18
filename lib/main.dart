@@ -21,10 +21,6 @@ void main() async {
   } catch (e) {
     log("Hive initialization failed: $e");
   }
-
-  // Initializes time zones for working with time zone-specific notifications.
-
-  // Run the app after initializing.
   runApp(ProviderScope(child: const MyApp()));
 }
 

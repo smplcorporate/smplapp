@@ -6,6 +6,11 @@ import 'package:home/screen/fastag3.dart';
 
 
 class VehicleRegistrationScreen extends StatefulWidget {
+
+  final String billerName;
+  final String billerCode;
+
+  const VehicleRegistrationScreen({super.key, required this.billerName, required this.billerCode});
   @override
   _VehicleRegistrationScreenState createState() =>
       _VehicleRegistrationScreenState();
@@ -40,7 +45,7 @@ class _VehicleRegistrationScreenState
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FastagSummary(accountNumber: vehicleNumber),
+        builder: (context) => FastagSummary(accountNumber: vehicleNumber, billerName: widget.billerName, billerCode: widget.billerCode,),
       ),
     );
   }

@@ -161,7 +161,7 @@ class _FastagScreenState extends ConsumerState<FastagScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => VehicleRegistrationScreen(),
+                                builder: (_) => VehicleRegistrationScreen(billerName: provider.billerName, billerCode: provider.billerCode,),
                               ),
                             );
                           },

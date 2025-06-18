@@ -5,7 +5,10 @@ import 'package:home/screen/gasbill.dart';
 import 'package:home/screen/licsumarry.dart'; // Ensure this exists
 
 class Dth2 extends StatefulWidget {
-  const Dth2({super.key, required String providerName});
+  final String billerName;
+  final String billerCode;
+
+  const Dth2({super.key,required this.billerName, required this.billerCode,});
 
   @override
   State<Dth2> createState() => _Dth2State();
@@ -26,7 +29,7 @@ class _Dth2State extends State<Dth2> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Dth3(accountNumber: _controller.text),
+          builder: (context) => Dth3(accountNumber: _controller.text, billerName: '${widget.billerName}', billerCode: '${widget.billerCode}',),
         ),
       );
     } else {
@@ -79,7 +82,7 @@ class _Dth2State extends State<Dth2> {
                   ),
                   Center(
                     child: Text(
-                      "Tata sky",
+                      "${widget.billerName}",
                       style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                   ),

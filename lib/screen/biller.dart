@@ -174,7 +174,7 @@ class _BillerState extends ConsumerState<Biller> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => Eletercitybill(),
+                                  builder: (_) => Eletercitybill(billerName: '${biller.billerName}', billerCode: '${biller.billerName}',),
                                 ),
                               );
                             },

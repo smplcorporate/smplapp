@@ -3,11 +3,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:home/screen/dth1.dart';
 import 'package:home/screen/home_page.dart';
 
-class Dth3 extends StatelessWidget {
+class Dth3 extends StatefulWidget {
   final String accountNumber;
+  final String billerName;
+  final String billerCode;
 
-  Dth3({required this.accountNumber});
+  Dth3({required this.accountNumber, required this.billerName, required this.billerCode});
 
+  @override
+  State<Dth3> createState() => _Dth3State();
+}
+
+class _Dth3State extends State<Dth3> {
   final Color buttonColor = const Color.fromARGB(255, 68, 128, 106);
 
   @override
@@ -48,7 +55,7 @@ class Dth3 extends StatelessWidget {
                     ),
                     Center(
                       child: Text(
-                        "Tata Sky",
+                        "${widget.billerName}",
                         style: GoogleFonts.inter(
                           fontSize: 18 * scale,
                           fontWeight: FontWeight.bold,
@@ -76,19 +83,19 @@ class Dth3 extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Image.asset(
-                              'assets/tatad.png',
-                              height: 40 * scale,
-                            ),
+                            // Image.asset(
+                            //   'assets/tatad.png',
+                            //   height: 40 * scale,
+                            // ),
                             SizedBox(width: 10 * scale),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('TATA Sky',
+                                Text('${widget.billerName}',
                                     style: GoogleFonts.inter(
                                         fontSize: 16 * scale,
                                         fontWeight: FontWeight.bold)),
-                                Text(accountNumber,
+                                Text(widget.accountNumber,
                                     style: GoogleFonts.inter(
                                         fontSize: 13 * scale)),
                               ],

@@ -148,7 +148,7 @@ class _Dth1State extends ConsumerState<Dth1> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) =>
-                                      Dth2(providerName: bank.billerName),
+                                      Dth2(  billerName: '${bank.billerName}', billerCode: '${bank.billerCode}',),
                                 ),
                               );
                             },
