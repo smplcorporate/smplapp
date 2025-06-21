@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/controller/fetchBills.provider.dart';
+import 'package:home/data/model/checkCopoun.model.dart';
 import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/data/model/paynow.model.dart';
 import 'package:home/screen/biller.dart';
@@ -28,7 +31,18 @@ class EleBillSummary extends ConsumerStatefulWidget {
 class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
   final Color buttonColor = const Color.fromARGB(255, 68, 128, 106);
   late final FetchBodymodel fetchRequest;
+  final TextEditingController _controller = TextEditingController();
+  bool isInvalid = false;
+
   bool btnLoder = false;
+  final TextEditingController _couponController = TextEditingController();
+  String _couponMessage = '';
+  double _discount = 0.0;
+
+  void _applyCoupon() async {
+    // Dummy check
+  }
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +63,8 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
       ),
     );
   }
+
+  bool applyBtnLoder = false;
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +241,96 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                     ),
                   ),
 
-                  const Spacer(),
+                  Padding(
+                    padding: EdgeInsets.only(left: 18.w, right: 18.w),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            decoration: InputDecoration(
+                              hintText: 'Gift card or discount code',
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6),
+                                borderSide: BorderSide(
+                                  color: isInvalid ? Colors.red : Colors.grey,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6),
+                                borderSide: BorderSide(
+                                  color: isInvalid ? Colors.red : Colors.grey,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6),
+                                borderSide: BorderSide(
+                                  color: isInvalid ? Colors.red : Colors.black,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              applyBtnLoder = true;
+                            });
+                            final state = APIStateNetwork(await createDio());
+                            final response = await state.checkCoupn(
+                              CheckCouponModel(
+                                ipAddress: "152.59.109.59",
+                                macAddress: "not found",
+                                latitude: "26.917979",
+                                longitude: "75.814593",
+                                billerCode: widget.billerName,
+                                billerName: widget.billerCode,
+                                param1: widget.accountNumber,
+                                transAmount: double.parse(snap.billAmount ?? "0.00").toInt().toString(),
+                                couponCode: _controller.text.trim(),
+                              ),
+                            );
+                            if(response.response.data['status'] == true){
+                              setState(() {
+                                applyBtnLoder = false;
+                              });
+                              ref.refresh(fetchBillDataProvider(fetchRequest));
+                              Fluttertoast.showToast(msg: response.response.data['status_desc'], backgroundColor: Colors.black, textColor: Colors.white);
+                            }else{
+                              setState(() {
+                                applyBtnLoder = false;
+                              });
+                              Fluttertoast.showToast(msg: response.response.data['status_desc'], backgroundColor: Colors.black, textColor: Colors.white);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          child: applyBtnLoder == true? CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ) : Text(
+                            'Apply',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16),
 
                   Padding(
                     padding: EdgeInsets.all(16.0 * scale),

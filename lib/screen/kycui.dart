@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/data/controller/kyc.provider.dart';
 
 import 'package:home/screen/bankkyc.dart';
 import 'package:home/screen/fullkyc.dart';
@@ -18,7 +20,12 @@ class KYCApp extends StatelessWidget {
   }
 }
 
-class KYCVerificationScreen extends StatelessWidget {
+class KYCVerificationScreen extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<KYCVerificationScreen> createState() => _KYCVerificationScreenState();
+}
+
+class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
   Widget kycCard({
     required String title,
     required String document,
@@ -166,6 +173,7 @@ class KYCVerificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final kyc = ref.watch(kycProvider);
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 236, 226),
@@ -199,7 +207,8 @@ class KYCVerificationScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Stack(
+      body: kyc.when(data: (snap) {
+        return Stack(
         children: [
           // Background container
           Positioned(
@@ -319,7 +328,14 @@ class KYCVerificationScreen extends StatelessWidget {
             ],
           ),
         ],
-      ),
+      );
+      }, error: (err, stack){
+        return Center(
+          child: Text("$err"),
+        );
+      }, loading: () => Center(
+        child: CircularProgressIndicator(),
+      )),
     );
   }
 }

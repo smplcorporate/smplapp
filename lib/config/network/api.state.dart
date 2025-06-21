@@ -1,9 +1,13 @@
 import 'package:dio/dio.dart';
+import 'package:home/data/model/addwallet_request_pageloadModel.dart';
+import 'package:home/data/model/checkCopoun.model.dart';
 import 'package:home/data/model/dthPrepaid.res.dart';
 import 'package:home/data/model/electritysityModel.dart';
 import 'package:home/data/model/fastTag.res.dart';
 import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/data/model/fetchBiller.res.model.dart';
+import 'package:home/data/model/getbankModel.dart';
+import 'package:home/data/model/kycList.model.dart';
 import 'package:home/data/model/lic.res.dart';
 import 'package:home/data/model/loadRepayment.res.dart';
 import 'package:home/data/model/login.body.model.dart';
@@ -11,8 +15,10 @@ import 'package:home/data/model/lpgBillerList.model.dart';
 import 'package:home/data/model/mobilePrepaid.res.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
 import 'package:home/data/model/paynow.model.dart';
+import 'package:home/data/model/profileDetails.model.dart';
 import 'package:home/data/model/register.body.validate.dart';
 import 'package:home/data/model/register.model1.dart';
+import 'package:home/data/model/userupdateModel.dart';
 import 'package:home/data/model/wallet.statementBody.dart';
 import 'package:home/data/model/walletModel.res.dart';
 import 'package:home/data/model/watterBillers.res.dart';
@@ -43,7 +49,7 @@ abstract class APIStateNetwork {
   Future<HttpResponse<LicModelResponse>> getLicBillers(
     @Body() ElectricityBody body,
   );
-  @POST('bbps/b2c_bills_Insurance/get_billers')
+  @POST('bbps/b2c_bills_loanrepayment/get_billers')
   Future<HttpResponse<LoanRepaymentResponse>> getLoanRepaymentBillers(
     @Body() ElectricityBody body,
   );
@@ -81,6 +87,8 @@ abstract class APIStateNetwork {
     @Path('path') String path,
     @Body() PayNowModel body,
   );
+  @POST('bbps/b2c_bills_electricity/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupn(@Body() CheckCouponModel body);
 
   // Wallet 
   @POST('profile/b2c_wallet/wallet_balance')
@@ -88,6 +96,19 @@ abstract class APIStateNetwork {
   @POST('profile/b2c_wallet/wallet_statement_main')
   Future<WalletStateMentRes> getWalleStatement(@Body() WalletStateMentBody body);
   @POST('request/b2c_wallet/addwallet_request_pageload')
-  Future<> 
+  Future<AddwalletRequestPageloadModel>  getWalletPageLoad();
+
+  @POST('request/b2c_wallet/addwallet_request_getbank')
+  Future<GetBankDetailModel> fetchBankDetail(@Body() GetBankBodymodel body );
+
+  // kyc 
+  @POST('verify/b2c_kyc_account/kyc_list')
+  Future<KycListmodel> fetchKycList();
+
+  // Profile
+  @POST('profile/b2c_account/details')
+  Future<ProfileDetailsmodel> getProfilDetails();
+  @POST('profile/b2c_account/details_update')
+  Future<HttpResponse<dynamic>> updateProfile(@Body() UserUpdateeModel body);
   
 }

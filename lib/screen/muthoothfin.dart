@@ -3,7 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:home/screen/muthootfin2.dart'; // Ensure this file exists
 
 class MuthootFinScreen extends StatefulWidget {
-  const MuthootFinScreen({super.key, required String accountNumber});
+  final String billerName;
+  final String billerCode;
+  const MuthootFinScreen({super.key, required String accountNumber, required this.billerName, required this.billerCode});
 
   @override
   State<MuthootFinScreen> createState() => _MuthootFinScreenState();
@@ -24,7 +26,7 @@ class _MuthootFinScreenState extends State<MuthootFinScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MuthootSummaryPage(accountNumber: _controller.text),
+          builder: (context) => MuthootSummaryPage(accountNumber: _controller.text, billerCode: '${widget.billerCode}', billerName: '${widget.billerName}',),
         ),
       );
     } else {
@@ -77,7 +79,7 @@ class _MuthootFinScreenState extends State<MuthootFinScreen> {
                   ),
                   Center(
                     child: Text(
-                      "Muthoot Finance",
+                      widget.billerName,
                       style: GoogleFonts.inter(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

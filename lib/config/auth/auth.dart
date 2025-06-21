@@ -86,6 +86,7 @@ class AuthService {
 
       final box = Hive.box('userdata');
       if (_registerResponseValidate?.sessionToken != null) {
+        // await box.put('@token', _registerResponseValidate!.sessionToken);
         await box.put('@token', _registerResponseValidate!.sessionToken);
         await box.put('@name', _registerResponseValidate!.userDetails.userName);
         await box.put(

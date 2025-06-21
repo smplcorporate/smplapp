@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:home/screen/homeloan2.dart';
-// Change this to 'homeloan2.dart' if you rename the second page
 
 class HomeLoanApp extends StatelessWidget {
   const HomeLoanApp({Key? key}) : super(key: key);

@@ -16,6 +16,7 @@ import 'package:home/screen/fastag1.dart';
 import 'package:home/screen/homeloan.dart';
 import 'package:home/screen/insurancebank.dart';
 import 'package:home/screen/invitefriend.dart';
+import 'package:home/screen/lender2.dart';
 import 'package:home/screen/lic insurance.dart';
 import 'package:home/screen/notification2.dart';
 import 'package:home/screen/openaccount.dart';
@@ -51,44 +52,46 @@ class HomePage extends StatelessWidget {
     double containerSize,
     BuildContext context,
   ) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(2),
-          child: Container(
-            height: 90,
-            width: 100,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Image.asset(
-                    assetPath,
-                    height: 40,
-                    width: 40,
-                    fit: BoxFit.contain,
+    return Expanded(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(2),
+            child: Container(
+              height: 90,
+              width: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Image.asset(
+                      assetPath,
+                      height: 40,
+                      width: 40,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 10,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                  SizedBox(height: 4),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -101,12 +104,7 @@ class HomePage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Wrap(
-            spacing: 23,
-            runSpacing: 10,
-            alignment: WrapAlignment.spaceBetween,
-            children: [
-              buildAssetIconColumn(
+         buildAssetIconColumn(
                 "APES\nWithdrawal",
                 "assets/apes.png",
                 containerSize,
@@ -124,8 +122,6 @@ class HomePage extends StatelessWidget {
                 containerSize,
                 context,
               ),
-            ],
-          ),
         ],
       ),
     );
@@ -313,6 +309,8 @@ class HomePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (_) => CreditBuilderApplyPage()),
               );
+            }else if(label.contains("loan")){
+               Navigator.push(context, MaterialPageRoute(builder: (_) => LenderSelectionScreen()));
             }
           },
           child: Column(
