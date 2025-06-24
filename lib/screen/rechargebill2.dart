@@ -1,38 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home/data/controller/mobilePlan.provider.dart';
+import 'package:home/data/controller/mobilePrepaid.notifier.dart';
+import 'package:home/data/controller/mobilePrepaid.provider.dart';
+import 'package:home/data/model/mobileplanRes.model.dart';
 import 'package:home/screen/rechargebill3.dart';
 
-
-void main() {
-  runApp(MaterialApp(
-    home: RechargePlansPage(),
-    debugShowCheckedModeBanner: false,
-  ));
+class RechargePlansPage extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<RechargePlansPage> createState() => _RechargePlansPageState();
 }
 
-class RechargePlansPage extends StatelessWidget {
-  final List<Map<String, String>> plans = [
-    {
-      'price': '₹199',
-      'data': '1.5GB/day',
-      'validity': '28 Days',
-      'desc': 'Don\'t miss Recharge with Rs.249 Plan & get 20% upto Rs.200 cashback from Jio Mart'
-    },
-    {
-      'price': '₹299',
-      'data': '2GB/day',
-      'validity': '28 Days',
-      'desc': 'Don\'t miss Recharge with Rs.249 Plan & get 20% upto Rs.200 cashback from Jio Mart'
-    },
-    {
-      'price': '₹499',
-      'data': '1.5GB/day',
-      'validity': '56 Days',
-      'desc': 'Don\'t miss Recharge with Rs.249 Plan & get 20% upto Rs.200 cashback from Jio Mart'
-    },
-  ];
+class _RechargePlansPageState extends ConsumerState<RechargePlansPage> {
+ late final RechargeRequestModel requestModel;
+@override
+void initState() {
+  super.initState();
+  final userBillerData = ref.read(billerProvider);
+  requestModel = RechargeRequestModel(
+    ipAddress: "198.168.62.1",
+    macAddress: "not found",
+    latitude: "42.000",
+    longitude: "45.000",
+    billerCode: userBillerData.selectedBiller!.billerCode,
+    billerName: userBillerData.selectedBiller!.billerName,
+    circleCode: userBillerData.selectedCircle!.circleId,
+    param1: userBillerData.number ?? "",
+  );
+}
 
   @override
   Widget build(BuildContext context) {
+    final userBillerData = ref.watch(billerProvider);
+    final dynamicPlan = ref.watch(mobilePlanProvider(requestModel));;
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -53,13 +53,19 @@ class RechargePlansPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                boxShadow: [BoxShadow(blurRadius: 4, color: Colors.grey.shade300)],
+                boxShadow: [
+                  BoxShadow(blurRadius: 4, color: Colors.grey.shade300),
+                ],
               ),
               child: Center(
-                child:    IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
-              onPressed: () => Navigator.pop(context),
-            ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.black,
+                    size: 20,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
             ),
           ),
@@ -68,7 +74,10 @@ class RechargePlansPage extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
@@ -79,7 +88,10 @@ class RechargePlansPage extends StatelessWidget {
                       children: [
                         Icon(Icons.search, color: Colors.black, size: 30),
                         SizedBox(width: 10),
-                        Text("Search by Biller", style: TextStyle(color: Colors.black)),
+                        Text(
+                          "Search by Biller",
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ],
                     ),
                   ),
@@ -98,71 +110,83 @@ class RechargePlansPage extends StatelessWidget {
             ),
           ),
         ),
-        body: TabBarView(
-          children: [
-            ListView.builder(
-              itemCount: plans.length,
-              itemBuilder: (context, index) {
-                final plan = plans[index];
-                final isSpecialPlan = plan['price'] == '₹199';
+        body: dynamicPlan.when(
+          data: (snap) {
+            return TabBarView(
+              children: [
+                ListView.builder(
+                  itemCount: snap.planData.length,
+                  itemBuilder: (context, index) {
+                    final plan = snap.planData[index];
+                    final isSpecialPlan = plan.planAmount.toString() == '199';
 
-                final planWidget = Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          plan['price']!,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    final planWidget = Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 10,
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Data: ${plan['data']}"),
-                            Text("Validity: ${plan['validity']}"),
+                            Text(
+                              plan.planAmount.toString()!,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Data: ${plan.validity}"),
+                                Text("Validity: ${plan.validity}"),
+                              ],
+                            ),
+                            SizedBox(height: 6),
+
+                            Text("Voice: Unlimited"),
+                            SizedBox(height: 8),
+                            Text(
+                              plan.planDescription!,
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
                           ],
                         ),
-                        SizedBox(height: 6),
-                        Text("Data: ${plan['data']}"),
-                        Text("Voice: Unlimited"),
-                        SizedBox(height: 8),
-                        Text(
-                          plan['desc']!,
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                      ),
+                    );
 
-                // Wrap only ₹199 plan with GestureDetector
-                return isSpecialPlan
-                    ? GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => RechargePage3(),
-                            ),
-                          );
-                        },
-                        child: planWidget,
-                      )
-                    : planWidget;
-              },
-            ),
-            Center(child: Text("Postpaid Bill Payment")),
-            Center(child: Text("Data Packs")),
-            Center(child: Text("Top-up")),
-          ],
+                    // Wrap only ₹199 plan with GestureDetector
+                    return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RechargePage3(),
+                              ),
+                            );
+                          },
+                          child: planWidget,
+                        );
+                  },
+                ),
+                Center(child: Text("Postpaid Bill Payment")),
+                Center(child: Text("Data Packs")),
+                Center(child: Text("Top-up")),
+              ],
+            );
+          },
+          error: (err, stack) {
+            return Center(child: Text("$err"));
+          },
+          loading: () => Center(child: CircularProgressIndicator()),
         ),
       ),
     );
@@ -180,4 +204,3 @@ class RechargePlansPage extends StatelessWidget {
     );
   }
 }
-

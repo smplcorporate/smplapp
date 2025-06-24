@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/data/controller/electirtyBiller.provider.dart';
+import 'package:home/data/model/electritysityModel.dart';
 import 'package:home/screen/eletercitybill.dart';
 import 'package:home/screen/home_page.dart';
 
@@ -149,11 +150,14 @@ class _BillerState extends ConsumerState<Biller> {
             Expanded(
               child: electricityProvider.when(
                 data: (snapshot) {
-                  final filteredList = snapshot.billersList
-                      .where((biller) => biller.billerName
-                          .toLowerCase()
-                          .contains(searchQuery.toLowerCase()))
-                      .toList();
+                  final filteredList =
+                      snapshot.billersList
+                          .where(
+                            (biller) => biller.billerName
+                                .toLowerCase()
+                                .contains(searchQuery.toLowerCase()),
+                          )
+                          .toList();
 
                   return ListView.builder(
                     padding: EdgeInsets.only(bottom: width * 0.05),
@@ -171,12 +175,28 @@ class _BillerState extends ConsumerState<Biller> {
                               ),
                             ),
                             onTap: () {
-                              Navigator.push(
+                              showCircleBottomSheet(
+                                context,
+                                snapshot.circleList,
+                                (selectedCircle) {
+                                  print(
+                                    "Selected: ${selectedCircle.circleName}",
+                                  );
+                                  Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => Eletercitybill(billerName: '${biller.billerName}', billerCode: '${biller.billerName}',),
+                                  builder:
+                                      (_) => Eletercitybill(
+                                        circleCode: selectedCircle.circleId,
+                                        billerName: '${biller.billerName}',
+                                        billerCode: '${biller.billerCode}',
+                                      ),
                                 ),
                               );
+                                  // handle selection
+                                },
+                              );
+                              
                             },
                           ),
                           Padding(
@@ -202,6 +222,70 @@ class _BillerState extends ConsumerState<Biller> {
           ],
         ),
       ),
+    );
+  }
+
+  void showCircleBottomSheet(
+    BuildContext context,
+    List<CircleList> circles,
+    Function(CircleList) onSelect,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                height: 4,
+                width: 40,
+                margin: EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              Text(
+                'Select Circle',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 10),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: circles.length,
+                  separatorBuilder: (_, __) => Divider(),
+                  itemBuilder: (context, index) {
+                    final circle = circles[index];
+                    return ListTile(
+                      title: Text(circle.circleName),
+                      leading: Icon(
+                        Icons.location_on_rounded,
+                        color: Colors.blue,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        onSelect(circle);
+                      },
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("Close", style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

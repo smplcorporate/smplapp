@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 
-
-
-
 import 'package:home/screen/bankingservice.dart';
 import 'package:home/screen/biller.dart';
 import 'package:home/screen/businessloan.dart';
@@ -104,24 +101,24 @@ class HomePage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-         buildAssetIconColumn(
-                "APES\nWithdrawal",
-                "assets/apes.png",
-                containerSize,
-                context,
-              ),
-              buildAssetIconColumn(
-                "mATM\nWithdrawal",
-                "assets/matm.png",
-                containerSize,
-                context,
-              ),
-              buildAssetIconColumn(
-                "Business UPI\nSoundbox",
-                "assets/upi.png",
-                containerSize,
-                context,
-              ),
+          buildAssetIconColumn(
+            "APES\nWithdrawal",
+            "assets/apes.png",
+            containerSize,
+            context,
+          ),
+          buildAssetIconColumn(
+            "mATM\nWithdrawal",
+            "assets/matm.png",
+            containerSize,
+            context,
+          ),
+          buildAssetIconColumn(
+            "Business UPI\nSoundbox",
+            "assets/upi.png",
+            containerSize,
+            context,
+          ),
         ],
       ),
     );
@@ -309,8 +306,11 @@ class HomePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (_) => CreditBuilderApplyPage()),
               );
-            }else if(label.contains("loan")){
-               Navigator.push(context, MaterialPageRoute(builder: (_) => LenderSelectionScreen()));
+            } else if (label.contains("loan")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => LenderSelectionScreen()),
+              );
             }
           },
           child: Column(
@@ -460,7 +460,6 @@ class HomePage extends StatelessWidget {
     final box = Hive.box("userdata");
     final name = box.get("@name");
     final mobile = box.get("@mobile");
-
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 232, 243, 235),
@@ -646,6 +645,18 @@ class HomePage extends StatelessWidget {
                   context,
                   borderColor: const Color.fromARGB(255, 235, 235, 235),
                   borderRadius: 12,
+                ),
+              ),
+              SizedBox(height: width * 0.05),
+              Container(
+                width: 380,
+                height: 550,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/pym.png'),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(12), // Optional styling
                 ),
               ),
               SizedBox(height: width * 0.05),

@@ -15,8 +15,9 @@ class MobilePrepaidResponse {
     String billerType;
     List<BillersList> billersList;
     bool isCircle;
-    dynamic circleList;
+    List<CircleList> circleList;
     String defaultBillerCode;
+    bool isPlanfetch;
     List<OldRecharge> oldRecharges;
 
     MobilePrepaidResponse({
@@ -28,6 +29,7 @@ class MobilePrepaidResponse {
         required this.isCircle,
         required this.circleList,
         required this.defaultBillerCode,
+        required this.isPlanfetch,
         required this.oldRecharges,
     });
 
@@ -38,8 +40,9 @@ class MobilePrepaidResponse {
         billerType: json["biller_type"],
         billersList: List<BillersList>.from(json["billers_list"].map((x) => BillersList.fromJson(x))),
         isCircle: json["is_circle"],
-        circleList: json["circle_list"],
+        circleList: List<CircleList>.from(json["circle_list"].map((x) => CircleList.fromJson(x))),
         defaultBillerCode: json["default_biller_code"],
+        isPlanfetch: json["is_planfetch"],
         oldRecharges: List<OldRecharge>.from(json["old_recharges"].map((x) => OldRecharge.fromJson(x))),
     );
 
@@ -50,8 +53,9 @@ class MobilePrepaidResponse {
         "biller_type": billerType,
         "billers_list": List<dynamic>.from(billersList.map((x) => x.toJson())),
         "is_circle": isCircle,
-        "circle_list": circleList,
+        "circle_list": List<dynamic>.from(circleList.map((x) => x.toJson())),
         "default_biller_code": defaultBillerCode,
+        "is_planfetch": isPlanfetch,
         "old_recharges": List<dynamic>.from(oldRecharges.map((x) => x.toJson())),
     };
 }
@@ -73,6 +77,26 @@ class BillersList {
     Map<String, dynamic> toJson() => {
         "biller_name": billerName,
         "biller_code": billerCode,
+    };
+}
+
+class CircleList {
+    String circleName;
+    String circleId;
+
+    CircleList({
+        required this.circleName,
+        required this.circleId,
+    });
+
+    factory CircleList.fromJson(Map<String, dynamic> json) => CircleList(
+        circleName: json["circle_name"],
+        circleId: json["circle_id"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "circle_name": circleName,
+        "circle_id": circleId,
     };
 }
 

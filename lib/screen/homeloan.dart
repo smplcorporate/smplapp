@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/screen/homeloan2.dart';
+// Change this to 'homeloan2.dart' if you rename the second page
 
 class HomeLoanApp extends StatelessWidget {
   const HomeLoanApp({Key? key}) : super(key: key);
@@ -28,7 +29,19 @@ class _HomeLoanApplyPageState extends State<HomeLoanApplyPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _incomeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-
+final TextEditingController _dobController = TextEditingController();
+    @override
+  void dispose() {
+    _nameController.dispose();
+    _mobileController.dispose();
+    _emailController.dispose();
+    _incomeController.dispose();
+    _addressController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
+  String? _dobError;
+  bool _isConfirmed = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,6 +135,76 @@ class _HomeLoanApplyPageState extends State<HomeLoanApplyPage> {
                                   return null;
                                 },
                               ),
+              Padding(
+  padding: const EdgeInsets.symmetric(vertical: 12.0),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "Date of Birth",
+        style: GoogleFonts.inter(
+          fontSize: 14,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(height: 5),
+    TextFormField(
+      controller: _dobController,
+      keyboardType: TextInputType.number,
+      inputFormatters: [DateInputFormatter()],
+      decoration: InputDecoration(
+        hintText: 'DD/MM/YYYY',
+        errorText: _dobError,
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.calendar_today),
+          onPressed: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime(2000),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            );
+            if (pickedDate != null) {
+              setState(() {
+                _dobController.text =
+                    "${pickedDate.day.toString().padLeft(2, '0')}/"
+                    "${pickedDate.month.toString().padLeft(2, '0')}/"
+                    "${pickedDate.year}";
+                _dobError = null;
+              });
+            }
+          },
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        filled: true,
+        fillColor: Colors.grey[200],
+      ),
+      onChanged: (value) {
+        final regex = RegExp(r'^(\d{2})/(\d{2})/(\d{4})$');
+        if (regex.hasMatch(value)) {
+          try {
+            final parts = value.split('/');
+            final day = int.parse(parts[0]);
+            final month = int.parse(parts[1]);
+            final year = int.parse(parts[2]);
+            final date = DateTime(year, month, day);
+            if (date.isAfter(DateTime.now())) {
+              setState(() => _dobError = 'DOB cannot be in future');
+            } else {
+              setState(() => _dobError = null);
+            }
+          } catch (_) {
+            setState(() => _dobError = 'Invalid date');
+          }
+        } else {
+          setState(() => _dobError = 'Enter date as DD/MM/YYYY');
+        }
+      },
+    ),
+    ],
+  ),
+),
                               buildTextField(
                                 'Monthly Income',
                                 _incomeController,
@@ -218,6 +301,29 @@ class _HomeLoanApplyPageState extends State<HomeLoanApplyPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class DateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digitsOnly.length > 8) {
+      digitsOnly = digitsOnly.substring(0, 8);
+    }
+
+    String formatted = '';
+    for (int i = 0; i < digitsOnly.length; i++) {
+      formatted += digitsOnly[i];
+      if (i == 1 || i == 3) {
+        formatted += '/';
+      }
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

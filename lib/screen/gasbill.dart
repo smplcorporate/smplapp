@@ -30,6 +30,7 @@ class _GasBillPageState extends ConsumerState<GasBillPage> {
     fetchRequest = FetchBodymodel(
       path: 'b2c_bills_lpg',
       data: FetchBillModel(
+        circleCode: "",
         ipAddress: "152.59.109.59",
         macAddress: "not found",
         latitude: "26.917979",

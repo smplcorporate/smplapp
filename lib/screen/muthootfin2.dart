@@ -34,6 +34,7 @@ class _MuthootSummaryPageState extends ConsumerState<MuthootSummaryPage> {
     fetchRequest = FetchBodymodel(
       path: 'b2c_bills_loanrepayment',
       data: FetchBillModel(
+        circleCode: "",
         ipAddress: "152.59.109.59",
         macAddress: "not found",
         latitude: "26.917979",

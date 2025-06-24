@@ -1,11 +1,10 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // For inputFormatters
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:home/data/controller/loanMitira.notifer.dart';
+import 'package:home/screen/creditappl2.dart';
 
 class CreditCardApp extends StatelessWidget {
   const CreditCardApp({Key? key}) : super(key: key);
@@ -19,19 +18,33 @@ class CreditCardApp extends StatelessWidget {
   }
 }
 
-class CreditCardApplyPage extends StatefulWidget {
+class CreditCardApplyPage extends ConsumerStatefulWidget {
   @override
   _CreditCardApplyPageState createState() => _CreditCardApplyPageState();
 }
 
-class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
+class _CreditCardApplyPageState extends ConsumerState<CreditCardApplyPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _incomeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _mobileController.dispose();
+    _emailController.dispose();
+    _incomeController.dispose();
+    _addressController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
+
+  String? _dobError;
+  bool _isConfirmed = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +59,10 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
             const SizedBox(height: 25),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -56,7 +72,10 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
                         radius: 20,
                         backgroundColor: Colors.white,
                         child: IconButton(
-                          icon: const Icon(CupertinoIcons.back, color: Colors.black),
+                          icon: const Icon(
+                            CupertinoIcons.back,
+                            color: Colors.black,
+                          ),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
@@ -101,7 +120,9 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter Mobile Number';
-                                  } else if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                                  } else if (!RegExp(
+                                    r'^\d{10}$',
+                                  ).hasMatch(value)) {
                                     return 'Mobile number must be exactly 10 digits';
                                   }
                                   return null;
@@ -118,13 +139,112 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter Email';
-                                  } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                      .hasMatch(value)) {
+                                  } else if (!RegExp(
+                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                  ).hasMatch(value)) {
                                     return 'Enter a valid email address';
                                   }
                                   return null;
                                 },
                               ),
+
+                              // Date of Birth Field
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12.0,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Date of Birth",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    TextFormField(
+                                      controller: _dobController,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [DateInputFormatter()],
+                                      decoration: InputDecoration(
+                                        hintText: 'DD/MM/YYYY',
+                                        errorText: _dobError,
+                                        suffixIcon: IconButton(
+                                          icon: const Icon(
+                                            Icons.calendar_today,
+                                          ),
+                                          onPressed: () async {
+                                            DateTime? pickedDate =
+                                                await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime(2000),
+                                                  firstDate: DateTime(1900),
+                                                  lastDate: DateTime.now(),
+                                                );
+                                            if (pickedDate != null) {
+                                              setState(() {
+                                                _dobController.text =
+                                                    "${pickedDate.day.toString().padLeft(2, '0')}/"
+                                                    "${pickedDate.month.toString().padLeft(2, '0')}/"
+                                                    "${pickedDate.year}";
+                                                _dobError = null;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        filled: true,
+                                        fillColor: Colors.grey[200],
+                                      ),
+                                      onChanged: (value) {
+                                        final regex = RegExp(
+                                          r'^(\d{2})/(\d{2})/(\d{4})$',
+                                        );
+                                        if (regex.hasMatch(value)) {
+                                          try {
+                                            final parts = value.split('/');
+                                            final day = int.parse(parts[0]);
+                                            final month = int.parse(parts[1]);
+                                            final year = int.parse(parts[2]);
+                                            final date = DateTime(
+                                              year,
+                                              month,
+                                              day,
+                                            );
+                                            if (date.isAfter(DateTime.now())) {
+                                              setState(
+                                                () =>
+                                                    _dobError =
+                                                        'DOB cannot be in future',
+                                              );
+                                            } else {
+                                              setState(() => _dobError = null);
+                                            }
+                                          } catch (_) {
+                                            setState(
+                                              () => _dobError = 'Invalid date',
+                                            );
+                                          }
+                                        } else {
+                                          setState(
+                                            () =>
+                                                _dobError =
+                                                    'Enter date as DD/MM/YYYY',
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+
                               buildTextField(
                                 'Monthly Income',
                                 _incomeController,
@@ -149,9 +269,17 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 68, 128, 106),
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            68,
+                            128,
+                            106,
+                          ),
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 15,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18),
                           ),
@@ -159,15 +287,34 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
+                            ref.read(loanmitraFormProvider.notifier).updateField('ipAddress', "127.34.343.434");
+                            ref.read(loanmitraFormProvider.notifier).updateField('macAddress', "mac address");
+                            ref.read(loanmitraFormProvider.notifier).updateField('latitude', "125.54545");
+                            ref.read(loanmitraFormProvider.notifier).updateField('longitude', "125.54545");
+                            ref.read(loanmitraFormProvider.notifier).updateField('serviceType', "CREDIT CARD");
+
+                            ref.read(loanmitraFormProvider.notifier).updateField('customerName', _nameController.text);
+                            ref.read(loanmitraFormProvider.notifier).updateField('customerMobile', _mobileController.text);
+                            ref.read(loanmitraFormProvider.notifier).updateField('customerEmail', _emailController.text);
+                            ref.read(loanmitraFormProvider.notifier).updateField('customerDob', _dobController.text);
+                            ref.read(loanmitraFormProvider.notifier).updateField('customerMonthlyIncome', _incomeController.text);
+                            ref.read(loanmitraFormProvider.notifier).updateField('customerAddress', _addressController.text);
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')),
                             );
-                            Future.delayed(const Duration(milliseconds: 300), () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const CreditAppPage2()),
-                              );
-                            });
+                            Future.delayed(
+                              const Duration(milliseconds: 300),
+                              () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => const CreditAppPage2(),
+                                  ),
+                                );
+                              },
+                            );
                           }
                         },
                       ),
@@ -183,10 +330,13 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
     );
   }
 
-  Widget buildTextField(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text,
-      String? Function(String?)? validator,
-      List<TextInputFormatter>? inputFormatters}) {
+  Widget buildTextField(
+    String label,
+    TextEditingController controller, {
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Column(
@@ -209,9 +359,13 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               isDense: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 14,
+              ),
             ),
-            validator: validator ??
+            validator:
+                validator ??
                 (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter $label';
@@ -225,269 +379,28 @@ class _CreditCardApplyPageState extends State<CreditCardApplyPage> {
   }
 }
 
-
-
-
-
-class CreditAppPage2 extends StatefulWidget {
-  const CreditAppPage2({super.key});
-
+class DateInputFormatter extends TextInputFormatter {
   @override
-  State<CreditAppPage2> createState() => _CreditAppPage2State();
-}
-
-class _CreditAppPage2State extends State<CreditAppPage2> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _panController = TextEditingController();
-  final TextEditingController _aadharController = TextEditingController();
-
-  File? _selectedFile1; // for Aadhaar section
-  File? _selectedFile2; // for PAN section
-
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      _showPopup();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete the form properly')),
-      );
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digitsOnly.length > 8) {
+      digitsOnly = digitsOnly.substring(0, 8);
     }
-  }
 
-  Future<void> _launchURL() async {
-    final Uri url = Uri.parse('https://example.com');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      throw 'Could not launch $url';
+    String formatted = '';
+    for (int i = 0; i < digitsOnly.length; i++) {
+      formatted += digitsOnly[i];
+      if (i == 1 || i == 3) {
+        formatted += '/';
+      }
     }
-  }
 
-  void _showPopup() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Form Submitted"),
-          content: const Text("Your Aadhaar and PAN details have been submitted."),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _launchURL();
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _pickFile(bool isForAadhaar) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setState(() {
-        if (isForAadhaar) {
-          _selectedFile1 = File(result.files.single.path!);
-        } else {
-          _selectedFile2 = File(result.files.single.path!);
-        }
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final mediaWidth = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Container(
-          width: mediaWidth,
-          color: const Color.fromARGB(255, 232, 243, 235),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          child: const Icon(Icons.arrow_back_ios_new,
-                              size: 20, color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Text(
-                        'Credit Card Apply',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Form Section
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Aadhaar
-                                Text('Aadhaar Number',
-                                    style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 10),
-                                TextFormField(
-                                  controller: _aadharController,
-                                  maxLength: 12,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    border: const OutlineInputBorder(),
-                                    counterText: "",
-                                    hintText: 'Enter Aadhaar Number',
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Aadhaar number is required';
-                                    } else if (!RegExp(r'^\d{12}$').hasMatch(value)) {
-                                      return 'Must be exactly 12 digits';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 10),
-                                _buildFilePickerField("Choose File", _selectedFile1, true),
-
-                                const SizedBox(height: 25),
-
-                                // PAN
-                                Text('PAN Number',
-                                    style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 10),
-                                TextFormField(
-                                  controller: _panController,
-                                  maxLength: 10,
-                                  textCapitalization: TextCapitalization.characters,
-                                  decoration: InputDecoration(
-                                    border: const OutlineInputBorder(),
-                                    counterText: "",
-                                    hintText: 'Enter PAN Number',
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'PAN number is required';
-                                    } else if (!RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]$').hasMatch(value)) {
-                                      return 'Invalid PAN format';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 10),
-                                _buildFilePickerField("Choose File", _selectedFile2, false),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 15),
-
-                        // Submit Button
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: ElevatedButton(
-                            onPressed: _submitForm,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 68, 128, 106),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              elevation: 5,
-                            ),
-                            child: Text(
-                              "Submit",
-                              style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilePickerField(String label, File? file, bool isForAadhaar) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Row(
-        children: [
-          ElevatedButton(
-            onPressed: () => _pickFile(isForAadhaar),
-          style: ElevatedButton.styleFrom(
-  backgroundColor: const Color.fromARGB(255, 68, 128, 106),
-  foregroundColor: Colors.white,
-  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-  elevation: 0, // Flat look
-  minimumSize: const Size(120, 45), // Similar to TextField height
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(6),
-    side: const BorderSide(color: Colors.grey), // optional: add border like TextField
-  ),
-),
-            child: const Text("Choose File"),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              file != null ? file.path.split('/').last : "No file chosen",
-              style: const TextStyle(color: Colors.black),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

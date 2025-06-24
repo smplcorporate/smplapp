@@ -34,6 +34,7 @@ class _FastagSummaryState extends ConsumerState<FastagSummary> {
     fetchRequest = FetchBodymodel(
       path: 'b2c_bills_fastag',
       data: FetchBillModel(
+        circleCode: "",
         ipAddress: "152.59.109.59",
         macAddress: "not found",
         latitude: "26.917979",

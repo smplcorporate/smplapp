@@ -5,9 +5,10 @@ import 'package:home/screen/elebillsummary.dart';
  // Make sure this file exists
 
 class Eletercitybill extends StatefulWidget {
+  final String circleCode;
   final String billerName;
   final String billerCode;
-  const Eletercitybill({super.key, required this.billerName, required this.billerCode});
+  const Eletercitybill({super.key, required this.billerName, required this.billerCode, required this.circleCode});
 
   @override
   State<Eletercitybill> createState() => _LoanAccountScreenState();
@@ -27,7 +28,7 @@ class _LoanAccountScreenState extends State<Eletercitybill> {
     if (_isValid) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => EleBillSummary(accountNumber: _controller.text, billerCode: widget.billerCode, billerName: widget.billerName,)),
+        MaterialPageRoute(builder: (context) => EleBillSummary(crcileCode: widget.circleCode, accountNumber: _controller.text, billerCode: widget.billerCode, billerName: widget.billerName,)),
       );
     } else {
       showDialog(

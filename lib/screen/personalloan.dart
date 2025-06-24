@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For inputFormatters
 import 'package:google_fonts/google_fonts.dart';
-
-import 'package:home/screen/creditap1.dart';
+import 'package:home/screen/creditappl2.dart';
 
 class PersonalLoanApp extends StatelessWidget {
   const PersonalLoanApp({Key? key}) : super(key: key);
@@ -29,6 +28,21 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _incomeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+
+  bool _isConfirmed = false;
+  String? _dobError;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _mobileController.dispose();
+    _emailController.dispose();
+    _incomeController.dispose();
+    _addressController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +58,10 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
             const SizedBox(height: 25),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -54,7 +71,10 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
                         radius: 20,
                         backgroundColor: Colors.white,
                         child: IconButton(
-                          icon: const Icon(CupertinoIcons.back, color: Colors.black),
+                          icon: const Icon(
+                            CupertinoIcons.back,
+                            color: Colors.black,
+                          ),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
@@ -99,7 +119,9 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter Mobile Number';
-                                  } else if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                                  } else if (!RegExp(
+                                    r'^\d{10}$',
+                                  ).hasMatch(value)) {
                                     return 'Mobile number must be exactly 10 digits';
                                   }
                                   return null;
@@ -116,12 +138,108 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter Email';
-                                  } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                      .hasMatch(value)) {
+                                  } else if (!RegExp(
+                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                  ).hasMatch(value)) {
                                     return 'Enter a valid email address';
                                   }
                                   return null;
                                 },
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12.0,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Date of Birth",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    TextFormField(
+                                      controller: _dobController,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [DateInputFormatter()],
+                                      decoration: InputDecoration(
+                                        hintText: 'DD/MM/YYYY',
+                                        errorText: _dobError,
+                                        suffixIcon: IconButton(
+                                          icon: const Icon(
+                                            Icons.calendar_today,
+                                          ),
+                                          onPressed: () async {
+                                            DateTime? pickedDate =
+                                                await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime(2000),
+                                                  firstDate: DateTime(1900),
+                                                  lastDate: DateTime.now(),
+                                                );
+                                            if (pickedDate != null) {
+                                              setState(() {
+                                                _dobController.text =
+                                                    "${pickedDate.day.toString().padLeft(2, '0')}/"
+                                                    "${pickedDate.month.toString().padLeft(2, '0')}/"
+                                                    "${pickedDate.year}";
+                                                _dobError = null;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        filled: true,
+                                        fillColor: Colors.grey[200],
+                                      ),
+                                      onChanged: (value) {
+                                        final regex = RegExp(
+                                          r'^(\d{2})/(\d{2})/(\d{4})$',
+                                        );
+                                        if (regex.hasMatch(value)) {
+                                          try {
+                                            final parts = value.split('/');
+                                            final day = int.parse(parts[0]);
+                                            final month = int.parse(parts[1]);
+                                            final year = int.parse(parts[2]);
+                                            final date = DateTime(
+                                              year,
+                                              month,
+                                              day,
+                                            );
+                                            if (date.isAfter(DateTime.now())) {
+                                              setState(
+                                                () =>
+                                                    _dobError =
+                                                        'DOB cannot be in future',
+                                              );
+                                            } else {
+                                              setState(() => _dobError = null);
+                                            }
+                                          } catch (_) {
+                                            setState(
+                                              () => _dobError = 'Invalid date',
+                                            );
+                                          }
+                                        } else {
+                                          setState(
+                                            () =>
+                                                _dobError =
+                                                    'Enter date as DD/MM/YYYY',
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                               buildTextField(
                                 'Monthly Income',
@@ -147,9 +265,17 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 68, 128, 106),
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            68,
+                            128,
+                            106,
+                          ),
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 15,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18),
                           ),
@@ -160,12 +286,18 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')),
                             );
-                            Future.delayed(const Duration(milliseconds: 300), () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const CreditAppPage2()),
-                              );
-                            });
+                            Future.delayed(
+                              const Duration(milliseconds: 300),
+                              () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => const CreditAppPage2(),
+                                  ),
+                                );
+                              },
+                            );
                           }
                         },
                       ),
@@ -181,10 +313,13 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
     );
   }
 
-  Widget buildTextField(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text,
-      String? Function(String?)? validator,
-      List<TextInputFormatter>? inputFormatters}) {
+  Widget buildTextField(
+    String label,
+    TextEditingController controller, {
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Column(
@@ -207,9 +342,13 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               isDense: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 14,
+              ),
             ),
-            validator: validator ??
+            validator:
+                validator ??
                 (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter $label';
@@ -219,6 +358,32 @@ class _PersonalLoanApplyPageState extends State<PersonalLoanApplyPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class DateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digitsOnly.length > 8) {
+      digitsOnly = digitsOnly.substring(0, 8);
+    }
+
+    String formatted = '';
+    for (int i = 0; i < digitsOnly.length; i++) {
+      formatted += digitsOnly[i];
+      if (i == 1 || i == 3) {
+        formatted += '/';
+      }
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

@@ -15,7 +15,7 @@ class FetchBillModel {
     String longitude;
     String billerCode;
     String billerName;
-    // String circleCode;
+    String circleCode;
     String param1;
     String param2;
     String param3;
@@ -29,7 +29,7 @@ class FetchBillModel {
         required this.longitude,
         required this.billerCode,
         required this.billerName,
-        // required this.circleCode,
+        required this.circleCode,
         required this.param1,
         required this.param2,
         required this.param3,
@@ -44,7 +44,7 @@ class FetchBillModel {
         longitude: json["longitude"],
         billerCode: json["biller_code"],
         billerName: json["biller_name"],
-        // circleCode: json["circle_code"],
+        circleCode: json["circle_code"],
         param1: json["param1"],
         param2: json["param2"],
         param3: json["param3"],
@@ -59,7 +59,7 @@ class FetchBillModel {
         "longitude": longitude,
         "biller_code": billerCode,
         "biller_name": billerName,
-        // "circle_code": circleCode,
+        "circle_code": circleCode,
         "param1": param1,
         "param2": param2,
         "param3": param3,

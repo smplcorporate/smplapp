@@ -63,7 +63,7 @@ class _VehicleRegistrationScreenState
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color.fromARGB(255, 232, 243, 235),
-        title: Text('ICICI Bank - FASTag',
+        title: Text('${widget.billerName}',
             style: GoogleFonts.inter(
                 fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
         centerTitle: true,
@@ -101,19 +101,27 @@ class _VehicleRegistrationScreenState
               ),
               const SizedBox(height: 10),
               TextFormField(
-                controller: _vehicleController,
-                decoration: InputDecoration(
-                  hintText: "Enter your vehicle number",
-                  errorText: _errorText,
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                textCapitalization: TextCapitalization.characters,
-              ),
+  controller: _vehicleController,
+  decoration: InputDecoration(
+    hintText: "Enter your vehicle number",
+    filled: true,
+    fillColor: Colors.white,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide.none,
+    ),
+  ),
+  textCapitalization: TextCapitalization.characters,
+  maxLength: 10, // Optional: prevents more than 10 characters
+  validator: (value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Vehicle number is required';
+    } else if (value.trim().length != 10) {
+      return 'Vehicle number must be exactly 10 characters';
+    }
+    return null;
+  },
+),
               const SizedBox(height: 5),
               Text(
                 'Please enter your vehicle number',

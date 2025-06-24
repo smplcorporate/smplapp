@@ -35,6 +35,7 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
     fetchRequest = FetchBodymodel(
       path: 'b2c_bills_water',
       data: FetchBillModel(
+        circleCode: "",
         ipAddress: "152.59.109.59",
         macAddress: "not found",
         latitude: "26.917979",

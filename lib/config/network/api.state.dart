@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:home/data/model/addwallet_request_pageloadModel.dart';
+import 'package:home/data/model/billerParms.model.dart';
+import 'package:home/data/model/billerParms.req.model.dart';
 import 'package:home/data/model/checkCopoun.model.dart';
 import 'package:home/data/model/dthPrepaid.res.dart';
 import 'package:home/data/model/electritysityModel.dart';
@@ -13,6 +15,7 @@ import 'package:home/data/model/loadRepayment.res.dart';
 import 'package:home/data/model/login.body.model.dart';
 import 'package:home/data/model/lpgBillerList.model.dart';
 import 'package:home/data/model/mobilePrepaid.res.dart';
+import 'package:home/data/model/mobileplanRes.model.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
 import 'package:home/data/model/paynow.model.dart';
 import 'package:home/data/model/profileDetails.model.dart';
@@ -87,6 +90,8 @@ abstract class APIStateNetwork {
     @Path('path') String path,
     @Body() PayNowModel body,
   );
+  @POST('/bbps/{path}/get_billers_param')
+  Future<BillerParamResponse> fetchBillerParm(@Path('path') String path, @Body() BillerParamRequest body);
   @POST('bbps/b2c_bills_electricity/check_coupon')
   Future<HttpResponse<dynamic>> checkCoupn(@Body() CheckCouponModel body);
 
@@ -110,5 +115,9 @@ abstract class APIStateNetwork {
   Future<ProfileDetailsmodel> getProfilDetails();
   @POST('profile/b2c_account/details_update')
   Future<HttpResponse<dynamic>> updateProfile(@Body() UserUpdateeModel body);
+
+  // mobile plan fetch
+  @POST('recharges/b2c_prepaid_mobile/get_plan')
+  Future<MobilePlansResponseModel> fetchMobilePlan(@Body() RechargeRequestModel body ); 
   
 }
