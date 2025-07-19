@@ -2,6 +2,8 @@ class UserRegisterBody {
   final int userMobile;
   final String userFirstname;
   final String userLastname;
+  final String userPassword;
+  final String confirmPassword;
   final String ipAddress;
   final String macAddress;
   final String latitude;
@@ -15,6 +17,8 @@ class UserRegisterBody {
     required this.macAddress,
     required this.latitude,
     required this.longitude,
+    required this.confirmPassword,
+    required this.userPassword,
   });
 
   factory UserRegisterBody.fromJson(Map<String, dynamic> json) {
@@ -26,6 +30,8 @@ class UserRegisterBody {
       macAddress: json['mac_address'],
       latitude: json['latitude'],
       longitude: json['longitude'],
+      confirmPassword: json['password'],
+      userPassword: json['password_confirm']
     );
   }
 
@@ -38,6 +44,8 @@ class UserRegisterBody {
       'mac_address': macAddress,
       'latitude': latitude,
       'longitude': longitude,
+      'password': userPassword,
+      'password_confirm': confirmPassword
     };
   }
 
@@ -49,8 +57,12 @@ class UserRegisterBody {
     String? macAddress,
     String? latitude,
     String? longitude,
+    String? userPassword,
+    String? confirmPassword,
   }) {
     return UserRegisterBody(
+      userPassword: userPassword ?? this.userPassword,
+      confirmPassword: confirmPassword ?? this.confirmPassword,
       userMobile: userMobile ?? this.userMobile,
       userFirstname: userFirstname ?? this.userFirstname,
       userLastname: userLastname ?? this.userLastname,

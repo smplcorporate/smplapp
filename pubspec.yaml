@@ -60,6 +60,8 @@ dependencies:
   mobile_scanner: ^7.0.1
   another_flushbar: ^1.12.30
   intl: ^0.20.2
+  dropdown_search: ^6.0.2
+  flutter_typeahead: ^5.2.0
 
 
   

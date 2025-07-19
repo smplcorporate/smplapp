@@ -23,7 +23,7 @@ class PayNowModel {
     String param5;
     String customerName;
     String billNo;
-    DateTime dueDate;
+    String dueDate;
     String billDate;
     String billAmount;
     String returnTransid;
@@ -72,7 +72,7 @@ class PayNowModel {
         param5: json["param5"],
         customerName: json["customer_name"],
         billNo: json["bill_no"],
-        dueDate: DateTime.parse(json["due_date"]),
+        dueDate: json["due_date"],
         billDate: json["bill_date"],
         billAmount: json["bill_amount"],
         returnTransid: json["return_transid"],
@@ -97,7 +97,7 @@ class PayNowModel {
         "param5": param5,
         "customer_name": customerName,
         "bill_no": billNo,
-        "due_date": "${dueDate.year.toString().padLeft(4, '0')}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}",
+        "due_date": dueDate,
         "bill_date": billDate,
         "bill_amount": billAmount,
         "return_transid": returnTransid,

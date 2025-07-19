@@ -1,10 +1,13 @@
 import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/config/auth/auth.dart';
 import 'package:home/data/controller/login.notider.dart';
+import 'package:home/screen/loginwithPassword.pagae.dart';
 import 'package:home/screen/otp.dart';
 import 'package:home/screen/sincreate.dart';
 
@@ -381,6 +384,38 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                       ),
                                       child: Text(
                                         'Create new account',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 18 * scale,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10.h,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: (){
+                                        Navigator.push(context, CupertinoPageRoute(builder: (context) =>LoginWithPasswordScreen() ));
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color.fromARGB(
+                                          255,
+                                          68,
+                                          128,
+                                          106,
+                                        ),
+                                        minimumSize: Size(
+                                          double.infinity,
+                                          45 * scale,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            30 * scale,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'login with password',
                                         style: GoogleFonts.inter(
                                           fontSize: 18 * scale,
                                           color: Colors.white,

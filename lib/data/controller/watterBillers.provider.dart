@@ -4,7 +4,7 @@ import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/model/electritysityModel.dart';
 import 'package:home/data/model/watterBillers.res.dart';
 
-final wattersBillerProvider = FutureProvider<WatterBilersModel>((ref) async {
+final wattersBillerProvider = FutureProvider<ElectricityModel>((ref) async {
   final service = APIStateNetwork(await createDio());
   final data = await service.fetchWaterList(
     ElectricityBody(

@@ -15,9 +15,9 @@ class ElectricityModel {
     String billerType;
     List<BillersList> billersList;
     bool isCircle;
-    List<CircleList> circleList;
+    List<CircleList>? circleList;
     String defaultBillerCode;
-
+    List<OldBill> oldBills;
 
     ElectricityModel({
         required this.status,
@@ -28,20 +28,23 @@ class ElectricityModel {
         required this.isCircle,
         required this.circleList,
         required this.defaultBillerCode,
-
+        required this.oldBills,
     });
 
-    factory ElectricityModel.fromJson(Map<String, dynamic> json) => ElectricityModel(
-        status: json["status"],
-        statusDesc: json["status_desc"],
-        userBalance: UserBalance.fromJson(json["user_balance"]),
-        billerType: json["biller_type"],
-        billersList: List<BillersList>.from(json["billers_list"].map((x) => BillersList.fromJson(x))),
-        isCircle: json["is_circle"],
-        circleList: List<CircleList>.from(json["circle_list"].map((x) => CircleList.fromJson(x))),
-        defaultBillerCode: json["default_biller_code"],
+   factory ElectricityModel.fromJson(Map<String, dynamic> json) => ElectricityModel(
+  status: json["status"],
+  statusDesc: json["status_desc"],
+  userBalance: UserBalance.fromJson(json["user_balance"]),
+  billerType: json["biller_type"],
+  billersList: List<BillersList>.from(json["billers_list"].map((x) => BillersList.fromJson(x))),
+  isCircle: json["is_circle"],
+  circleList: json["circle_list"] != null
+      ? List<CircleList>.from(json["circle_list"].map((x) => CircleList.fromJson(x)))
+      : null,
+  defaultBillerCode: json["default_biller_code"],
+  oldBills: List<OldBill>.from(json["old_bills"].map((x) => OldBill.fromJson(x))),
+);
 
-    );
 
     Map<String, dynamic> toJson() => {
         "status": status,
@@ -50,9 +53,11 @@ class ElectricityModel {
         "biller_type": billerType,
         "billers_list": List<dynamic>.from(billersList.map((x) => x.toJson())),
         "is_circle": isCircle,
-        "circle_list": List<dynamic>.from(circleList.map((x) => x.toJson())),
+       "circle_list": circleList != null
+    ? List<dynamic>.from(circleList!.map((x) => x.toJson()))
+    : null,
         "default_biller_code": defaultBillerCode,
-
+        "old_bills": List<dynamic>.from(oldBills.map((x) => x.toJson())),
     };
 }
 
@@ -102,7 +107,7 @@ class OldBill {
     String transId;
     String serviceProvider;
     String serviceAccount;
-    int transAmount;
+    double transAmount;
     String transStatus;
 
     OldBill({
@@ -144,7 +149,7 @@ class UserBalance {
     });
 
     factory UserBalance.fromJson(Map<String, dynamic> json) => UserBalance(
-        balanceMain: json["balance_main"]?.toDouble(),
+        balanceMain: json["balance_main"],
     );
 
     Map<String, dynamic> toJson() => {

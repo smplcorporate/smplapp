@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -6,27 +7,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
+import 'package:home/data/controller/billerParam.notier.dart';
 import 'package:home/data/controller/fetchBills.provider.dart';
-import 'package:home/data/model/billerParms.req.model.dart';
+import 'package:home/data/model/billerParam.model.dart';
 import 'package:home/data/model/checkCopoun.model.dart';
-import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/data/model/paynow.model.dart';
-import 'package:home/screen/biller.dart';
+import 'package:home/screen/order.details.page.dart';
 import 'package:home/screen/waterbill3.dart';
 import 'package:intl/intl.dart';
 
 class EleBillSummary extends ConsumerStatefulWidget {
-  final String billerCode;
-  final String billerName;
-  final String accountNumber;
-  final String crcileCode;
-
-  EleBillSummary({
-    required this.accountNumber,
-    required this.billerCode,
-    required this.billerName,
-    required this.crcileCode,
-  });
+  final FetchBodymodel body;
+  EleBillSummary({required this.body});
 
   @override
   ConsumerState<EleBillSummary> createState() => _EleBillSummaryState();
@@ -41,407 +33,256 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
   bool isInvalid = false;
 
   bool btnLoder = false;
-  final TextEditingController _couponController = TextEditingController();
   String _couponMessage = '';
   double _discount = 0.0;
-
-  void _applyCoupon() async {
-    // Dummy check
-  }
 
   @override
   void initState() {
     super.initState();
-    fetchBillerParam = FetchBllerParam(
-      path: "b2c_bills_electricity",
-      data: BillerParamRequest(
-        ipAddress: "152.59.109.59",
-        macAddress: "not found",
-        latitude: "26.917979",
-        longitude: "26.917979",
-        billerCode: widget.billerCode,
-        billerName: widget.billerName,
-      ),
-    );
-    fetchRequest = FetchBodymodel(
-      path: 'b2c_bills_electricity',
-      data: FetchBillModel(
-        ipAddress: "152.59.109.59",
-        macAddress: "not found",
-        latitude: "26.917979",
-        longitude: "75.814593",
-        circleCode: widget.crcileCode,
-        billerCode: widget.billerCode,
-        billerName: widget.billerName,
-        param1: widget.accountNumber,
-        param2: "",
-        param3: "",
-        param4: "",
-        param5: "",
-      ),
-    );
+
+    fetchRequest = widget.body;
   }
 
-  TextEditingController _parm3Controller = TextEditingController();
-  TextEditingController _parm4Controller = TextEditingController();
-  TextEditingController _parm5Controller = TextEditingController();
-
   bool applyBtnLoder = false;
+  bool coupnApplyed = false;
 
   @override
   Widget build(BuildContext context) {
-    final billerParam = ref.watch(fetchBillerParamProvider(fetchBillerParam));
     final screenWidth = MediaQuery.of(context).size.width;
     final scale = screenWidth / 375;
     final fetchBillerData = ref.watch(fetchBillDataProvider(fetchRequest));
     final String formattedDate = DateFormat(
       'dd-MM-yyyy',
     ).format(DateTime.now());
+    final params = ref.watch(paramsProvider);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 243, 235),
       body: fetchBillerData.when(
         data: (snap) {
-          return billerParam.when(
-            data: (snapshot) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 232, 243, 235),
-                ),
-                child: SafeArea(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.0 * scale,
-                            vertical: 10 * scale,
-                          ),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: GestureDetector(
-                                  onTap: () => Navigator.pop(context),
-                                  child: Container(
-                                    height: 40 * scale,
-                                    width: 40 * scale,
-                                    padding: EdgeInsets.all(8 * scale),
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white,
-                                    ),
-                                    child: Icon(
-                                      Icons.arrow_back_ios_new,
-                                      color: Colors.black,
-                                      size: 21 * scale,
-                                    ),
-                                  ),
+          return Container(
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 232, 243, 235),
+            ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.0 * scale,
+                        vertical: 10 * scale,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                height: 40 * scale,
+                                width: 40 * scale,
+                                padding: EdgeInsets.all(8 * scale),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                ),
+                                child: Icon(
+                                  Icons.arrow_back_ios_new,
+                                  color: Colors.black,
+                                  size: 21 * scale,
                                 ),
                               ),
-                              Center(
-                                child: Text(
-                                  "BILL Summary",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 16 * scale,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Card with billing details
-                        Padding(
-                          padding: EdgeInsets.all(16.0 * scale),
-                          child: Card(
-                            color: Colors.white,
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12 * scale),
                             ),
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0 * scale),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      // Image.asset(
-                                      //   'assets/elect.png',
-                                      //   height: 40 * scale,
-                                      // ),
-                                      SizedBox(width: 10 * scale),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            truncateString(
-                                              widget.billerName,
-                                              26,
-                                              addEllipsis: true,
-                                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              "BILL Summary",
+                              style: GoogleFonts.inter(
+                                fontSize: 16 * scale,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                                            style: GoogleFonts.inter(
-                                              fontSize: 14 * scale,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            widget.accountNumber,
-                                            style: GoogleFonts.inter(
-                                              fontSize: 13 * scale,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 20 * scale),
-                                  Text(
-                                    'Billing Details',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 15 * scale,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10 * scale),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                    // Card with billing details
+                    Padding(
+                      padding: EdgeInsets.all(16.0 * scale),
+                      child: Card(
+                        color: Colors.white,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12 * scale),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0 * scale),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  // Image.asset(
+                                  //   'assets/elect.png',
+                                  //   height: 40 * scale,
+                                  // ),
+                                  SizedBox(width: 10 * scale),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      _infoColumn([
-                                        "Customer Name",
-                                        "Bill Number",
-                                        "Bill Date",
-                                      ], scale),
-                                      _infoColumn(
-                                        [
-                                          snap.customerName ?? "No name",
-                                          snap.billNo.toString(),
-                                          DateFormat(
-                                            'dd-MM-yyyy',
-                                          ).format(snap.dueDate),
-                                        ],
-                                        scale,
-                                        alignRight: true,
+                                      Text(
+                                        truncateString(
+                                          fetchRequest.data.billerName,
+                                          26,
+                                          addEllipsis: true,
+                                        ),
+
+                                        style: GoogleFonts.inter(
+                                          fontSize: 14 * scale,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        fetchRequest.data.param1,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13 * scale,
+                                        ),
                                       ),
                                     ],
-                                  ),
-                                  SizedBox(height: 20 * scale),
-                                  Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: 12 * scale,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                        255,
-                                        232,
-                                        243,
-                                        235,
-                                      ),
-                                      border: Border.all(
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      borderRadius: BorderRadius.circular(
-                                        10 * scale,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: TextField(
-                                        controller: TextEditingController(
-                                          text: '₹${snap.billAmount ?? ""}',
-                                        ),
-                                        readOnly: true,
-                                        showCursor: false,
-                                        decoration:
-                                            const InputDecoration.collapsed(
-                                              hintText: '',
-                                            ),
-                                        style: TextStyle(
-                                          fontSize: 22 * scale,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        keyboardType: TextInputType.none,
-                                      ),
-                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
-                        ),
-
-                        Padding(
-                          padding: EdgeInsets.only(left: 18.w, right: 18.w),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: _controller,
-                                  decoration: InputDecoration(
-                                    hintText: 'Gift card or discount code',
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 14,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: BorderSide(
-                                        color:
-                                            isInvalid
-                                                ? Colors.red
-                                                : Colors.grey,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: BorderSide(
-                                        color:
-                                            isInvalid
-                                                ? Colors.red
-                                                : Colors.grey,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: BorderSide(
-                                        color:
-                                            isInvalid
-                                                ? Colors.red
-                                                : Colors.black,
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                  ),
+                              Padding(
+                                padding:  EdgeInsets.only(left: 12),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                if (params.param2.isNotEmpty)
+                                  _buildDetailRow(params.param2, ""),
+                                if (params.param3.isNotEmpty)
+                                  _buildDetailRow(params.param3, ""),
+                                if (params.param4.isNotEmpty)
+                                  _buildDetailRow(params.param4, ""),
+                                if (params.param5.isNotEmpty)
+                                  _buildDetailRow(params.param5, ""),],
                                 ),
                               ),
-                              SizedBox(width: 8),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  setState(() {
-                                    applyBtnLoder = true;
-                                  });
-                                  final state = APIStateNetwork(
-                                    await createDio(),
-                                  );
-                                  final response = await state.checkCoupn(
-                                    CheckCouponModel(
-                                      ipAddress: "152.59.109.59",
-                                      macAddress: "not found",
-                                      latitude: "26.917979",
-                                      longitude: "75.814593",
-                                      billerCode: widget.billerName,
-                                      billerName: widget.billerCode,
-                                      param1: widget.accountNumber,
-                                      transAmount:
-                                          double.parse(
-                                            snap.billAmount ?? "0.00",
-                                          ).toInt().toString(),
-                                      couponCode: _controller.text.trim(),
-                                    ),
-                                  );
-                                  if (response.response.data['status'] ==
-                                      true) {
-                                    setState(() {
-                                      applyBtnLoder = false;
-                                    });
-                                    ref.refresh(
-                                      fetchBillDataProvider(fetchRequest),
-                                    );
-                                    Fluttertoast.showToast(
-                                      msg:
-                                          response.response.data['status_desc'],
-                                      backgroundColor: Colors.black,
-                                      textColor: Colors.white,
-                                    );
-                                  } else {
-                                    setState(() {
-                                      applyBtnLoder = false;
-                                    });
-                                    Fluttertoast.showToast(
-                                      msg:
-                                          response.response.data['status_desc'],
-                                      backgroundColor: Colors.black,
-                                      textColor: Colors.white,
-                                    );
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 14,
+                              SizedBox(height: 20 * scale),
+                              Text(
+                                'Billing Details',
+                                style: GoogleFonts.inter(
+                                  fontSize: 15 * scale,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 10 * scale),
+
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _infoColumn([
+                                    if (snap.customerName != null ||
+                                        snap.customerName!.isNotEmpty)
+                                      "Customer Name",
+                                    if (snap.billNo.isNotEmpty) "Bill Number",
+                                    if (snap.billDate.isNotEmpty) "Bill Date",
+                                    if (snap.dueDate.trim().isNotEmpty)...[
+                                      "Bill Due Date"
+                                    ],
+                                  ], scale),
+                                  _infoColumn(
+                                    [
+                                      if (snap.customerName != null ||
+                                          snap.customerName!.isNotEmpty)
+                                        snap.customerName ?? "No name",
+                                      if (snap.billNo.isNotEmpty)
+                                        snap.billNo.toString(),
+                                      if (snap.billDate.isNotEmpty)
+                                        snap.billDate,
+                                      if (snap.dueDate.trim().isNotEmpty)...[
+ snap.dueDate.toString(),
+                                      ]
+                                       
+                                    ],
+                                    scale,
+                                    alignRight: true,
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
+                                ],
+                              ),
+                              SizedBox(height: 20 * scale),
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 12 * scale,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(
+                                    255,
+                                    232,
+                                    243,
+                                    235,
+                                  ),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    10 * scale,
                                   ),
                                 ),
-                                child:
-                                    applyBtnLoder == true
-                                        ? CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2.5,
-                                        )
-                                        : Text(
-                                          'Apply',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
+                                child: Center(
+                                  child: TextField(
+                                    controller: TextEditingController(
+                                      text: '₹${snap.billAmount ?? ""}',
+                                    ),
+                                    readOnly: true,
+                                    showCursor: false,
+                                    decoration: const InputDecoration.collapsed(
+                                      hintText: '',
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 22 * scale,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    keyboardType: TextInputType.none,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(height: 10.h),
-                        Padding(
-                          padding: EdgeInsets.only(left: 18.w, right: 18.w),
-                          child: TextField(
-                            controller: _mpinControllr,
-                            decoration: InputDecoration(
-                              hintText: 'Enter your mpin',
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 14,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6),
-                                borderSide: BorderSide(
-                                  color: isInvalid ? Colors.red : Colors.grey,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6),
-                                borderSide: BorderSide(
-                                  color: isInvalid ? Colors.red : Colors.grey,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6),
-                                borderSide: BorderSide(
-                                  color: isInvalid ? Colors.red : Colors.black,
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (snapshot.isParam3 == true) ...[
-                          SizedBox(height: 16),
-                          Padding(
-                            padding: EdgeInsets.only(left: 18.w, right: 18.w),
+                      ),
+                    ),
+                    // _buildBillDetailsParamCard(params),
+                    Padding(
+                      padding: EdgeInsets.only(left: 18.w, right: 18.w),
+                      child: Row(
+                        children: [
+                          Expanded(
                             child: TextField(
-                              controller: _parm3Controller,
+                              readOnly: coupnApplyed,
+                              controller: _controller,
+                              maxLength: 15, // Max length 15 characters
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(
+                                  15,
+                                ), // Enforce length limit
+                                UpperCaseTextFormatter(), // Custom formatter for uppercase
+                              ],
                               decoration: InputDecoration(
-                                hintText: '${snapshot.param3.name.toString()}',
+                                hintText: 'Gift card or discount code',
+                                counterText: '', // Hide character counter
                                 contentPadding: EdgeInsets.symmetric(
                                   horizontal: 12,
                                   vertical: 14,
@@ -469,249 +310,298 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                               ),
                             ),
                           ),
-                        ],
-                        if (snapshot.isParam4 == true) ...[
-                          SizedBox(height: 16),
-                          Padding(
-                            padding: EdgeInsets.only(left: 18.w, right: 18.w),
-                            child: TextField(
-                              controller: _parm4Controller,
-                              decoration: InputDecoration(
-                                hintText: '${snapshot.param4.name.toString()}',
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                  borderSide: BorderSide(
-                                    color: isInvalid ? Colors.red : Colors.grey,
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                  borderSide: BorderSide(
-                                    color: isInvalid ? Colors.red : Colors.grey,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                  borderSide: BorderSide(
-                                    color:
-                                        isInvalid ? Colors.red : Colors.black,
-                                    width: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                        if (snapshot.isParam5 == true) ...[
-                          SizedBox(height: 16),
-                          Padding(
-                            padding: EdgeInsets.only(left: 18.w, right: 18.w),
-                            child: TextField(
-                              controller: _parm4Controller,
-                              decoration: InputDecoration(
-                                hintText: '${snapshot.param5.name.toString()}',
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                  borderSide: BorderSide(
-                                    color: isInvalid ? Colors.red : Colors.grey,
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                  borderSide: BorderSide(
-                                    color: isInvalid ? Colors.red : Colors.grey,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                  borderSide: BorderSide(
-                                    color:
-                                        isInvalid ? Colors.red : Colors.black,
-                                    width: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
 
-                        SizedBox(height: 16),
-
-                        Padding(
-                          padding: EdgeInsets.all(16.0 * scale),
-                          child: ElevatedButton(
+                          SizedBox(width: 8),
+                          ElevatedButton(
                             onPressed: () async {
-                              setState(() {
-                                btnLoder = true;
-                              });
-                              final box = Hive.box('userdata');
-                              final mobile = box.get('@mobile');
-                              final service = APIStateNetwork(
-                                await createDio(),
-                              );
-                              final reponse = await service.payNow(
-                                'b2c_bills_electricity',
-                                PayNowModel(
-                                  ipAddress: "152.59.109.59",
-                                  macAddress: "not found",
-                                  latitude: "26.917979",
-                                  longitude: "75.814593",
-                                  billerCode: widget.billerName,
-                                  billerName: widget.billerName,
-                                  circleCode: widget.crcileCode,
-                                  param1: widget.accountNumber,
-                                  param2: mobile,
-                                  param3: _parm3Controller.text,
-                                  param4: _parm4Controller.text,
-                                  param5: _parm5Controller.text,
-                                  customerName: snap.customerName ?? "",
-                                  billNo: snap.billNo,
-                                  dueDate: snap.dueDate,
-                                  billDate: snap.billDate,
-                                  billAmount: snap.billAmount.toString(),
-                                  returnTransid: snap.returnTransid.toString(),
-                                  returnFetchid: snap.returnFetchid,
-                                  returnBillid: snap.returnBillid,
-                                  couponCode: "${_couponController.text}",
-                                  userMpin: "${_mpinControllr.text}",
-                                ),
-                              );
-                              if (reponse.response.data["status"] == false) {
+                              if(_mpinControllr.text.isEmpty || _mpinControllr.text.trim().isEmpty){
+                                 Fluttertoast.showToast(
+                                    msg: "Mpin is required",
+                                    backgroundColor: Colors.black,
+                                    textColor: Colors.white,
+                                  );
+                              }else{
+                                if (coupnApplyed == false) {
                                 setState(() {
-                                  btnLoder = false;
+                                  applyBtnLoder = true;
                                 });
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        'Payment Faild',
-                                        style: GoogleFonts.inter(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      content: Text(
-                                        '${reponse.response.data["status_desc"]}',
-                                        style: GoogleFonts.inter(),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) => Biller(),
-                                              ),
-                                              (route) => false,
-                                            );
-                                          },
-                                          child: Text(
-                                            'OK',
-                                            style: GoogleFonts.inter(
-                                              color:
-                                                  Theme.of(
-                                                    context,
-                                                  ).primaryColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                final state = APIStateNetwork(
+                                  await createDio(),
                                 );
+                                final response = await state.checkCoupn(
+                                  CheckCouponModel(
+                                    ipAddress: "152.59.109.59",
+                                    macAddress: "not found",
+                                    latitude: "26.917979",
+                                    longitude: "75.814593",
+                                    billerCode: fetchRequest.data.billerCode,
+                                    billerName: fetchRequest.data.billerName,
+                                    param1: fetchRequest.data.param1,
+                                    transAmount:
+                                        double.parse(
+                                          snap.billAmount ?? "0.00",
+                                        ).toInt().toString(),
+                                    couponCode: _controller.text.trim(),
+                                  ),
+                                );
+                                if (response.response.data['status'] == true) {
+                                  setState(() {
+                                    applyBtnLoder = false;
+                                    coupnApplyed = true;
+                                  });
+
+                                  Fluttertoast.showToast(
+                                    msg: response.response.data['status_desc'],
+                                    backgroundColor: Colors.black,
+                                    textColor: Colors.white,
+                                  );
+                                } else {
+                                  setState(() {
+                                    applyBtnLoder = false;
+                                  });
+                                  Fluttertoast.showToast(
+                                    msg: response.response.data['status_desc'],
+                                    backgroundColor: Colors.black,
+                                    textColor: Colors.white,
+                                  );
+                                }
                               } else {
                                 setState(() {
-                                  btnLoder = false;
+                                  coupnApplyed = false;
+                                  _controller.clear();
                                 });
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        'Payment Successful',
-                                        style: GoogleFonts.inter(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      content: Text(
-                                        '${reponse.response.data["status_desc"]}',
-                                        style: GoogleFonts.inter(),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) => Biller(),
-                                              ),
-                                              (route) => false,
-                                            );
-                                          },
-                                          child: Text(
-                                            'OK',
-                                            style: GoogleFonts.inter(
-                                              color:
-                                                  Theme.of(
-                                                    context,
-                                                  ).primaryColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                              }
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: buttonColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25 * scale),
-                              ),
+                              backgroundColor: Colors.black,
                               padding: EdgeInsets.symmetric(
-                                vertical: 14 * scale,
+                                horizontal: 20,
+                                vertical: 14,
                               ),
-                              minimumSize: Size(double.infinity, 45 * scale),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
                             child:
-                                btnLoder == false
-                                    ? Text(
-                                      'Proceed to pay',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 18 * scale,
-                                        color: Colors.white,
-                                      ),
+                                applyBtnLoder == true
+                                    ? CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.5,
                                     )
-                                    : Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
+                                    : Text(
+                                      coupnApplyed == false
+                                          ? 'Apply'
+                                          : 'Remove',
+                                      style: TextStyle(color: Colors.white),
                                     ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                    SizedBox(height: 10.h),
+                    Padding(
+                      padding: EdgeInsets.only(left: 18.w, right: 18.w),
+                      child: TextField(
+                        controller: _mpinControllr,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(
+                            6,
+                          ), // Enforce length limit
+                        ],
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: 'Enter your mpin',
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: BorderSide(
+                              color: isInvalid ? Colors.red : Colors.grey,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: BorderSide(
+                              color: isInvalid ? Colors.red : Colors.grey,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: BorderSide(
+                              color: isInvalid ? Colors.red : Colors.black,
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+
+                    Padding(
+                      padding: EdgeInsets.all(16.0 * scale),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_mpinControllr.text.isEmpty ||
+                              _mpinControllr.text == "") {
+                            Fluttertoast.showToast(
+                              msg: "Mpin is required",
+                              textColor: Colors.white,
+                              backgroundColor: Colors.red,
+                            );
+                          } else {
+                            setState(() {
+                              btnLoder = true;
+                            });
+                            final box = Hive.box('userdata');
+                            final mobile = box.get('@mobile');
+                            final service = APIStateNetwork(await createDio());
+                            final reponse = await service.payNow(
+                              'b2c_bills_electricity',
+                              PayNowModel(
+                                ipAddress: "152.59.109.59",
+                                macAddress: "not found",
+                                latitude: "26.917979",
+                                longitude: "75.814593",
+                                billerCode: fetchRequest.data.billerCode,
+                                billerName: fetchRequest.data.billerName,
+                                circleCode: fetchRequest.data.circleCode,
+                                param1: fetchRequest.data.param1,
+                                param2: fetchRequest.data.param2,
+                                param3: fetchRequest.data.param3,
+                                param4: fetchRequest.data.param4,
+                                param5: fetchRequest.data.param5,
+                                customerName: snap.customerName ?? "",
+                                billNo: snap.billNo,
+                                dueDate: snap.dueDate,
+                                billDate: snap.billDate,
+                                billAmount: snap.billAmount.toString(),
+                                returnTransid: snap.returnTransid.toString(),
+                                returnFetchid: snap.returnFetchid,
+                                returnBillid: snap.returnBillid,
+                                couponCode: "${_controller.text.trim()}",
+                                userMpin: "${_mpinControllr.text}",
+                              ),
+                            );
+                            ref.read(paramsProvider.notifier).clearData();
+                            if (reponse.response.data["status"] == false) {
+                              setState(() {
+                                btnLoder = false;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      '',
+                                      style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      '${reponse.response.data["status_desc"]}',
+                                      style: GoogleFonts.inter(),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          'OK',
+                                          style: GoogleFonts.inter(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              setState(() {
+                                btnLoder = false;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      '${reponse.response.data['trans_status']}',
+                                      style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      '${reponse.response.data["status_desc"]}',
+                                      style: GoogleFonts.inter(),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => PaymentDetailsScreen(
+                                                    trnxId:
+                                                        '${reponse.response.data['trans_id']}',
+                                                  ),
+                                            ),
+                                          
+                                          );
+                                        },
+                                        child: Text(
+                                          'OK',
+                                          style: GoogleFonts.inter(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25 * scale),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 14 * scale),
+                          minimumSize: Size(double.infinity, 45 * scale),
+                        ),
+                        child:
+                            btnLoder == false
+                                ? Text(
+                                  'Proceed to pay',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 18 * scale,
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            },
-            error: (err, stack) {
-              return Center(child: Text("$err"));
-            },
-            loading: () => Center(child: CircularProgressIndicator()),
+              ),
+            ),
           );
         },
         error: (err, stack) {
@@ -746,6 +636,62 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                 ),
               )
               .toList(),
+    );
+  }
+
+  Widget _buildBillDetailsParamCard(ParamsState snap) {
+    final params = ref.watch(paramsProvider);
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Bill Information',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+_buildDetailRow(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 1.5),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 150,
+          child: Text(label, style: TextStyle(color: Colors.grey[900])),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return newValue.copyWith(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
     );
   }
 }

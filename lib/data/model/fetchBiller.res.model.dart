@@ -14,7 +14,7 @@ class FetchResponseModel {
   final String? billAmount;
   final String? customerName;
   final String billNo;
-  final DateTime dueDate;
+  final String dueDate;
   final String billDate;
   final String returnTransid;
   final String returnFetchid;
@@ -44,7 +44,7 @@ class FetchResponseModel {
       billAmount: json["bill_amount"]?.toString(),
       customerName: json["customer_name"],
       billNo: json["bill_no"] ?? '',
-      dueDate: DateTime.tryParse(json["due_date"] ?? '') ?? DateTime.now(),
+      dueDate: json["due_date"],
       billDate: json["bill_date"] ?? '',
       returnTransid: json["return_transid"] ?? '',
       returnFetchid: json["return_fetchid"] ?? '',
@@ -53,18 +53,17 @@ class FetchResponseModel {
   }
 
   Map<String, dynamic> toJson() => {
-        "status": status,
-        "status_desc": statusDesc,
-        "biller_type": billerType,
-        "biller_name": billerName,
-        "bill_amount": billAmount,
-        "customer_name": customerName,
-        "bill_no": billNo,
-        "due_date":
-            "${dueDate.year.toString().padLeft(4, '0')}-${dueDate.month.toString().padLeft(2, '0')}-${dueDate.day.toString().padLeft(2, '0')}",
-        "bill_date": billDate,
-        "return_transid": returnTransid,
-        "return_fetchid": returnFetchid,
-        "return_billid": returnBillid,
-      };
+    "status": status,
+    "status_desc": statusDesc,
+    "biller_type": billerType,
+    "biller_name": billerName,
+    "bill_amount": billAmount,
+    "customer_name": customerName,
+    "bill_no": billNo,
+    "due_date": dueDate,
+    "bill_date": billDate,
+    "return_transid": returnTransid,
+    "return_fetchid": returnFetchid,
+    "return_billid": returnBillid,
+  };
 }

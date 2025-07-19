@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:home/config/network/api.state.dart';
+import 'package:home/config/utils/preety.dio.dart';
+import 'package:home/data/model/ipAddreess.req.dart';
 import 'package:home/screen/cashbackoffer.dart';
 import 'package:home/screen/helpsupport.dart';
 import 'package:home/screen/home_page.dart';
@@ -401,7 +404,10 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     onTap: () async {
-                      final box = Hive.box("userdata");
+                     
+                      final api = APIStateNetwork(await createDio());
+                      final respone = api.logout(IpAddressRequest(ipAddress: "127.0.0.1"));
+                       final box = Hive.box("userdata");
                       await box.clear();
                       Navigator.pushAndRemoveUntil(
                         context,

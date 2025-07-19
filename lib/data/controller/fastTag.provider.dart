@@ -5,7 +5,7 @@ import 'package:home/data/model/electritysityModel.dart';
 import 'package:home/data/model/fastTag.res.dart';
 
 
-final fastTagProvider = FutureProvider<FastTagmodel>((ref) async {
+final fastTagProvider = FutureProvider<ElectricityModel>((ref) async {
   final service = APIStateNetwork(await createDio());
   final data = await service.getFastTagBillers(
     ElectricityBody(

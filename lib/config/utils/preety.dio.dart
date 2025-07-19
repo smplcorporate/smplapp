@@ -7,11 +7,10 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 Future<Dio> createDio() async {
   final dio = Dio();
 
-  if (!Hive.isBoxOpen('userdata')) {
-    await Hive.openBox('userdata');
-  }
+  
   final box = Hive.box('userdata');
   final token = box.get('@token');
+
   dio.interceptors.add(
     PrettyDioLogger(
       requestHeader: true,
@@ -34,6 +33,15 @@ Future<Dio> createDio() async {
 
           
         });
+        log({
+          'Content-Type': 'application/json',
+          'SMPL-B2CMAap-Encrypt-ID': 'c6715usrb4eeb2c97f4655bc2smpl740ecbe8abwin',
+          'SMPL-B2CMApp-Encrypt-Passcode': 'wzrc6715user15u57f4655bc2wr200a426b2c10147857smpl45236wwin',
+          if(token != null)
+          'SMPL-B2CMApp-SESkey' : '$token'
+
+          
+        }.toString());
         handler.next(options); // Continue with the request
       },
       onResponse: (response, handler) {

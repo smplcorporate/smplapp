@@ -9,6 +9,7 @@ import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/config/utils/route.dart';
 import 'package:home/data/model/login.body.model.dart';
+import 'package:home/data/model/loginRequest.req.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
 import 'package:home/data/model/register.body.validate.dart';
 import 'package:home/data/model/register.model1.dart';
@@ -123,7 +124,7 @@ class AuthService {
       throw Exception("Something went wrong");
     }
   }
-
+  
   Future<void> loginInit(LoginBodyRequest user, BuildContext context) async {
     final dio = await createDio();
     final service = APIStateNetwork(dio);
@@ -215,7 +216,53 @@ class AuthService {
       throw Exception("OTP not verified");
     }
   }
+  Future<void> loginwithPassword(LoginRequest body, BuildContext context) async {
+    final dio = await createDio();
+    final service = APIStateNetwork(dio);
+    final response = await service.loginwithPassword(body);
 
+    try {
+      print(
+        "Raw response (loginValidate): ${response.response.data}",
+      ); // Debug response
+      _verifyOtpResponse = VerfiyOtpResponse.fromJson(response.response.data);
+
+      final box = Hive.box('userdata');
+      if (_verifyOtpResponse?.sessionToken != null) {
+        log("first save");
+        await box.put('@token', _verifyOtpResponse!.sessionToken);
+        await box.put('@name', _verifyOtpResponse!.userDetails.userName);
+        await box.put('@mobile', _verifyOtpResponse!.userDetails.userMobile);
+      } else {
+        log("first save - 2");
+        print("Error: sessionToken is null in loginValidate");
+        throw Exception("Session token is null");
+      }
+
+      await Flushbar(
+        message: "Login successful",
+        duration: const Duration(seconds: 1),
+        backgroundColor: Colors.black,
+        margin: const EdgeInsets.all(10),
+        borderRadius: BorderRadius.circular(8),
+        flushbarPosition: FlushbarPosition.TOP,
+      ).show(context);
+      log("first save - 4");
+      // Use Navigator.push for consistency; alternatively, use named route: navigatorKey.currentState?.pushNamed('/home');
+      Navigator.push(
+        context,
+        CupertinoPageRoute(builder: (context) => HomePage()),
+      );
+    } catch (e) {
+      log("first save - 4");
+      print("Error in loginValidate: $e"); // Debug error
+      await Fluttertoast.showToast(
+        msg: "Error: ${e.toString()}",
+        backgroundColor: Colors.red,
+      );
+      throw Exception("OTP not verified");
+    }
+  }
   void clearData() {
     _otpResponseRegister = null;
     _registerResponseValidate = null;

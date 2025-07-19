@@ -9,18 +9,27 @@ import 'package:home/data/model/fastTag.res.dart';
 import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/data/model/fetchBiller.res.model.dart';
 import 'package:home/data/model/getbankModel.dart';
+import 'package:home/data/model/ipAddreess.req.dart';
 import 'package:home/data/model/kycList.model.dart';
 import 'package:home/data/model/lic.res.dart';
 import 'package:home/data/model/loadRepayment.res.dart';
 import 'package:home/data/model/login.body.model.dart';
+import 'package:home/data/model/loginRequest.req.dart';
 import 'package:home/data/model/lpgBillerList.model.dart';
 import 'package:home/data/model/mobilePrepaid.res.dart';
 import 'package:home/data/model/mobileplanRes.model.dart';
+import 'package:home/data/model/order.details.body.dart';
+import 'package:home/data/model/orderDetails.res.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
+import 'package:home/data/model/passwordResponse.dart';
+import 'package:home/data/model/passwordUpdatae.req.dart';
 import 'package:home/data/model/paynow.model.dart';
 import 'package:home/data/model/profileDetails.model.dart';
 import 'package:home/data/model/register.body.validate.dart';
 import 'package:home/data/model/register.model1.dart';
+import 'package:home/data/model/updateProfilereq.dart';
+import 'package:home/data/model/updateUserProfile.res.dart';
+import 'package:home/data/model/userDetails.res.dart';
 import 'package:home/data/model/userupdateModel.dart';
 import 'package:home/data/model/wallet.statementBody.dart';
 import 'package:home/data/model/walletModel.res.dart';
@@ -33,6 +42,9 @@ part 'api.state.g.dart';
 abstract class APIStateNetwork {
   factory APIStateNetwork(Dio dio, {String baseUrl}) = _APIStateNetwork;
   //Regsiter API
+  @POST('outlet/b2c_login/with_password')
+  Future<HttpResponse> loginwithPassword(@Body() LoginRequest body);
+
   @POST('outlet/b2c_register/initiate')
   Future<HttpResponse> registerUserInit(@Body() UserRegisterBody user);
   @POST('outlet/b2c_register/validate')
@@ -65,7 +77,7 @@ abstract class APIStateNetwork {
     @Body() ElectricityBody body,
   );
   @POST('bbps/b2c_bills_fastag/get_billers')
-  Future<HttpResponse<FastTagmodel>> getFastTagBillers(
+  Future<HttpResponse<ElectricityModel>> getFastTagBillers(
     @Body() ElectricityBody body,
   );
   // Login api
@@ -76,7 +88,7 @@ abstract class APIStateNetwork {
     @Body() VerfiyOtpBody body,
   );
   @POST('bbps/b2c_bills_water/get_billers')
-  Future<HttpResponse<WatterBilersModel>> fetchWaterList(
+  Future<HttpResponse<ElectricityModel>> fetchWaterList(
     @Body() ElectricityBody body,
   );
   // fetch bill
@@ -119,5 +131,15 @@ abstract class APIStateNetwork {
   // mobile plan fetch
   @POST('recharges/b2c_prepaid_mobile/get_plan')
   Future<MobilePlansResponseModel> fetchMobilePlan(@Body() RechargeRequestModel body ); 
-  
+
+  @POST('transactions/b2c_wallet/order_details_bbps')
+  Future<OrderDetailsRes> getOrderDetails(@Body() GetOrderDetailsBody body);
+  /// user 
+  @POST('profile/b2c_account/password_change')
+  Future<PasswordChangeResponse> updatePassword(@Body() PasswordChangeRequest body);
+  @POST("profile/b2c_account/logout")
+  Future<HttpResponse> logout(@Body()IpAddressRequest body);
+  @POST('profile/b2c_account/details')
+  Future<UserProfileDetailsRes> userDEtails();
 }
+

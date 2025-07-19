@@ -378,6 +378,8 @@ class _CreateAccountScreenState extends ConsumerState<CreateAccountScreen> {
                                         userMobile: int.parse(
                                           mobileController.text,
                                         ),
+                                        userPassword: passwordController.text,
+                                        confirmPassword: passwordController.text,
                                         userFirstname: firstNameController.text,
                                         userLastname: lastNameController.text,
                                         ipAddress: "152.59.109.59",
