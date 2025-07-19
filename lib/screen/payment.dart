@@ -1,23 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/data/model/wallet.statementBody.dart';
 
-class TransactionApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: TransactionDetailsPage(),
-    );
-  }
-}
+
 
 class TransactionDetailsPage extends StatelessWidget {
-  final String customerName = 'Shreya Goyal';
-  final String transactionId = '7234 4564 4576';
-  final String date = '09-10-2024';
-  final String transactionType = 'Credit Card';
-  final String status = 'Success';
-  final String amount = '₹1,000';
+  
+  final StatementList data;
+
+  const TransactionDetailsPage({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -86,12 +78,12 @@ class TransactionDetailsPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      buildRow('Customer Name', customerName),
-                      buildRow('Transaction ID', transactionId),
-                      buildRow('Date', date),
-                      buildRow('Type of Transaction', transactionType),
-                      buildRow('Status', status),
-                      buildRow('Amount', amount),
+                      buildRow('Customer Name', "Shreya"),
+                      buildRow('Transaction ID', data.transId),
+                      buildRow('Date', data.date),
+                      buildRow('Type of Transaction', data.transType),
+                      buildRow('Status', "Done"),
+                      buildRow('Amount', "₹"+data.debit.toString()),
                       const SizedBox(height: 20),
                       Center(
                         child: ElevatedButton.icon(

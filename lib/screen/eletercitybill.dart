@@ -560,70 +560,83 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                               SizedBox(width: 8),
                               ElevatedButton(
                                 onPressed: () async {
-                                  if (_mpinControllr.text.isNotEmpty || _mpinControllr.text.trim().isNotEmpty) {
-                                    if (coupnApplyed == false) {
-                                      setState(() {
-                                        applyBtnLoder = true;
-                                      });
-                                      final state = APIStateNetwork(
-                                        await createDio(),
-                                      );
-                                      final response = await state.checkCoupn(
-                                        CheckCouponModel(
-                                          ipAddress: "152.59.109.59",
-                                          macAddress: "not found",
-                                          latitude: "26.917979",
-                                          longitude: "75.814593",
-                                          billerCode: widget.billerCode,
-                                          billerName: widget.billerName,
-                                          param1: _parm1Controller.text,
-                                          transAmount:
-                                              double.parse(
-                                                _amountController.text,
-                                              ).toInt().toString(),
-                                          couponCode: _controller.text.trim(),
-                                        ),
-                                      );
-                                      if (response.response.data['status'] ==
-                                          true) {
+                                  if (_controller.text.isNotEmpty ||
+                                      _controller.text.trim().isNotEmpty) {
+                                    if (_amountController.text.isNotEmpty ||
+                                        _amountController.text
+                                            .trim()
+                                            .isNotEmpty) {
+                                      if (coupnApplyed == false) {
                                         setState(() {
-                                          applyBtnLoder = false;
-                                          coupnApplyed = true;
+                                          applyBtnLoder = true;
                                         });
-
-                                        Fluttertoast.showToast(
-                                          msg:
-                                              response
-                                                  .response
-                                                  .data['status_desc'],
-                                          backgroundColor: Colors.black,
-                                          textColor: Colors.white,
+                                        final state = APIStateNetwork(
+                                          await createDio(),
                                         );
+                                        final response = await state.checkCoupn(
+                                          CheckCouponModel(
+                                            ipAddress: "152.59.109.59",
+                                            macAddress: "not found",
+                                            latitude: "26.917979",
+                                            longitude: "75.814593",
+                                            billerCode: widget.billerCode,
+                                            billerName: widget.billerName,
+                                            param1: _parm1Controller.text,
+                                            transAmount:
+                                                double.parse(
+                                                  _amountController.text,
+                                                ).toInt().toString(),
+                                            couponCode: _controller.text.trim(),
+                                          ),
+                                        );
+                                        if (response.response.data['status'] ==
+                                            true) {
+                                          setState(() {
+                                            applyBtnLoder = false;
+                                            coupnApplyed = true;
+                                          });
+
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                response
+                                                    .response
+                                                    .data['status_desc'],
+                                            backgroundColor: Colors.black,
+                                            textColor: Colors.white,
+                                          );
+                                        } else {
+                                          setState(() {
+                                            applyBtnLoder = false;
+                                          });
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                response
+                                                    .response
+                                                    .data['status_desc'],
+                                            backgroundColor: Colors.black,
+                                            textColor: Colors.white,
+                                          );
+                                        }
                                       } else {
                                         setState(() {
-                                          applyBtnLoder = false;
+                                          coupnApplyed = false;
+                                          _controller.clear();
                                         });
-                                        Fluttertoast.showToast(
-                                          msg:
-                                              response
-                                                  .response
-                                                  .data['status_desc'],
-                                          backgroundColor: Colors.black,
-                                          textColor: Colors.white,
-                                        );
                                       }
                                     } else {
-                                      setState(() {
-                                        coupnApplyed = false;
-                                        _controller.clear();
-                                      });
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            "Amount is required to apply Coupon code",
+                                        backgroundColor: Colors.black,
+                                        textColor: Colors.white,
+                                      );
                                     }
-                                  }else{
+                                  } else {
                                     Fluttertoast.showToast(
-                                          msg:
-                                              "Mpin is required",
-                                          backgroundColor: Colors.black,
-                                          textColor: Colors.white,);
+                                      msg: "Coupon Code is required",
+                                      backgroundColor: Colors.black,
+                                      textColor: Colors.white,
+                                    );
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -675,26 +688,26 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                               Expanded(
                                 child: TextFormField(
                                   controller: _mpinControllr,
-                                  keyboardType:
-                                      TextInputType
-                                          .number, // Use number keyboard
+                                  keyboardType: TextInputType.number,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return "This field is required";
                                     }
+                                    if (value.length < 6) {
+                                      return "MPIN must be at least 6 digits";
+                                    }
+                                    return null;
                                   },
                                   onChanged: (value) {
-                                    // ref
-                                    //     .read(paramsProvider.notifier)
-                                    //     .updateParam5(value);
+                                    // ref.read(paramsProvider.notifier).updateParam5(value);
                                   },
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9]'), // Only numbers allowed
-                                    ),
+                                      RegExp(r'[0-9]'),
+                                    ), // Only numbers
                                     LengthLimitingTextInputFormatter(
                                       6,
-                                    ), // Enforce length limit
+                                    ), // Max 6 digits
                                     UpperCaseTextFormatter(),
                                   ],
                                   decoration: InputDecoration(

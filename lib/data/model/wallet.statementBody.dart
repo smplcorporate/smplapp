@@ -1,8 +1,104 @@
 // To parse this JSON data, do
 //
-//     final walletStateMentBody = walletStateMentBodyFromJson(jsonString);
+//     final walletStateMentRes = walletStateMentResFromJson(jsonString);
 
 import 'dart:convert';
+
+WalletStateMentRes walletStateMentResFromJson(String str) => WalletStateMentRes.fromJson(json.decode(str));
+
+String walletStateMentResToJson(WalletStateMentRes data) => json.encode(data.toJson());
+
+class WalletStateMentRes {
+    bool status;
+    String statusDesc;
+    double balance;
+    double balanceLocked;
+    double balanceUnclear;
+    List<StatementList> statementList;
+
+    WalletStateMentRes({
+        required this.status,
+        required this.statusDesc,
+        required this.balance,
+        required this.balanceLocked,
+        required this.balanceUnclear,
+        required this.statementList,
+    });
+
+    factory WalletStateMentRes.fromJson(Map<String, dynamic> json) => WalletStateMentRes(
+        status: json["status"],
+        statusDesc: json["status_desc"],
+        balance: json["balance"],
+        balanceLocked: json["balance_locked"],
+        balanceUnclear: json["balance_unclear"],
+        statementList: List<StatementList>.from(json["statement_list"].map((x) => StatementList.fromJson(x))),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "status": status,
+        "status_desc": statusDesc,
+        "balance": balance,
+        "balance_locked": balanceLocked,
+        "balance_unclear": balanceUnclear,
+        "statement_list": List<dynamic>.from(statementList.map((x) => x.toJson())),
+    };
+}
+
+class StatementList {
+    String transLogo;
+    String date;
+    String transType;
+    String transId;
+    double balOpen;
+    double credit;
+    double debit;
+    double balClose;
+    String remark;
+
+    StatementList({
+        required this.transLogo,
+        required this.date,
+        required this.transType,
+        required this.transId,
+        required this.balOpen,
+        required this.credit,
+        required this.debit,
+        required this.balClose,
+        required this.remark,
+    });
+
+    factory StatementList.fromJson(Map<String, dynamic> json) => StatementList(
+        transLogo: json["trans_logo"],
+        date: json["date"],
+        transType: json["trans_type"]!,
+        transId: json["trans_id"],
+        balOpen: json["bal_open"],
+        credit: json["credit"],
+        debit: json["debit"],
+        balClose: json["bal_close"],
+        remark: json["remark"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "trans_logo": transLogo,
+        "date": date,
+        "trans_type": transType,
+        "trans_id": transId,
+        "bal_open": balOpen,
+        "credit": credit,
+        "debit": debit,
+        "bal_close": balClose,
+        "remark": remark,
+    };
+}
+
+
+
+// To parse this JSON data, do
+//
+//     final walletStateMentBody = walletStateMentBodyFromJson(jsonString);
+
+
 
 WalletStateMentBody walletStateMentBodyFromJson(String str) => WalletStateMentBody.fromJson(json.decode(str));
 
@@ -30,109 +126,4 @@ class WalletStateMentBody {
         "date_to": dateTo,
         "trans_id": transId,
     };
-}
-
-
-// To parse this JSON data, do
-//
-//     final walletStateMentRes = walletStateMentResFromJson(jsonString);
-
-
-
-
-
-WalletStateMentRes walletStateMentResFromJson(String str) =>
-    WalletStateMentRes.fromJson(json.decode(str));
-
-String walletStateMentResToJson(WalletStateMentRes data) =>
-    json.encode(data.toJson());
-
-class WalletStateMentRes {
-  bool status;
-  String statusDesc;
-  double balance;
-  double balanceLocked;
-  double balanceUnclear;
-  List<StatementList> statementList;
-
-  WalletStateMentRes({
-    required this.status,
-    required this.statusDesc,
-    required this.balance,
-    required this.balanceLocked,
-    required this.balanceUnclear,
-    required this.statementList,
-  });
-
-  factory WalletStateMentRes.fromJson(Map<String, dynamic> json) =>
-      WalletStateMentRes(
-        status: json["status"],
-        statusDesc: json["status_desc"],
-        balance: (json["balance"] as num?)?.toDouble() ?? 0.0,
-        balanceLocked: (json["balance_locked"] as num?)?.toDouble() ?? 0.0,
-        balanceUnclear: (json["balance_unclear"] as num?)?.toDouble() ?? 0.0,
-        statementList: (json["statement_list"] != null && json["statement_list"] is List)
-            ? List<StatementList>.from(
-                json["statement_list"].map((x) => StatementList.fromJson(x)),
-              )
-            : [],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "status": status,
-        "status_desc": statusDesc,
-        "balance": balance,
-        "balance_locked": balanceLocked,
-        "balance_unclear": balanceUnclear,
-        "statement_list":
-            List<dynamic>.from(statementList.map((x) => x.toJson())),
-      };
-}
-
-class StatementList {
-  String transLogo;
-  String date;
-  String transType;
-  String transId;
-  double balOpen;
-  double credit;
-  double debit;
-  double balClose;
-  String remark;
-
-  StatementList({
-    required this.transLogo,
-    required this.date,
-    required this.transType,
-    required this.transId,
-    required this.balOpen,
-    required this.credit,
-    required this.debit,
-    required this.balClose,
-    required this.remark,
-  });
-
-  factory StatementList.fromJson(Map<String, dynamic> json) => StatementList(
-        transLogo: json["trans_logo"],
-        date: json["date"],
-        transType: json["trans_type"],
-        transId: json["trans_id"],
-        balOpen: (json["bal_open"] as num?)?.toDouble() ?? 0.0,
-        credit: (json["credit"] as num?)?.toDouble() ?? 0.0,
-        debit: (json["debit"] as num?)?.toDouble() ?? 0.0,
-        balClose: (json["bal_close"] as num?)?.toDouble() ?? 0.0,
-        remark: json["remark"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "trans_logo": transLogo,
-        "date": date,
-        "trans_type": transType,
-        "trans_id": transId,
-        "bal_open": balOpen,
-        "credit": credit,
-        "debit": debit,
-        "bal_close": balClose,
-        "remark": remark,
-      };
 }

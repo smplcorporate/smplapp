@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/config/colors.dart';
 import 'package:home/data/controller/wallet.provider.dart';
+import 'package:home/data/model/wallet.statementBody.dart';
 import 'package:home/screen/payment.dart';
 import 'package:intl/intl.dart';
 
@@ -99,6 +100,7 @@ class _TransactionPageState extends ConsumerState<TransactionPage> {
                       itemCount: snap.statementList.length,
                       itemBuilder: (context, index) {
                         return TransactionTile(
+                          statement: snap.statementList[index],
                           transaction: Transaction(
                             status: "Done",
                             name: "",
@@ -108,7 +110,10 @@ class _TransactionPageState extends ConsumerState<TransactionPage> {
                                     ? snap.statementList[index].debit.toString()
                                     : snap.statementList[index].credit
                                         .toString(),
-                            isCredit: snap.statementList[index].credit == 0.00 ? false: true, 
+                            isCredit:
+                                snap.statementList[index].credit == 0.00
+                                    ? false
+                                    : true,
                             isSuccess: true,
                           ),
                         );
@@ -161,8 +166,12 @@ class Transaction {
 // Transaction Tile (List Item)
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
-
-  const TransactionTile({required this.transaction, super.key});
+  final StatementList statement;
+  const TransactionTile({
+    required this.transaction,
+    super.key,
+    required this.statement,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -171,10 +180,11 @@ class TransactionTile extends StatelessWidget {
         // Navigate to Transaction Success Page
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TransactionDetailsPage()),
+          MaterialPageRoute(builder: (context) => TransactionDetailsPage(data: statement,)),
         );
       },
       child: Container(
+        height: 80.h,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -185,23 +195,56 @@ class TransactionTile extends StatelessWidget {
           children: [
             // Arrow icon with date below
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 60,
-                  width: 70,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 68, 128, 106),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Image.asset(
-                      transaction.isCredit
-                          ? 'assets/arrow1.png'
-                          : 'assets/arrow2.png',
-                    ),
+                SizedBox(
+                  width: 210.w,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 68, 128, 106),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Image.asset(
+                            transaction.isCredit
+                                ? 'assets/arrow1.png'
+                                : 'assets/arrow2.png',
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              statement.transId,
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: const Color.fromARGB(255, 48, 47, 47),
+                              ),
+                            ),
+                            Text(
+                              transaction.status,
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+
                 const SizedBox(height: 15),
                 Text(
                   transaction.date,
@@ -215,34 +258,14 @@ class TransactionTile extends StatelessWidget {
             const SizedBox(width: 18),
 
             // Transaction info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    transaction.status,
-                    style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    transaction.name,
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: const Color.fromARGB(255, 153, 153, 153),
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
             // Amount and bank info
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  "₹${transaction.amount}",
-                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 20),
+                SizedBox(height: 4),
+              
                 Row(
                   children: [
                     Text(
@@ -255,6 +278,12 @@ class TransactionTile extends StatelessWidget {
                     const SizedBox(width: 5),
                     Image.asset('assets/sbi1.png', width: 25, height: 25),
                   ],
+                ),
+                Spacer(),
+                SizedBox(height: 3.h),
+                Text(
+                  "₹${transaction.amount}",
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -306,8 +335,6 @@ class TransactionTile extends StatelessWidget {
 //     );
 //   }
 // }
-
-
 
 String formatMonthYear(DateTime date) {
   return DateFormat('MMMM yyyy').format(date);
