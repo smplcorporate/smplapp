@@ -46,6 +46,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
   bool applyBtnLoder = false;
   bool coupnApplyed = false;
   final _formKey = GlobalKey<FormState>();
+  final _coponKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -112,7 +113,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                           ],
                         ),
                       ),
-            
+
                       // Card with billing details
                       Padding(
                         padding: EdgeInsets.all(16.0 * scale),
@@ -144,7 +145,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                             26,
                                             addEllipsis: true,
                                           ),
-            
+
                                           style: GoogleFonts.inter(
                                             fontSize: 14 * scale,
                                             color: Colors.black,
@@ -165,7 +166,8 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                   padding: EdgeInsets.only(left: 12),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       if (params.param2.isNotEmpty)
                                         _buildDetailRow(params.param2, ""),
@@ -188,7 +190,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                   ),
                                 ),
                                 SizedBox(height: 10 * scale),
-            
+
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -248,9 +250,10 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                       ),
                                       readOnly: true,
                                       showCursor: false,
-                                      decoration: const InputDecoration.collapsed(
-                                        hintText: '',
-                                      ),
+                                      decoration:
+                                          const InputDecoration.collapsed(
+                                            hintText: '',
+                                          ),
                                       style: TextStyle(
                                         fontSize: 22 * scale,
                                         fontWeight: FontWeight.bold,
@@ -269,140 +272,171 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                       // _buildBillDetailsParamCard(params),
                       Padding(
                         padding: EdgeInsets.only(left: 18.w, right: 18.w),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                readOnly: coupnApplyed,
-                                controller: _controller,
-                                maxLength: 15, // Max length 15 characters
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(
-                                    15,
-                                  ), // Enforce length limit
-                                  UpperCaseTextFormatter(), // Custom formatter for uppercase
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: 'Gift card or discount code',
-                                  counterText: '', // Hide character counter
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                    borderSide: BorderSide(
-                                      color: isInvalid ? Colors.red : Colors.grey,
+                        child: Form(
+                          key: _coponKey,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  readOnly: coupnApplyed,
+                                  controller: _controller,
+                                  maxLength: 15, // Max length 15 characters
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(
+                                      15,
+                                    ), // Enforce length limit
+                                    UpperCaseTextFormatter(), // Custom formatter for uppercase
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: 'Gift card or discount code',
+                                    counterText: '', // Hide character counter
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: BorderSide(
+                                        color:
+                                            isInvalid
+                                                ? Colors.red
+                                                : Colors.grey,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: BorderSide(
+                                        color:
+                                            isInvalid
+                                                ? Colors.red
+                                                : Colors.grey,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: BorderSide(
+                                        color:
+                                            isInvalid
+                                                ? Colors.red
+                                                : Colors.black,
+                                        width: 1.5,
+                                      ),
                                     ),
                                   ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                    borderSide: BorderSide(
-                                      color: isInvalid ? Colors.red : Colors.grey,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                    borderSide: BorderSide(
-                                      color:
-                                          isInvalid ? Colors.red : Colors.black,
-                                      width: 1.5,
-                                    ),
-                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Code is required";
+                                    }
+                                    if (value.length < 5) {
+                                      return "Minimum 5 characters required";
+                                    }
+                                    if (value.length > 15) {
+                                      return "Maximum 15 characters allowed";
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
-                            ),
-            
-                            SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (_controller.text.isEmpty ||
-                                    _controller.text.trim().isEmpty) {
-                                  Fluttertoast.showToast(
-                                    msg: "Coupon code is required",
-                                    backgroundColor: Colors.black,
-                                    textColor: Colors.white,
-                                  );
-                                } else {
-                                  if (coupnApplyed == false) {
-                                    setState(() {
-                                      applyBtnLoder = true;
-                                    });
-                                    final state = APIStateNetwork(
-                                      await createDio(),
-                                    );
-                                    final response = await state.checkCoupn(
-                                      CheckCouponModel(
-                                        ipAddress: "152.59.109.59",
-                                        macAddress: "not found",
-                                        latitude: "26.917979",
-                                        longitude: "75.814593",
-                                        billerCode: fetchRequest.data.billerCode,
-                                        billerName: fetchRequest.data.billerName,
-                                        param1: fetchRequest.data.param1,
-                                        transAmount:
-                                            double.parse(
-                                              snap.billAmount ?? "0.00",
-                                            ).toInt().toString(),
-                                        couponCode: _controller.text.trim(),
-                                      ),
-                                    );
-                                    if (response.response.data['status'] ==
-                                        true) {
-                                      setState(() {
-                                        applyBtnLoder = false;
-                                        coupnApplyed = true;
-                                      });
-            
+
+                              SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  if (_coponKey.currentState!.validate()) {
+                                    if (_controller.text.isEmpty ||
+                                        _controller.text.trim().isEmpty) {
                                       Fluttertoast.showToast(
-                                        msg:
-                                            response.response.data['status_desc'],
+                                        msg: "Coupon code is required",
                                         backgroundColor: Colors.black,
                                         textColor: Colors.white,
                                       );
                                     } else {
-                                      setState(() {
-                                        applyBtnLoder = false;
-                                      });
-                                      Fluttertoast.showToast(
-                                        msg:
-                                            response.response.data['status_desc'],
-                                        backgroundColor: Colors.black,
-                                        textColor: Colors.white,
-                                      );
+                                      if (coupnApplyed == false) {
+                                        setState(() {
+                                          applyBtnLoder = true;
+                                        });
+                                        final state = APIStateNetwork(
+                                          await createDio(),
+                                        );
+                                        final response = await state.checkCoupn(
+                                          CheckCouponModel(
+                                            ipAddress: "152.59.109.59",
+                                            macAddress: "not found",
+                                            latitude: "26.917979",
+                                            longitude: "75.814593",
+                                            billerCode:
+                                                fetchRequest.data.billerCode,
+                                            billerName:
+                                                fetchRequest.data.billerName,
+                                            param1: fetchRequest.data.param1,
+                                            transAmount:
+                                                double.parse(
+                                                  snap.billAmount ?? "0.00",
+                                                ).toInt().toString(),
+                                            couponCode: _controller.text.trim(),
+                                          ),
+                                        );
+                                        if (response.response.data['status'] ==
+                                            true) {
+                                          setState(() {
+                                            applyBtnLoder = false;
+                                            coupnApplyed = true;
+                                          });
+
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                response
+                                                    .response
+                                                    .data['status_desc'],
+                                            backgroundColor: Colors.black,
+                                            textColor: Colors.white,
+                                          );
+                                        } else {
+                                          setState(() {
+                                            applyBtnLoder = false;
+                                          });
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                response
+                                                    .response
+                                                    .data['status_desc'],
+                                            backgroundColor: Colors.black,
+                                            textColor: Colors.white,
+                                          );
+                                        }
+                                      } else {
+                                        setState(() {
+                                          coupnApplyed = false;
+                                          _controller.clear();
+                                        });
+                                      }
                                     }
-                                  } else {
-                                    setState(() {
-                                      coupnApplyed = false;
-                                      _controller.clear();
-                                    });
                                   }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 14,
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
+                                child:
+                                    applyBtnLoder == true
+                                        ? CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2.5,
+                                        )
+                                        : Text(
+                                          coupnApplyed == false
+                                              ? 'Apply'
+                                              : 'Remove',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                               ),
-                              child:
-                                  applyBtnLoder == true
-                                      ? CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2.5,
-                                      )
-                                      : Text(
-                                        coupnApplyed == false
-                                            ? 'Apply'
-                                            : 'Remove',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 10.h),
@@ -430,7 +464,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                               horizontal: 12,
                               vertical: 14,
                             ),
-            
+
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(6),
                               borderSide: BorderSide(
@@ -453,9 +487,9 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                           ),
                         ),
                       ),
-            
+
                       SizedBox(height: 16),
-            
+
                       Padding(
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
@@ -497,14 +531,15 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                     dueDate: snap.dueDate,
                                     billDate: snap.billDate,
                                     billAmount: snap.billAmount.toString(),
-                                    returnTransid: snap.returnTransid.toString(),
+                                    returnTransid:
+                                        snap.returnTransid.toString(),
                                     returnFetchid: snap.returnFetchid,
                                     returnBillid: snap.returnBillid,
                                     couponCode: "${_controller.text.trim()}",
                                     userMpin: "${_mpinControllr.text}",
                                   ),
                                 );
-                                ref.read(paramsProvider.notifier).clearData();
+
                                 if (reponse.response.data["status"] == false) {
                                   setState(() {
                                     btnLoder = false;
@@ -569,7 +604,9 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder:
-                                                      (_) => PaymentDetailsScreen(
+                                                      (
+                                                        _,
+                                                      ) => PaymentDetailsScreen(
                                                         trnxId:
                                                             '${reponse.response.data['trans_id']}',
                                                       ),

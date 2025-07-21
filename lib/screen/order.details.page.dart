@@ -20,6 +20,15 @@ class PaymentDetailsScreen extends ConsumerStatefulWidget {
 class _PaymentDetailsScreenState extends ConsumerState<PaymentDetailsScreen> {
   final Color buttonColor = const Color.fromRGBO(68, 128, 106, 1);
   final Color backgroundColor = const Color.fromARGB(255, 232, 243, 235);
+  
+  void initState() {
+    super.initState();
+
+    /// Call the provider safely after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(paramsProvider.notifier).clearData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
