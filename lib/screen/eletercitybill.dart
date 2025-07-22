@@ -516,8 +516,11 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                                     controller: _controller,
                                     maxLength: 15,
                                     inputFormatters: [
-                                      LengthLimitingTextInputFormatter(15),
+                                      FilteringTextInputFormatter.allow(
+                                        RegExp(r'[A-Za-z0-9]'),
+                                      ),
                                       UpperCaseTextFormatter(),
+                                      LengthLimitingTextInputFormatter(15),
                                     ],
                                     decoration: InputDecoration(
                                       hintText: 'Gift card or discount code',
@@ -729,13 +732,11 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                                     // ref.read(paramsProvider.notifier).updateParam5(value);
                                   },
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9]'),
-                                    ), // Only numbers
+                                    FilteringTextInputFormatter
+                                        .digitsOnly, // Only digits 0-9
                                     LengthLimitingTextInputFormatter(
                                       6,
                                     ), // Max 6 digits
-                                    UpperCaseTextFormatter(),
                                   ],
                                   decoration: InputDecoration(
                                     hintText: "MPIN",

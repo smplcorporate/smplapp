@@ -282,10 +282,11 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                   controller: _controller,
                                   maxLength: 15, // Max length 15 characters
                                   inputFormatters: [
-                                    LengthLimitingTextInputFormatter(
-                                      15,
-                                    ), // Enforce length limit
-                                    UpperCaseTextFormatter(), // Custom formatter for uppercase
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp(r'[A-Za-z0-9]'),
+                                    ),
+                                    UpperCaseTextFormatter(),
+                                    LengthLimitingTextInputFormatter(15),
                                   ],
                                   decoration: InputDecoration(
                                     hintText: 'Gift card or discount code',
@@ -453,9 +454,11 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                             }
                           },
                           inputFormatters: [
+                            FilteringTextInputFormatter
+                                .digitsOnly, // Only digits 0-9
                             LengthLimitingTextInputFormatter(
                               6,
-                            ), // Enforce length limit
+                            ), //Enforce length limit
                           ],
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
