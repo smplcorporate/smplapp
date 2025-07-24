@@ -793,6 +793,7 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: TextFormField(
+                                  obscureText: true,
                                   controller: _mpinControllr,
                                   keyboardType: TextInputType.number,
                                   validator: (value) {
@@ -845,9 +846,7 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                             ),
                           ),
                           child: Text(
-                            snap.fetchOption == false
-                                ? "Pay Now"
-                                : "Proceed",
+                              snap.fetchOption == true? "Proceed" : "Proceed to Pay",
                             style: GoogleFonts.inter(
                               fontSize: 20,
                               color: Colors.white,

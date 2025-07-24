@@ -506,6 +506,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                       Padding(
                         padding: EdgeInsets.only(left: 18.w, right: 18.w),
                         child: TextFormField(
+                            obscureText: true,
                           controller: _mpinControllr,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -708,7 +709,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                           child:
                               btnLoder == false
                                   ? Text(
-                                    'Proceed to pay',
+                                    'Proceed to Pay',
                                     style: GoogleFonts.inter(
                                       fontSize: 18 * scale,
                                       color: Colors.white,
