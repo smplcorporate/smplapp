@@ -3,9 +3,6 @@ import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/model/dthPrepaid.res.dart';
 import 'package:home/data/model/electritysityModel.dart';
-import 'package:home/data/model/lic.res.dart';
-import 'package:home/data/model/loadRepayment.res.dart';
-import 'package:home/data/model/mobilePrepaid.res.dart';
 
 final dthPrepaidProvider = FutureProvider<DthPrepaidResponse>((ref) async {
   final service = APIStateNetwork(await createDio());

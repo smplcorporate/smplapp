@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -621,7 +623,7 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                                                 applyBtnLoder = false;
                                                 coupnApplyed = true;
                                               });
-
+                                              log("testing1");
                                               Fluttertoast.showToast(
                                                 msg:
                                                     response
@@ -634,6 +636,7 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                                               setState(() {
                                                 applyBtnLoder = false;
                                               });
+                                              log("testing2");
                                               Fluttertoast.showToast(
                                                 msg:
                                                     response

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -382,6 +384,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                             applyBtnLoder = false;
                                             coupnApplyed = true;
                                           });
+                                          log("Trsing1");
 
                                           Fluttertoast.showToast(
                                             msg:
@@ -394,7 +397,9 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                         } else {
                                           setState(() {
                                             applyBtnLoder = false;
+                                            _controller.clear();
                                           });
+                                          log("Trsing2");
                                           Fluttertoast.showToast(
                                             msg:
                                                 response
