@@ -180,244 +180,245 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Bottom Container with Fixed Height and Width
-            Container(
-              height: 530,
-              width: 395,
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade200,
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                children: [
-                  ListTile(
-                    leading: const Icon(
-                      Icons.person,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
+            Expanded(
+              child: Container(
+               
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade200,
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
                     ),
-                    title: Text(
-                      "My Profile",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                  ],
+                ),
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  children: [
+                    ListTile(
+                      leading: const Icon(
+                        Icons.person,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
                       ),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MyProfileScreen(),
+                      title: Text(
+                        "My Profile",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.badge_outlined,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
-                    ),
-                    title: Text(
-                      "KYC",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyProfileScreen(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => KYCVerificationScreen(),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.badge_outlined,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
+                      ),
+                      title: Text(
+                        "KYC",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.history,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
-                    ),
-                    title: Text(
-                      "Transaction History",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => KYCVerificationScreen(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TransactionPage(),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.history,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
+                      ),
+                      title: Text(
+                        "Transaction History",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                      );
-                    },
-                  ),
-                  // My Commission tile added here
-                  ListTile(
-                    leading: const Icon(
-                      Icons.trending_up,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
-                    ),
-                    title: Text(
-                      "My Commission",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TransactionPage(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MyCommissionPage(),
+                    // My Commission tile added here
+                    ListTile(
+                      leading: const Icon(
+                        Icons.trending_up,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
+                      ),
+                      title: Text(
+                        "My Commission",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.card_giftcard,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
-                    ),
-                    title: Text(
-                      "Cashback & Offers",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyCommissionPage(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CashbackOffersPage(),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.card_giftcard,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
+                      ),
+                      title: Text(
+                        "Cashback & Offers",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.notifications,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
-                    ),
-                    title: Text(
-                      "Notification",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CashbackOffersPage(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationScreen2(),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.notifications,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
+                      ),
+                      title: Text(
+                        "Notification",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.help,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
-                    ),
-                    title: Text(
-                      "Help & Support",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificationScreen2(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HelpSupportPage(),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.help,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
+                      ),
+                      title: Text(
+                        "Help & Support",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.settings,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
-                    ),
-                    title: Text(
-                      "Setting",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HelpSupportPage(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SettingsPage()),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  const Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Color.fromARGB(255, 241, 241, 241),
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.logout,
-                      size: 30,
-                      color: Color.fromARGB(255, 68, 128, 106),
-                    ),
-                    title: Text(
-                      "Logout",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black, 
+                    ListTile(
+                      leading: const Icon(
+                        Icons.settings,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
                       ),
+                      title: Text(
+                        "Setting",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SettingsPage()),
+                        );
+                      },
                     ),
-                    onTap: () async {
-                     
-                      final api = APIStateNetwork(await createDio());
-                      final respone = api.logout(IpAddressRequest(ipAddress: "127.0.0.1"));
-                       final box = Hive.box("userdata");
-                      await box.clear();
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        CupertinoPageRoute(builder: (context) => PaymentIntroScreen()),
-                        (route) => false,
-                      );
-                      // Add logout logic here
-                    },
-                  ),
-                ],
+                    const SizedBox(height: 15),
+                    const Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Color.fromARGB(255, 241, 241, 241),
+                    ),
+                    const SizedBox(height: 10),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.logout,
+                        size: 30,
+                        color: Color.fromARGB(255, 68, 128, 106),
+                      ),
+                      title: Text(
+                        "Logout",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, 
+                        ),
+                      ),
+                      onTap: () async {
+                       
+                        final api = APIStateNetwork(await createDio());
+                        final respone = api.logout(IpAddressRequest(ipAddress: "127.0.0.1"));
+                         final box = Hive.box("userdata");
+                        await box.clear();
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          CupertinoPageRoute(builder: (context) => PaymentIntroScreen()),
+                          (route) => false,
+                        );
+                        // Add logout logic here
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

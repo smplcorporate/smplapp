@@ -1,4 +1,3 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,7 +6,7 @@ import 'package:home/data/controller/electirtyBiller.provider.dart';
 import 'package:home/data/model/electritysityModel.dart';
 import 'package:home/screen/eletercitybill.dart';
 import 'package:home/screen/home_page.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:home/screen/order.details.page.dart';
 
 // Search query provider
 final searchQueryProvider = StateProvider.autoDispose<String>((ref) => '');
@@ -91,11 +90,7 @@ class _BillerState extends ConsumerState<Biller> {
                 ),
               ),
 
-              // Search bar
-
-              // Section label
-
-              // List of billers
+      
               electricityProvider.when(
                 data: (snapshot) {
                   final filteredList =
@@ -199,7 +194,6 @@ class _BillerState extends ConsumerState<Biller> {
                                   );
                                 }
                               }
-
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: buttonColor,
@@ -407,7 +401,6 @@ class _BillerState extends ConsumerState<Biller> {
 
                         SizedBox(height: 16),
 
-                        // List with smooth scrolling and animation
                         Container(
                           constraints: BoxConstraints(
                             maxHeight:
@@ -522,7 +515,7 @@ class _BillerState extends ConsumerState<Biller> {
                                   ),
                         ),
 
-                        // Close Button with custom color and increased width
+
                         Padding(
                           padding: const EdgeInsets.all(16),
                           child: ElevatedButton(
@@ -556,7 +549,7 @@ class _BillerState extends ConsumerState<Biller> {
         );
       },
     ).whenComplete(() {
-      // Dispose of the controller after the bottom sheet is closed
+
       searchController.dispose();
     });
   }
@@ -569,96 +562,107 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: Colors.white,
-      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Transaction Logo
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                transaction.transLogo,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (context, error, stackTrace) =>
-                        Icon(Icons.error, size: 50, color: Colors.grey),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => PaymentDetailsScreen(trnxId: '${transaction.transId}'),
+          ),
+        );
+      },
+      child: Card(
+        elevation: 0,
+        color: Colors.white,
+        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Transaction Logo
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  transaction.transLogo,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (context, error, stackTrace) =>
+                          Icon(Icons.error, size: 50, color: Colors.grey),
+                ),
               ),
-            ),
-            SizedBox(width: 16),
-            // Transaction Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    transaction.serviceProvider,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Date: ${transaction.transDate}',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
-
-                  SizedBox(height: 4),
-                  Text(
-                    'Account: ${transaction.serviceAccount}',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '₹${transaction.transAmount}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+              SizedBox(width: 16),
+              // Transaction Details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      transaction.serviceProvider,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              transaction.transStatus == 'SUCCESS'
-                                  ? Colors.green[100]
-                                  : Colors.red[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          transaction.transStatus,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Last Paid: ${transaction.transDate}',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+
+                    SizedBox(height: 4),
+                    Text(
+                      '${transaction.serviceAccount}',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '₹${transaction.transAmount}',
                           style: TextStyle(
-                            fontSize: 12,
-                            color:
-                                transaction.transStatus == 'SUCCESS'
-                                    ? Colors.green[800]
-                                    : Colors.red[800],
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                transaction.transStatus == 'SUCCESS'
+                                    ? Colors.green[100]
+                                    : Colors.red[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            transaction.transStatus,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  transaction.transStatus == 'SUCCESS'
+                                      ? Colors.green[800]
+                                      : Colors.red[800],
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

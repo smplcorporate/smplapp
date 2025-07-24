@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/data/controller/watterBillers.provider.dart';
 import 'package:home/data/model/electritysityModel.dart';
@@ -22,254 +23,258 @@ class WaterBill extends ConsumerStatefulWidget {
 }
 
 class _WaterBillState extends ConsumerState<WaterBill> {
+  final Color buttonColor = const Color.fromARGB(255, 68, 128, 106);
   String searchQuery = '';
-
+  String billerName = '';
+  String billerCode = '';
+  String circleCode = '';
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-
+    final scale = width / 375;
     final watterBiller = ref.watch(wattersBillerProvider);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 232, 243, 235),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(width * 0.5),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 232, 243, 235),
-            ),
-          ),
-          title: Padding(
-            padding: EdgeInsets.only(top: width * 0.03),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      if (Navigator.of(context).canPop()) {
-                        Navigator.pop(context);
-                      } else {
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Header
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.04,
+                  vertical: width * 0.04,
+                ),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => HomePage(),
-                          ), // fallback
+                          MaterialPageRoute(builder: (context) => HomePage()),
                         );
-                      }
-                    },
-                    child: Container(
-                      height: width * 0.1,
-                      width: width * 0.1,
-                      padding: EdgeInsets.all(width * 0.01),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new,
-                        color: Colors.black,
-                        size: width * 0.05,
-                      ),
-                    ),
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    'Select Provider',
-                    style: GoogleFonts.inter(
-                      color: Colors.black,
-                      fontSize: width * 0.045,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(width * 0.2),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                width * 0.04,
-                0,
-                width * 0.04,
-                width * 0.05,
-              ),
-              child: SizedBox(
-                height: width * 0.15,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search by Biller',
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: width * 0.05,
-                      vertical: width * 0.04,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      searchQuery = value;
-                    });
-                  },
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      body: watterBiller.when(
-        data: (snap) {
-          // Filter list using searchQuery
-          final filteredBillers =
-              snap.billersList.where((biller) {
-                return biller.billerName.toLowerCase().contains(
-                  searchQuery.toLowerCase(),
-                );
-              }).toList();
-
-          return SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: width * 0.05),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (snap.oldBills.isNotEmpty)
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width * 0.05,
-                      vertical: width * 0.025,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Olds Bills',
-                        style: GoogleFonts.inter(
-                          fontSize: width * 0.04,
-                          fontWeight: FontWeight.w500,
+                      },
+                      child: Container(
+                        height: width * 0.1,
+                        width: width * 0.1,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: width * 0.05,
+                          color: Colors.black,
                         ),
                       ),
                     ),
-                  ),
-                if (snap.oldBills.isNotEmpty)
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(
-                      bottom: width * 0.05,
-                      right: width * 0.02,
-                      left: width * 0.02,
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'Water Bill',
+                          style: GoogleFonts.inter(
+                            fontSize: width * 0.045,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
                     ),
-                    itemCount: snap.oldBills.length > 3 ? 2 : 1,
-                    itemBuilder: (context, index) {
-                      final transaction = snap.oldBills[index];
-                      return TransactionCard(transaction: transaction);
-                    },
-                  ),
-                Padding(
-                  padding: const EdgeInsets.all(9.0),
-                  child: Card(
-                    color: Colors.white,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
+                    SizedBox(width: width * 0.1),
+                  ],
+                ),
+              ),
+
+              watterBiller.when(
+                data: (snapshot) {
+                  final filteredList =
+                      snapshot.billersList
+                          .where(
+                            (biller) => biller.billerName
+                                .toLowerCase()
+                                .contains(searchQuery.toLowerCase()),
+                          )
+                          .toList();
+
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (snapshot.circleList != null) ...[
+                        SizedBox(height: 30.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: width * 0.03,
+                          ),
+                          child: BillerCircleDropDown(
+                            billers: snapshot.circleList!,
+                            callBack: (value) {
+                              circleCode = value.circleId;
+                            },
+                          ),
+                        ),
+                      ],
+
+                      SizedBox(height: 5.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: width * 0.03),
+                        child: CustomSearchableDropdown(
+                          billers: snapshot.billersList,
+                          callBack: (value) {
+                            billerCode = value.billerCode;
+                            billerName = value.billerName;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Container(
+                        color: Color.fromARGB(255, 232, 243, 235),
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0 * scale),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (snapshot.isCircle == false) {
+                                if (billerCode != "" && billerName != "") {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder:
+                                  //         (_) => Eletercitybill(
+                                  //           circleCode: circleCode,
+                                  //           billerName: '${billerName}',
+                                  //           billerCode: '${billerCode}',
+                                  //         ),
+                                  //   ),
+                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => WaterBill2(
+                                            circleId: circleCode,
+                                            billerName: '${billerName}',
+                                            billerCode: '${billerCode}',
+                                          ),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                        "Select Provider",
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                if (billerCode != "" &&
+                                    billerName != "" &&
+                                    circleCode != "") {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder:
+                                  //         (_) => Eletercitybill(
+                                  //           circleCode: circleCode,
+                                  //           billerName: '${billerName}',
+                                  //           billerCode: '${billerCode}',
+                                  //         ),
+                                  //   ),
+                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => WaterBill2(
+                                            circleId: circleCode,
+                                            billerName: '${billerName}',
+                                            billerCode: '${billerCode}',
+                                          ),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                        "Select Provider & Circle",
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: buttonColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25 * scale),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                vertical: 14 * scale,
+                              ),
+                              minimumSize: Size(double.infinity, 45 * scale),
+                            ),
+                            child: Text(
+                              'Continue',
+                              style: GoogleFonts.inter(
+                                fontSize: 18 * scale,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      if (snapshot.oldBills.isNotEmpty)
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: width * 0.05,
                             vertical: width * 0.025,
                           ),
-                          child: Text(
-                            'Billers',
-                            style: GoogleFonts.inter(
-                              fontSize: width * 0.04,
-                              fontWeight: FontWeight.w500,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Recent Bills',
+                              style: GoogleFonts.inter(
+                                fontSize: width * 0.04,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
+                      if (snapshot.oldBills.isNotEmpty)
                         ListView.builder(
-                          shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: filteredBillers.length,
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(
+                            bottom: width * 0.05,
+                            right: width * 0.02,
+                            left: width * 0.02,
+                          ),
+                          itemCount: snapshot.oldBills.length > 3 ? 2 : 1,
                           itemBuilder: (context, index) {
-                            final biller = filteredBillers[index];
-                            return Column(
-                              children: [
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.water_drop_outlined,
-                                    size: width * 0.08,
-                                  ),
-                                  title: Text(
-                                    biller.billerName,
-                                    style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: width * 0.032,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    
-                                    if (snap.circleList != null) {
-                                      showCircleBottomSheet(
-                                        context,
-                                        snap.circleList!,
-                                        (selectedCircle) {
-                                          
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (_) => WaterBill2(
-                                                    circleId:
-                                                        selectedCircle.circleId,
-                                                    billerName:
-                                                        '${biller.billerName}',
-                                                    billerCode:
-                                                        '${biller.billerCode}',
-                                                  ),
-                                            ),
-                                          );
-                                          // handle selection
-                                        },
-                                        biller.billerName
-                                      );
-                                    }
-                                  },
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: width * 0.05,
-                                  ),
-                                  child: const Divider(
-                                    color: Color.fromARGB(255, 221, 221, 221),
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ],
-                            );
+                            final transaction = snapshot.oldBills[index];
+                            return TransactionCard(transaction: transaction);
                           },
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-        error: (err, stack) {
-          return Center(child: Text("Something went wrong"));
-        },
-        loading: () => Center(child: CircularProgressIndicator()),
+                    ],
+                  );
+                },
+                error: (err, stack) {
+                  return Center(child: Text("$err, $stack"));
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -556,3 +561,255 @@ void showCircleBottomSheet(
     searchController.dispose();
   });
 }
+
+
+
+
+
+
+
+
+
+// Scaffold(
+//       backgroundColor: const Color.fromARGB(255, 232, 243, 235),
+//       appBar: PreferredSize(
+//         preferredSize: Size.fromHeight(width * 0.5),
+//         child: AppBar(
+//           automaticallyImplyLeading: false,
+//           backgroundColor: Colors.transparent,
+//           elevation: 0,
+//           flexibleSpace: Container(
+//             decoration: const BoxDecoration(
+//               color: Color.fromARGB(255, 232, 243, 235),
+//             ),
+//           ),
+//           title: Padding(
+//             padding: EdgeInsets.only(top: width * 0.03),
+//             child: Stack(
+//               alignment: Alignment.center,
+//               children: [
+//                 Align(
+//                   alignment: Alignment.centerLeft,
+//                   child: GestureDetector(
+//                     onTap: () {
+//                       if (Navigator.of(context).canPop()) {
+//                         Navigator.pop(context);
+//                       } else {
+//                         Navigator.pushReplacement(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (_) => HomePage(),
+//                           ), // fallback
+//                         );
+//                       }
+//                     },
+//                     child: Container(
+//                       height: width * 0.1,
+//                       width: width * 0.1,
+//                       padding: EdgeInsets.all(width * 0.01),
+//                       decoration: const BoxDecoration(
+//                         color: Colors.white,
+//                         shape: BoxShape.circle,
+//                       ),
+//                       child: Icon(
+//                         Icons.arrow_back_ios_new,
+//                         color: Colors.black,
+//                         size: width * 0.05,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 Center(
+//                   child: Text(
+//                     'Select Provider',
+//                     style: GoogleFonts.inter(
+//                       color: Colors.black,
+//                       fontSize: width * 0.045,
+//                       fontWeight: FontWeight.bold,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           bottom: PreferredSize(
+//             preferredSize: Size.fromHeight(width * 0.2),
+//             child: Padding(
+//               padding: EdgeInsets.fromLTRB(
+//                 width * 0.04,
+//                 0,
+//                 width * 0.04,
+//                 width * 0.05,
+//               ),
+//               child: SizedBox(
+//                 height: width * 0.15,
+//                 child: TextField(
+//                   decoration: InputDecoration(
+//                     hintText: 'Search by Biller',
+//                     prefixIcon: const Icon(Icons.search),
+//                     filled: true,
+//                     fillColor: Colors.white,
+//                     contentPadding: EdgeInsets.symmetric(
+//                       horizontal: width * 0.05,
+//                       vertical: width * 0.04,
+//                     ),
+//                     border: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(15),
+//                       borderSide: BorderSide.none,
+//                     ),
+//                   ),
+//                   onChanged: (value) {
+//                     setState(() {
+//                       searchQuery = value;
+//                     });
+//                   },
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//       body: watterBiller.when(
+//         data: (snap) {
+//           // Filter list using searchQuery
+//           final filteredBillers =
+//               snap.billersList.where((biller) {
+//                 return biller.billerName.toLowerCase().contains(
+//                   searchQuery.toLowerCase(),
+//                 );
+//               }).toList();
+
+//           return SingleChildScrollView(
+//             padding: EdgeInsets.only(bottom: width * 0.05),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 if (snap.oldBills.isNotEmpty)
+//                   Padding(
+//                     padding: EdgeInsets.symmetric(
+//                       horizontal: width * 0.05,
+//                       vertical: width * 0.025,
+//                     ),
+//                     child: Align(
+//                       alignment: Alignment.centerLeft,
+//                       child: Text(
+//                         'Olds Bills',
+//                         style: GoogleFonts.inter(
+//                           fontSize: width * 0.04,
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 if (snap.oldBills.isNotEmpty)
+//                   ListView.builder(
+//                     physics: const NeverScrollableScrollPhysics(),
+//                     shrinkWrap: true,
+//                     padding: EdgeInsets.only(
+//                       bottom: width * 0.05,
+//                       right: width * 0.02,
+//                       left: width * 0.02,
+//                     ),
+//                     itemCount: snap.oldBills.length > 3 ? 2 : 1,
+//                     itemBuilder: (context, index) {
+//                       final transaction = snap.oldBills[index];
+//                       return TransactionCard(transaction: transaction);
+//                     },
+//                   ),
+//                 Padding(
+//                   padding: const EdgeInsets.all(9.0),
+//                   child: Card(
+//                     color: Colors.white,
+//                     child: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       mainAxisAlignment: MainAxisAlignment.start,
+//                       children: [
+//                         Padding(
+//                           padding: EdgeInsets.symmetric(
+//                             horizontal: width * 0.05,
+//                             vertical: width * 0.025,
+//                           ),
+//                           child: Text(
+//                             'Billers',
+//                             style: GoogleFonts.inter(
+//                               fontSize: width * 0.04,
+//                               fontWeight: FontWeight.w500,
+//                             ),
+//                           ),
+//                         ),
+//                         ListView.builder(
+//                           shrinkWrap: true,
+//                           physics: const NeverScrollableScrollPhysics(),
+//                           itemCount: filteredBillers.length,
+//                           itemBuilder: (context, index) {
+//                             final biller = filteredBillers[index];
+//                             return Column(
+//                               children: [
+//                                 ListTile(
+//                                   leading: Icon(
+//                                     Icons.water_drop_outlined,
+//                                     size: width * 0.08,
+//                                   ),
+//                                   title: Text(
+//                                     biller.billerName,
+//                                     style: GoogleFonts.inter(
+//                                       fontWeight: FontWeight.w400,
+//                                       fontSize: width * 0.032,
+//                                     ),
+//                                   ),
+//                                   onTap: () {
+                                    
+//                                     if (snap.circleList != null) {
+//                                       showCircleBottomSheet(
+//                                         context,
+//                                         snap.circleList!,
+//                                         (selectedCircle) {
+                                          
+//                                           Navigator.push(
+//                                             context,
+//                                             MaterialPageRoute(
+//                                               builder:
+//                                                   (_) => WaterBill2(
+//                                                     circleId:
+//                                                         selectedCircle.circleId,
+//                                                     billerName:
+//                                                         '${biller.billerName}',
+//                                                     billerCode:
+//                                                         '${biller.billerCode}',
+//                                                   ),
+//                                             ),
+//                                           );
+//                                           // handle selection
+//                                         },
+//                                         biller.billerName
+//                                       );
+//                                     }
+//                                   },
+//                                 ),
+//                                 Padding(
+//                                   padding: EdgeInsets.symmetric(
+//                                     horizontal: width * 0.05,
+//                                   ),
+//                                   child: const Divider(
+//                                     color: Color.fromARGB(255, 221, 221, 221),
+//                                     thickness: 1,
+//                                   ),
+//                                 ),
+//                               ],
+//                             );
+//                           },
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           );
+//         },
+//         error: (err, stack) {
+//           return Center(child: Text("Something went wrong"));
+//         },
+//         loading: () => Center(child: CircularProgressIndicator()),
+//       ),
+//     )

@@ -63,7 +63,6 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final scale = screenWidth / 375;
-
     final fetchBillerData = ref.watch(fetchBillDataProvider(fetchRequest));
     final String formattedDate = DateFormat(
       'dd-MM-yyyy',
