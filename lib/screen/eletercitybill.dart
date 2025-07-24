@@ -586,7 +586,8 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                                             _amountController.text
                                                 .trim()
                                                 .isNotEmpty) {
-                                          if (coupnApplyed == false) {
+                                          if(_parm1Controller.text.trim().isNotEmpty){
+                                           if (coupnApplyed == false) {
                                             setState(() {
                                               applyBtnLoder = true;
                                             });
@@ -652,6 +653,9 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                                               coupnApplyed = false;
                                               _controller.clear();
                                             });
+                                          }
+                                          }else{
+                                            Fluttertoast.showToast(msg: "First Parameter is required to apply coupon", backgroundColor: Colors.black, textColor: Colors.white);
                                           }
                                         } else {
                                           Fluttertoast.showToast(
