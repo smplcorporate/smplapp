@@ -635,6 +635,7 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
                                             } else {
                                               setState(() {
                                                 applyBtnLoder = false;
+                                                _controller.clear();
                                               });
                                               log("testing2");
                                               Fluttertoast.showToast(
