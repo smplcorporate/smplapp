@@ -15,3 +15,4 @@ final electricityBillerProvider = FutureProvider<ElectricityModel>((ref) async {
   );
   return data.data;
 });
+

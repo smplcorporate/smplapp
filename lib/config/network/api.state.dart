@@ -65,7 +65,7 @@ abstract class APIStateNetwork {
     @Body() ElectricityBody body,
   );
   @POST('bbps/b2c_bills_loanrepayment/get_billers')
-  Future<HttpResponse<LoanRepaymentResponse>> getLoanRepaymentBillers(
+  Future<HttpResponse<ElectricityModel>> getLoanRepaymentBillers(
     @Body() ElectricityBody body,
   );
   @POST('recharges/b2c_prepaid_mobile/get_billers')

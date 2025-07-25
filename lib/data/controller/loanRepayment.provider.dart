@@ -5,7 +5,7 @@ import 'package:home/data/model/electritysityModel.dart';
 import 'package:home/data/model/lic.res.dart';
 import 'package:home/data/model/loadRepayment.res.dart';
 
-final loanRepaynentProvider = FutureProvider<LoanRepaymentResponse>((ref) async {
+final loanRepaynentProvider = FutureProvider<ElectricityModel>((ref) async {
   final service = APIStateNetwork(await createDio());
   final data = await service.getLoanRepaymentBillers(
     ElectricityBody(

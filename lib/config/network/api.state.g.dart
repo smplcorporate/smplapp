@@ -184,7 +184,7 @@ class _APIStateNetwork implements APIStateNetwork {
   }
 
   @override
-  Future<HttpResponse<LoanRepaymentResponse>> getLoanRepaymentBillers(
+  Future<HttpResponse<ElectricityModel>> getLoanRepaymentBillers(
     ElectricityBody body,
   ) async {
     final _extra = <String, dynamic>{};
@@ -192,7 +192,7 @@ class _APIStateNetwork implements APIStateNetwork {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
-    final _options = _setStreamType<HttpResponse<LoanRepaymentResponse>>(
+    final _options = _setStreamType<HttpResponse<ElectricityModel>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -203,9 +203,9 @@ class _APIStateNetwork implements APIStateNetwork {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late LoanRepaymentResponse _value;
+    late ElectricityModel _value;
     try {
-      _value = LoanRepaymentResponse.fromJson(_result.data!);
+      _value = ElectricityModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

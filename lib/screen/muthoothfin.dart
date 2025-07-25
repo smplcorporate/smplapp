@@ -5,7 +5,7 @@ import 'package:home/screen/muthootfin2.dart'; // Ensure this file exists
 class MuthootFinScreen extends StatefulWidget {
   final String billerName;
   final String billerCode;
-  const MuthootFinScreen({super.key, required String accountNumber, required this.billerName, required this.billerCode});
+  const MuthootFinScreen({super.key, required String circleCode, required this.billerName, required this.billerCode});
 
   @override
   State<MuthootFinScreen> createState() => _MuthootFinScreenState();
