@@ -2,12 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/model/electritysityModel.dart';
+import 'package:home/data/model/lic.res.dart';
 
-
-
-final fastTagProvider = FutureProvider<ElectricityModel>((ref) async {
+final pipGasProvider = FutureProvider<ElectricityModel>((ref) async {
   final service = APIStateNetwork(await createDio());
-  final data = await service.getFastTagBillers(
+  final data = await service.getPipeGasBillers(
     ElectricityBody(
       ipAddress: "152.59.109.59",
       macAddress:  "not found",

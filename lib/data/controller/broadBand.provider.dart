@@ -3,11 +3,9 @@ import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/model/electritysityModel.dart';
 
-
-
-final fastTagProvider = FutureProvider<ElectricityModel>((ref) async {
+final broadbandProvider = FutureProvider<ElectricityModel>((ref) async {
   final service = APIStateNetwork(await createDio());
-  final data = await service.getFastTagBillers(
+  final data = await service.getBroadBandBillers(
     ElectricityBody(
       ipAddress: "152.59.109.59",
       macAddress:  "not found",
@@ -17,3 +15,4 @@ final fastTagProvider = FutureProvider<ElectricityModel>((ref) async {
   );
   return data.data;
 });
+

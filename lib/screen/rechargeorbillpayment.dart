@@ -7,6 +7,8 @@ import 'package:home/screen/lender2.dart';
 import 'package:home/screen/lic insurance.dart';
 import 'package:home/screen/rechargebill.dart';
 import 'package:home/screen/selectgas.dart';
+import 'package:home/screen/summerysPages/boardBand.page.dart';
+import 'package:home/screen/summerysPages/pipeGas.page.dart';
 import 'package:home/screen/waterbill1.dart';
 
 
@@ -172,7 +174,7 @@ class SectionWidget extends StatelessWidget {
                     } else if (item.label == "Electricity Bill") {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => Biller()));
                     } else if (item.label == "Insurance / LIC") {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => LoanAccountScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => InusrencePage()));
                     } else if (item.label == "Loan/EMI Payment") {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => LenderSelectionScreen()));
                     } else if (item.label == "Water Bill") {
@@ -181,7 +183,11 @@ class SectionWidget extends StatelessWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => SelectGasProviderScreen()));
                     }  else if (item.label == "FASTag Recharge") {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => FastagScreen()));
-                    } 
+                    } else if(item.label == "Piped Gas"){
+                       Navigator.push(context, MaterialPageRoute(builder: (_) => PipeGasPage()));
+                    } else if(item.label == "Broadband Landline"){
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => BoardBansPage()));
+                    }
                     else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Tapped on ${item.label}")),

@@ -61,11 +61,19 @@ abstract class APIStateNetwork {
     @Body() ElectricityBody body,
   );
   @POST('bbps/b2c_bills_Insurance/get_billers')
-  Future<HttpResponse<LicModelResponse>> getLicBillers(
+  Future<HttpResponse<ElectricityModel>> getLicBillers(
+    @Body() ElectricityBody body,
+  );
+  @POST('bbps/b2c_bills_pipedgas/get_billers')
+  Future<HttpResponse<ElectricityModel>> getPipeGasBillers(
     @Body() ElectricityBody body,
   );
   @POST('bbps/b2c_bills_loanrepayment/get_billers')
   Future<HttpResponse<ElectricityModel>> getLoanRepaymentBillers(
+    @Body() ElectricityBody body,
+  );
+  @POST('bbps/b2c_bills_broadband/get_billers')
+  Future<HttpResponse<ElectricityModel>> getBroadBandBillers(
     @Body() ElectricityBody body,
   );
   @POST('recharges/b2c_prepaid_mobile/get_billers')

@@ -184,7 +184,7 @@ class BillingSummaryPage extends StatelessWidget {
                                 Navigator.of(ctx).pop();
                                 Navigator.pushAndRemoveUntil(
                                   context,
-                                  MaterialPageRoute(builder: (_) => LoanAccountScreen()),
+                                  MaterialPageRoute(builder: (_) => InusrencePage()),
                                   (route) => false,
                                 );
                               },

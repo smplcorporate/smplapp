@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -22,6 +24,7 @@ import 'package:home/screen/profile.dart';
 import 'package:home/screen/qrcode.dart';
 import 'package:home/screen/rechargebill.dart';
 import 'package:home/screen/rechargeorbillpayment.dart';
+import 'package:home/screen/summerysPages/fastagBiller.page.dart';
 import 'package:home/screen/wallet.dart';
 import 'package:home/screen/screen2.dart';
 import 'package:home/screen/waterbill1.dart';
@@ -249,7 +252,7 @@ class HomePage extends StatelessWidget {
             } else if (label.contains("lic")) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => LoanAccountScreen()),
+                MaterialPageRoute(builder: (_) => InusrencePage()),
               );
             } else if (label.contains("acount")) {
               Navigator.push(
@@ -277,9 +280,10 @@ class HomePage extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => WaterBill()),
               );
             } else if (label.contains("fastag")) {
+              log("Fastag");
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => FastagScreen()),
+                MaterialPageRoute(builder: (_) => FastTagBillerPage()),
               );
             } else if (label.contains("personal")) {
               Navigator.push(

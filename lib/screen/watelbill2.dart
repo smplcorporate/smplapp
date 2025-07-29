@@ -402,13 +402,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                       .updateParam3(value);
                                 },
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'[a-zA-Z0-9]'),
-                                  ),
-                                  LengthLimitingTextInputFormatter(
-                                    15,
-                                  ), // Enforce length limit
-                                  UpperCaseTextFormatter(),
+                                  
                                 ],
                                 decoration: InputDecoration(
                                   hintText: snap.param3.name,

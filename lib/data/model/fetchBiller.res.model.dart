@@ -11,7 +11,7 @@ class FetchResponseModel {
   final String statusDesc;
   final String billerType;
   final String billerName;
-  final String? billAmount;
+   String? billAmount;
   final String? customerName;
   final String billNo;
   final String dueDate;
