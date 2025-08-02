@@ -593,7 +593,7 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
                                   await createDio(),
                                 );
                                 final reponse = await service.payNow(
-                                  'b2c_bills_electricity',
+                                  'b2c_bills_water',
                                   PayNowModel(
                                     ipAddress: "152.59.109.59",
                                     macAddress: "not found",
@@ -616,7 +616,7 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
                                         snap.returnTransid.toString(),
                                     returnFetchid: snap.returnFetchid,
                                     returnBillid: snap.returnBillid,
-                                    couponCode: "${_controller.text.trim()}",
+                                       couponCode: coupnApplyed == true?  _controller.text.trim() : "",
                                     userMpin: "${_mpinControllr.text}",
                                   ),
                                 );

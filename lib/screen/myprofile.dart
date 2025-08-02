@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -32,9 +34,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
   }
 
   void _selectGender(String gender) {
-    setState(() {
-      _selectedGender = gender;
-    });
+    ref.read(stringNotifierProvider.notifier).update(gender);
   }
 
   void _viewFullImage() {
@@ -63,7 +63,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
   }
 
   Widget genderOption(String gender) {
-    bool isSelected = _selectedGender == gender;
+    final genderSelected = ref.watch(stringNotifierProvider);
+    bool isSelected = genderSelected == gender;
     return Expanded(
       child: GestureDetector(
         onTap: () => _selectGender(gender),
@@ -106,29 +107,87 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
   }
 
   bool btnLoder = false;
-  final firstName = TextEditingController(text: "");
-  final lastName = TextEditingController(text: "");
-  final dobController = TextEditingController(text: "");
+  late final TextEditingController firstName;
+  late final TextEditingController lastName;
+  late final TextEditingController dobController;
+  late final TextEditingController addressController;
+  late final TextEditingController mobileNumber;
+  late final TextEditingController emailController;
+  late final TextEditingController adharController;
+  late final TextEditingController panNo;
 
-  final addressController = TextEditingController(text: "");
-  final mobileNumber = TextEditingController(text: "");
-  final emailController = TextEditingController(text: "");
-  final adharController = TextEditingController(text: "");
-  final panNo = TextEditingController(text: "");
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize all controllers
+    firstName = TextEditingController();
+    lastName = TextEditingController();
+    dobController = TextEditingController();
+    addressController = TextEditingController();
+    mobileNumber = TextEditingController();
+    emailController = TextEditingController();
+    adharController = TextEditingController();
+    panNo = TextEditingController();
+
+    // Load initial data only once
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeFormData();
+    });
+  }
+
+  Future<void> _initializeFormData() async {
+    final profileData = ref.watch(profileprovider).value;
+    if (profileData != null ) {
+      log(profileData.userDetails.firstName.toString());
+      setState(() {
+        firstName.text = profileData.userDetails.firstName;
+        lastName.text = profileData.userDetails.lastName;
+        dobController.text = profileData.userDetails.dateOfBirth;
+        addressController.text = profileData.userDetails.address;
+        mobileNumber.text = profileData.userDetails.mobileNo;
+        emailController.text = profileData.userDetails.emailId;
+        adharController.text = profileData.userDetails.aadhaarNo;
+        panNo.text = profileData.userDetails.panNo;
+
+        // Initialize gender
+        ref
+            .read(stringNotifierProvider.notifier)
+            .update(profileData.userDetails.gender ?? 'M');
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    // Clean up all controllers
+    firstName.dispose();
+    lastName.dispose();
+    dobController.dispose();
+    addressController.dispose();
+    mobileNumber.dispose();
+    emailController.dispose();
+    adharController.dispose();
+    panNo.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(profileprovider);
-    data.whenData((value){
-      firstName.text = value.userDetails.firstName;
-      lastName.text = value.userDetails.lastName;
-      dobController.text = value.userDetails.dateOfBirth;
-      addressController.text = value.userDetails.address;
-      mobileNumber.text = value.userDetails.mobileNo;
-      emailController.text = value.userDetails.emailId;
-      adharController.text = value.userDetails.aadhaarNo;
-      panNo.text = value.userDetails.panNo;
-    });
+    // data.whenData((value) {
+    //   firstName.text = value.userDetails.firstName;
+    //   lastName.text = value.userDetails.lastName;
+    //   dobController.text = value.userDetails.dateOfBirth;
+    //   addressController.text = value.userDetails.address;
+    //   mobileNumber.text = value.userDetails.mobileNo;
+    //   emailController.text = value.userDetails.emailId;
+    //   adharController.text = value.userDetails.aadhaarNo;
+    //   panNo.text = value.userDetails.panNo;
+    // });
+    final genderSelected = ref.watch(stringNotifierProvider);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 236, 226),
       body: data.when(
@@ -301,8 +360,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border:
                                     OutlineInputBorder(), // Fallback default
                               ),
-                              validator: (value){
-                                if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
                               },
@@ -332,8 +391,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border:
                                     OutlineInputBorder(), // Fallback default
                               ),
-                              validator: (value){
-                                if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
                               },
@@ -363,8 +422,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border:
                                     OutlineInputBorder(), // Fallback default
                               ),
-                              validator: (value){
-                                if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
                               },
@@ -414,8 +473,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border:
                                     OutlineInputBorder(), // Fallback default
                               ),
-                              validator: (value){
-                                if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
                               },
@@ -444,8 +503,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border:
                                     OutlineInputBorder(), // Fallback default
                               ),
-                              validator: (value){
-                                if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
                               },
@@ -474,8 +533,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border:
                                     OutlineInputBorder(), // Fallback default
                               ),
-                              validator: (value){
-                                if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
                               },
@@ -515,8 +574,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border:
                                     OutlineInputBorder(), // Fallback default
                               ),
-                              validator: (value){
-                                if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
                               },
@@ -546,8 +605,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border:
                                     OutlineInputBorder(), // Fallback default
                               ),
-                              validator: (value){
-                                if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
                               },
@@ -577,7 +636,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                               ipAddress: "152.59.109.59",
                                               firstName: firstName.text,
                                               lastName: lastName.text,
-                                              gender: _selectedGender!,
+                                              gender: genderSelected,
                                               dateOfBirth: dobController.text,
                                               emailId: emailController.text,
                                               aadhaarNo: int.parse(
@@ -695,3 +754,18 @@ class BoolStateNotifier extends StateNotifier<bool> {
 final boolStateProvider = StateNotifierProvider<BoolStateNotifier, bool>(
   (ref) => BoolStateNotifier(),
 );
+
+// StateNotifier which manages a String state
+class StringNotifier extends StateNotifier<String> {
+  StringNotifier() : super('M');
+
+  void update(String newValue) {
+    state = newValue;
+  }
+}
+
+final stringNotifierProvider = StateNotifierProvider<StringNotifier, String>((
+  ref,
+) {
+  return StringNotifier();
+});

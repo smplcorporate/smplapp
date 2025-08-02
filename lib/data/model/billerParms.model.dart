@@ -19,12 +19,12 @@ class BillerParamResponse {
     Param param1;
     bool isParam2;
     Param param2;
-    bool isParam3;
-    Param param3;
-    bool isParam4;
-    Param param4;
-    bool isParam5;
-    Param param5;
+    bool? isParam3;
+    Param? param3;
+    bool? isParam4;
+    Param? param4;
+    bool? isParam5;
+    Param? param5;
 
     BillerParamResponse({
         required this.status,
@@ -56,12 +56,12 @@ class BillerParamResponse {
         param1: Param.fromJson(json["param1"]),
         isParam2: json["is_param2"],
         param2: Param.fromJson(json["param2"]),
-        isParam3: json["is_param3"],
-        param3: Param.fromJson(json["param3"]),
-        isParam4: json["is_param4"],
-        param4: Param.fromJson(json["param4"]),
-        isParam5: json["is_param5"],
-        param5: Param.fromJson(json["param5"]),
+        isParam3: json["is_param3"] ?? false,
+        param3: json["param3"]  == null ? null : Param.fromJson(json["param3"]),
+        isParam4: json["is_param4"] ?? false,
+        param4: json["param4"] == null ? null :Param.fromJson(json["param4"]),
+        isParam5: json["is_param5"] ?? false,
+        param5: json["param5"]  == null ? null :Param.fromJson(json["param5"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -76,11 +76,11 @@ class BillerParamResponse {
         "is_param2": isParam2,
         "param2": param2.toJson(),
         "is_param3": isParam3,
-        "param3": param3.toJson(),
+        "param3": param3?.toJson(),
         "is_param4": isParam4,
-        "param4": param4.toJson(),
+        "param4": param4?.toJson(),
         "is_param5": isParam5,
-        "param5": param5.toJson(),
+        "param5": param5?.toJson(),
     };
 }
 

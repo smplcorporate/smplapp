@@ -11,12 +11,9 @@ import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/controller/billerParam.notier.dart';
 import 'package:home/data/controller/fetchBills.provider.dart';
-import 'package:home/data/model/billerParam.model.dart';
 import 'package:home/data/model/billerParms.req.model.dart';
-import 'package:home/data/model/checkCopoun.model.dart';
 import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/data/model/paynow.model.dart';
-import 'package:home/screen/licsumarry.dart';
 import 'package:home/screen/elebillsummary.dart';
 import 'package:home/screen/order.details.page.dart';
 import 'package:home/screen/summerysPages/broadBandSumerry.page.dart' hide UpperCaseTextFormatter;
@@ -166,6 +163,7 @@ class _LoanAccountScreenState extends ConsumerState<BroadBandFormnPage> {
         ),
         body: billerParam.when(
           data: (snap) {
+          
             return SingleChildScrollView(
               child: Container(
                 decoration: const BoxDecoration(
@@ -237,7 +235,116 @@ class _LoanAccountScreenState extends ConsumerState<BroadBandFormnPage> {
                           ),
                         ),
                       ],
-                      
+                      if (snap.isParam2 == true) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color:
+                                  _isValid || _parm2Controller.text.isEmpty
+                                      ? Colors.grey.shade600
+                                      : Colors.red,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _parm2Controller,
+
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp(r'[a-zA-Z0-9]'),
+                                    ),
+                                    LengthLimitingTextInputFormatter(
+                                      15,
+                                    ), // Enforce length limit
+                                    UpperCaseTextFormatter(),
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: snap.param2.name,
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (value) {
+                                    ref
+                                        .read(paramsProvider.notifier)
+                                        .updateParam2(value);
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "This field is required";
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      if (snap.isParam3 == true) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color:
+                                  _isValid || _parm3Controller.text.isEmpty
+                                      ? Colors.grey.shade600
+                                      : Colors.red,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _parm2Controller,
+
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp(r'[a-zA-Z0-9]'),
+                                    ),
+                                    LengthLimitingTextInputFormatter(
+                                      15,
+                                    ), // Enforce length limit
+                                    UpperCaseTextFormatter(),
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: snap.param3?.name,
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (value) {
+                                    ref
+                                        .read(paramsProvider.notifier)
+                                        .updateParam3(value);
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "This field is required";
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                       
                       
                       
@@ -317,7 +424,7 @@ class _LoanAccountScreenState extends ConsumerState<BroadBandFormnPage> {
           returnTransid: "",
           returnFetchid: "",
           returnBillid: "",
-          couponCode: "${_controller.text.trim()}",
+          couponCode: coupnApplyed == true?  _controller.text.trim() : "",
           userMpin: "${_mpinControllr.text}",
         ),
       );

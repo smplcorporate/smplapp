@@ -50,32 +50,35 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
 
   void _submitAccount() {
     final cidCode = _controller.text.trim();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => WaterBill3(
-              body: FetchBodymodel(
-                data: FetchBillModel(
-                  ipAddress: "152.59.109.59",
-                  macAddress: "not found",
-                  latitude: "26.917979",
-                  longitude: "75.814593",
-                  circleCode: widget.circleId,
-                  billerCode: widget.billerCode,
-                  billerName: widget.billerName,
-                  param1: _parm1Controller.text,
-                  param2: _parm2Controller.text,
-                  param3: _parm3Controller.text,
-                  param4: _parm4Controller.text,
-                  param5: _parm5Controller.text,
+    if (_formKey.currentState!.validate()) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => WaterBill3(
+                body: FetchBodymodel(
+                  data: FetchBillModel(
+                    ipAddress: "152.59.109.59",
+                    macAddress: "not found",
+                    latitude: "26.917979",
+                    longitude: "75.814593",
+                    circleCode: widget.circleId,
+                    billerCode: widget.billerCode,
+                    billerName: widget.billerName,
+                    param1: _parm1Controller.text,
+                    param2: _parm2Controller.text,
+                    param3: _parm3Controller.text,
+                    param4: _parm4Controller.text,
+                    param5: _parm5Controller.text,
+                  ),
+                  path: "b2c_bills_water",
                 ),
-                path: "b2c_bills_water",
               ),
-            ),
-      ),
-    );
+        ),
+      );
+    }
   }
+
   void paynow() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -107,7 +110,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
           returnTransid: "",
           returnFetchid: "",
           returnBillid: "",
-          couponCode: "${_controller.text.trim()}",
+          couponCode: coupnApplyed == true ? _controller.text.trim() : "",
           userMpin: "${_mpinControllr.text}",
         ),
       );
@@ -189,6 +192,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
       }
     }
   }
+
   late final FetchBllerParam fetchBillerParam;
   @override
   void initState() {
@@ -264,7 +268,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                           horizontal: 12,
                           vertical: 8,
                         ),
-                
+
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
@@ -282,7 +286,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                             Expanded(
                               child: TextFormField(
                                 controller: _parm1Controller,
-                
+
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
                                     RegExp(r'[a-zA-Z0-9]'),
@@ -336,7 +340,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                             Expanded(
                               child: TextFormField(
                                 controller: _parm2Controller,
-                
+
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "This field is required";
@@ -390,7 +394,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                             Expanded(
                               child: TextFormField(
                                 controller: _parm3Controller,
-                
+
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "This field is required";
@@ -401,11 +405,9 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                       .read(paramsProvider.notifier)
                                       .updateParam3(value);
                                 },
-                                inputFormatters: [
-                                  
-                                ],
+                                inputFormatters: [],
                                 decoration: InputDecoration(
-                                  hintText: snap.param3.name,
+                                  hintText: snap.param3?.name,
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -438,7 +440,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                             Expanded(
                               child: TextFormField(
                                 controller: _parm4Controller,
-                
+
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "This field is required";
@@ -459,7 +461,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                   UpperCaseTextFormatter(),
                                 ],
                                 decoration: InputDecoration(
-                                  hintText: snap.param4.name,
+                                  hintText: snap.param4?.name,
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -492,7 +494,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                             Expanded(
                               child: TextFormField(
                                 controller: _parm5Controller,
-                
+
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "This field is required";
@@ -513,7 +515,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                   UpperCaseTextFormatter(),
                                 ],
                                 decoration: InputDecoration(
-                                  hintText: snap.param5.name,
+                                  hintText: snap.param5?.name,
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -609,7 +611,9 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                           vertical: 14,
                                         ),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                           borderSide: BorderSide(
                                             color:
                                                 isInvalid
@@ -618,7 +622,9 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                           ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                           borderSide: BorderSide(
                                             color:
                                                 isInvalid
@@ -627,7 +633,9 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                           borderSide: BorderSide(
                                             color:
                                                 isInvalid
@@ -689,7 +697,8 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                                         billerName:
                                                             widget.billerName,
                                                         param1:
-                                                            _parm1Controller.text,
+                                                            _parm1Controller
+                                                                .text,
                                                         transAmount:
                                                             double.parse(
                                                               _amountController
@@ -714,7 +723,8 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                                         response
                                                             .response
                                                             .data['status_desc'],
-                                                    backgroundColor: Colors.black,
+                                                    backgroundColor:
+                                                        Colors.black,
                                                     textColor: Colors.white,
                                                   );
                                                 } else {
@@ -728,7 +738,8 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                                         response
                                                             .response
                                                             .data['status_desc'],
-                                                    backgroundColor: Colors.black,
+                                                    backgroundColor:
+                                                        Colors.black,
                                                     textColor: Colors.white,
                                                   );
                                                 }
@@ -756,7 +767,8 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                         }
                                       } else {
                                         Fluttertoast.showToast(
-                                          msg: "${snap.param1.name} is required",
+                                          msg:
+                                              "${snap.param1.name} is required",
                                           backgroundColor: Colors.black,
                                           textColor: Colors.white,
                                         );
@@ -796,7 +808,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                     color: Colors.green,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                
+
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                       left: 6,
@@ -877,7 +889,8 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                       width: double.infinity,
                       height: 60,
                       child: ElevatedButton(
-                        onPressed: snap.fetchOption == true? _submitAccount : paynow,
+                        onPressed:
+                            snap.fetchOption == true ? _submitAccount : paynow,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(
                             255,
@@ -890,7 +903,9 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                           ),
                         ),
                         child: Text(
-                          snap.fetchOption == true? "Process" : "Processd to Pay",
+                          snap.fetchOption == true
+                              ? "Process"
+                              : "Processd to Pay",
                           style: GoogleFonts.inter(
                             fontSize: 20,
                             color: Colors.white,

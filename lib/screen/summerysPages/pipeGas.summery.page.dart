@@ -506,7 +506,7 @@ class _PipeGasSumeryState extends ConsumerState<PipeGasSumery> {
                       Padding(
                         padding: EdgeInsets.only(left: 18.w, right: 18.w),
                         child: TextFormField(
-                            obscureText: true,
+                          obscureText: true,
                           controller: _mpinControllr,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -601,7 +601,10 @@ class _PipeGasSumeryState extends ConsumerState<PipeGasSumery> {
                                         snap.returnTransid.toString(),
                                     returnFetchid: snap.returnFetchid,
                                     returnBillid: snap.returnBillid,
-                                    couponCode: "${_controller.text.trim()}",
+                                    couponCode:
+                                        coupnApplyed == true
+                                            ? _controller.text.trim()
+                                            : "",
                                     userMpin: "${_mpinControllr.text}",
                                   ),
                                 );

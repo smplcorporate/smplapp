@@ -20,6 +20,7 @@ import 'package:home/data/model/mobilePrepaid.res.dart';
 import 'package:home/data/model/mobileplanRes.model.dart';
 import 'package:home/data/model/order.details.body.dart';
 import 'package:home/data/model/orderDetails.res.dart';
+import 'package:home/data/model/orderList.res.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
 import 'package:home/data/model/passwordResponse.dart';
 import 'package:home/data/model/passwordUpdatae.req.dart';
@@ -55,6 +56,10 @@ abstract class APIStateNetwork {
   @POST('bbps/b2c_bills_electricity/get_billers')
   Future<HttpResponse<ElectricityModel>> getElectritcity(
     @Body() ElectricityBody body,
+  );
+  @POST('transactions/b2c_wallet/order_list_bbps')
+  Future<OrderListResponse> getAllOrderList(
+   
   );
   @POST('bbps/b2c_bills_lpg/get_billers')
   Future<HttpResponse<LpgResponseModel>> getGasBillers(

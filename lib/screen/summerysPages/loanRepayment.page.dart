@@ -601,7 +601,7 @@ class _LoanRepaymentSummeryState extends ConsumerState<LoanRepaymentSummery> {
                                         snap.returnTransid.toString(),
                                     returnFetchid: snap.returnFetchid,
                                     returnBillid: snap.returnBillid,
-                                    couponCode: "${_controller.text.trim()}",
+                                      couponCode: coupnApplyed == true?  _controller.text.trim() : "",
                                     userMpin: "${_mpinControllr.text}",
                                   ),
                                 );

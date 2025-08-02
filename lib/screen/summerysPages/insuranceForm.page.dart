@@ -334,7 +334,7 @@ class _LoanAccountScreenState extends ConsumerState<InsuranceFormPage> {
                                     UpperCaseTextFormatter(),
                                   ],
                                   decoration: InputDecoration(
-                                    hintText: snap.param3.name,
+                                    hintText: snap.param3?.name,
                                     border: InputBorder.none,
                                   ),
                                 ),
@@ -388,7 +388,7 @@ class _LoanAccountScreenState extends ConsumerState<InsuranceFormPage> {
                                     UpperCaseTextFormatter(),
                                   ],
                                   decoration: InputDecoration(
-                                    hintText: snap.param4.name,
+                                    hintText: snap.param4?.name,
                                     border: InputBorder.none,
                                   ),
                                 ),
@@ -442,7 +442,7 @@ class _LoanAccountScreenState extends ConsumerState<InsuranceFormPage> {
                                     UpperCaseTextFormatter(),
                                   ],
                                   decoration: InputDecoration(
-                                    hintText: snap.param5.name,
+                                    hintText: snap.param5?.name,
                                     border: InputBorder.none,
                                   ),
                                 ),
@@ -901,7 +901,7 @@ class _LoanAccountScreenState extends ConsumerState<InsuranceFormPage> {
           returnTransid: "",
           returnFetchid: "",
           returnBillid: "",
-          couponCode: "${_controller.text.trim()}",
+         couponCode: coupnApplyed == true?  _controller.text.trim() : "",
           userMpin: "${_mpinControllr.text}",
         ),
       );

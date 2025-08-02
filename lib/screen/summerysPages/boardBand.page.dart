@@ -94,6 +94,7 @@ class _BoardBansPageState extends ConsumerState<BoardBansPage> {
       
               electricityProvider.when(
                 data: (snapshot) {
+             
                   final filteredList =
                       snapshot.billersList
                           .where(
