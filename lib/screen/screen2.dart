@@ -276,37 +276,42 @@ class NoTransactionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-           color: const Color.fromARGB(255, 232, 243, 235),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor:Color.fromARGB(255, 232, 243, 235),
       ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.line_axis_rounded, color: Colors.green.shade900, size: 50,),
-              const SizedBox(height: 20),
-              Text(
-                "No transactions yet",
-                style: GoogleFonts.inter(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+             color: const Color.fromARGB(255, 232, 243, 235),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.line_axis_rounded, color: Colors.green.shade900, size: 50,),
+                const SizedBox(height: 20),
+                Text(
+                  "No transactions yet",
+                  style: GoogleFonts.inter(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "Your transaction history will show up here\nonce you make a payment.",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.grey,
+                const SizedBox(height: 10),
+                Text(
+                  "Your transaction history will show up here\nonce you make a payment.",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -356,7 +356,7 @@ class ProfileScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HelpSupportPage(),
+                            builder: (context) => SupportTicketsPage(),
                           ),
                         );
                       },

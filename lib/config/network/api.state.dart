@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:home/data/model/addwallet_request_pageloadModel.dart';
+import 'package:home/data/model/allTickets.res.dart';
 import 'package:home/data/model/billerParms.model.dart';
 import 'package:home/data/model/billerParms.req.model.dart';
 import 'package:home/data/model/checkCopoun.model.dart';
@@ -58,9 +61,7 @@ abstract class APIStateNetwork {
     @Body() ElectricityBody body,
   );
   @POST('transactions/b2c_wallet/order_list_bbps')
-  Future<OrderListResponse> getAllOrderList(
-   
-  );
+  Future<OrderListResponse> getAllOrderList();
   @POST('bbps/b2c_bills_lpg/get_billers')
   Future<HttpResponse<LpgResponseModel>> getGasBillers(
     @Body() ElectricityBody body,
@@ -116,22 +117,27 @@ abstract class APIStateNetwork {
     @Body() PayNowModel body,
   );
   @POST('/bbps/{path}/get_billers_param')
-  Future<BillerParamResponse> fetchBillerParm(@Path('path') String path, @Body() BillerParamRequest body);
+  Future<BillerParamResponse> fetchBillerParm(
+    @Path('path') String path,
+    @Body() BillerParamRequest body,
+  );
   @POST('bbps/b2c_bills_electricity/check_coupon')
   Future<HttpResponse<dynamic>> checkCoupn(@Body() CheckCouponModel body);
 
-  // Wallet 
+  // Wallet
   @POST('profile/b2c_wallet/wallet_balance')
   Future<WalletBalancemodel> getWallet();
   @POST('profile/b2c_wallet/wallet_statement_main')
-  Future<WalletStateMentRes> getWalleStatement(@Body() WalletStateMentBody body);
+  Future<WalletStateMentRes> getWalleStatement(
+    @Body() WalletStateMentBody body,
+  );
   @POST('request/b2c_wallet/addwallet_request_pageload')
-  Future<AddwalletRequestPageloadModel>  getWalletPageLoad();
+  Future<AddwalletRequestPageloadModel> getWalletPageLoad();
 
   @POST('request/b2c_wallet/addwallet_request_getbank')
-  Future<GetBankDetailModel> fetchBankDetail(@Body() GetBankBodymodel body );
+  Future<GetBankDetailModel> fetchBankDetail(@Body() GetBankBodymodel body);
 
-  // kyc 
+  // kyc
   @POST('verify/b2c_kyc_account/kyc_list')
   Future<KycListmodel> fetchKycList();
 
@@ -143,16 +149,31 @@ abstract class APIStateNetwork {
 
   // mobile plan fetch
   @POST('recharges/b2c_prepaid_mobile/get_plan')
-  Future<MobilePlansResponseModel> fetchMobilePlan(@Body() RechargeRequestModel body ); 
+  Future<MobilePlansResponseModel> fetchMobilePlan(
+    @Body() RechargeRequestModel body,
+  );
 
   @POST('transactions/b2c_wallet/order_details_bbps')
   Future<OrderDetailsRes> getOrderDetails(@Body() GetOrderDetailsBody body);
-  /// user 
+
+  /// user
   @POST('profile/b2c_account/password_change')
-  Future<PasswordChangeResponse> updatePassword(@Body() PasswordChangeRequest body);
+  Future<PasswordChangeResponse> updatePassword(
+    @Body() PasswordChangeRequest body,
+  );
   @POST("profile/b2c_account/logout")
-  Future<HttpResponse> logout(@Body()IpAddressRequest body);
+  Future<HttpResponse> logout(@Body() IpAddressRequest body);
   @POST('profile/b2c_account/details')
   Future<UserProfileDetailsRes> userDEtails();
-}
 
+  @POST("others/b2c_dashboard/ticket_raise")
+  @MultiPart()
+  Future<HttpResponse> ticketRezie(
+    @Part(name: 'ip_address') String ipAddreess,
+    @Part(name: 'subject') String subject,
+    @Part(name: 'description') String description,
+    @Part(name: "Issue_proof ") File? proof,
+  );
+  @POST('others/b2c_dashboard/support')
+  Future<SupportLoadResponse> getAllTickets();
+}
