@@ -618,7 +618,7 @@ class _LoanAccountScreenState extends ConsumerState<PipeGasForm> {
                                                           APIStateNetwork(
                                                             await createDio(),
                                                           );
-                                                      final response = await state.checkCoupn(
+                                                      final response = await state.checkCoupnPipeGas(
                                                         CheckCouponModel(
                                                           ipAddress:
                                                               "152.59.109.59",

@@ -377,7 +377,7 @@ class _PipeGasSumeryState extends ConsumerState<PipeGasSumery> {
                                               await createDio(),
                                             );
                                             final response = await state
-                                                .checkCoupn(
+                                                .checkCoupnPipeGas(
                                                   CheckCouponModel(
                                                     ipAddress: "152.59.109.59",
                                                     macAddress: "not found",

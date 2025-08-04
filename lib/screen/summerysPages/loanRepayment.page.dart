@@ -377,7 +377,7 @@ class _LoanRepaymentSummeryState extends ConsumerState<LoanRepaymentSummery> {
                                               await createDio(),
                                             );
                                             final response = await state
-                                                .checkCoupn(
+                                                .checkCoupnLoan(
                                                   CheckCouponModel(
                                                     ipAddress: "152.59.109.59",
                                                     macAddress: "not found",

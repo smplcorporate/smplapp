@@ -123,6 +123,20 @@ abstract class APIStateNetwork {
   );
   @POST('bbps/b2c_bills_electricity/check_coupon')
   Future<HttpResponse<dynamic>> checkCoupn(@Body() CheckCouponModel body);
+  @POST('bbps/b2c_bills_water/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnWater(@Body() CheckCouponModel body);
+  @POST('bbps/b2c_bills_lpg/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnGas(@Body() CheckCouponModel body);
+  @POST('bbps/b2c_bills_loanrepayment/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnLoan(@Body() CheckCouponModel body);
+  @POST('bbps/b2c_bills_broadband/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnBroadband(@Body() CheckCouponModel body);
+  @POST('bbps/b2c_bills_Insurance/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnInsurance(@Body() CheckCouponModel body);
+  @POST('bbps/b2c_bills_pipedgas/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnPipeGas(@Body() CheckCouponModel body);
+  @POST('bbps/b2c_bills_fastag/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnFastTag(@Body() CheckCouponModel body);
 
   // Wallet
   @POST('profile/b2c_wallet/wallet_balance')

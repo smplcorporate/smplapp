@@ -377,7 +377,7 @@ class _InsurancesummeryPageState extends ConsumerState<InsurancesummeryPage> {
                                               await createDio(),
                                             );
                                             final response = await state
-                                                .checkCoupn(
+                                                .checkCoupnInsurance(
                                                   CheckCouponModel(
                                                     ipAddress: "152.59.109.59",
                                                     macAddress: "not found",

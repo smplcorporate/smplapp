@@ -685,7 +685,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                                   await createDio(),
                                                 );
                                                 final response = await state
-                                                    .checkCoupn(
+                                                    .checkCoupnWater(
                                                       CheckCouponModel(
                                                         ipAddress:
                                                             "152.59.109.59",

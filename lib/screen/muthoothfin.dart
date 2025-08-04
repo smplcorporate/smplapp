@@ -623,7 +623,7 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
                                                           APIStateNetwork(
                                                             await createDio(),
                                                           );
-                                                      final response = await state.checkCoupn(
+                                                      final response = await state.checkCoupnLoan(
                                                         CheckCouponModel(
                                                           ipAddress:
                                                               "152.59.109.59",

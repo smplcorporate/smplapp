@@ -617,7 +617,7 @@ class _LoanAccountScreenState extends ConsumerState<InsuranceFormPage> {
                                                           APIStateNetwork(
                                                             await createDio(),
                                                           );
-                                                      final response = await state.checkCoupn(
+                                                      final response = await state.checkCoupnInsurance(
                                                         CheckCouponModel(
                                                           ipAddress:
                                                               "152.59.109.59",

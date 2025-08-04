@@ -33,26 +33,45 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
   final TextEditingController _controller = TextEditingController();
   final TextEditingController _mpinControllr = TextEditingController();
   TextEditingController _amountController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   bool isInvalid = false;
 
   bool btnLoder = false;
   String _couponMessage = '';
   double _discount = 0.0;
 
- @override
-void initState() {
-  super.initState();
-  fetchRequest = widget.body;
-  log("==========================");
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    final billData = ref.read(fetchBillDataProvider(fetchRequest));
-    billData.whenData((e) {
-      log("Fetched amount: ${e.billAmount}");
-      _amountController.text = e.billAmount ?? "";
+  @override
+  void initState() {
+    super.initState();
+    fetchRequest = widget.body;
+    log("==========================");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_focusNode);
+      final billData = ref.read(fetchBillDataProvider(fetchRequest));
+      billData.whenData((e) {
+        log("Fetched amount: ${e.billAmount}");
+        _amountController.text = e.billAmount ?? "";
+      });
     });
-  });
-}
+  }
+  bool _isEditable = false;
 
+  void _handleTap() {
+    setState(() {
+      _isEditable = true;
+    });
+    // Delay is needed to wait for widget to rebuild with editable true
+    Future.delayed(Duration(milliseconds: 100), () {
+      FocusScope.of(context).requestFocus(_focusNode);
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
 
   bool applyBtnLoder = false;
   bool coupnApplyed = false;
@@ -67,7 +86,9 @@ void initState() {
       'dd-MM-yyyy',
     ).format(DateTime.now());
     final params = ref.watch(paramsProvider);
-    fetchBillerData.whenData((e) => _amountController.text = e.billAmount ?? "");
+    fetchBillerData.whenData(
+      (e) => _amountController.text = e.billAmount ?? "",
+    );
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 243, 235),
@@ -261,27 +282,37 @@ void initState() {
                                     ),
                                   ),
                                   child: Center(
-                                    child: TextField(
-                                      
-                                      controller: _amountController,
-                                      readOnly: false,
-                                      showCursor: false,
-                                      decoration:
-                                          const InputDecoration.collapsed(
-                                            hintText: '',
-                                          ),
-                                      style: TextStyle(
-                                        fontSize: 22 * scale,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    
-                                      onChanged: (value ){
-                                       setState(() {
-                                         snap.billAmount = value;
-                                       });
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        if (!_isEditable) {
+                                          _handleTap();
+                                        }
                                       },
+                                      child: AbsorbPointer(
+                                           absorbing: !_isEditable,
+                                        child: TextField(
+                                          focusNode: _focusNode,
+                                          controller: _amountController,
+                                readOnly: !_isEditable,
+                                        showCursor: true,
+                                          decoration:
+                                              const InputDecoration.collapsed(
+                                                hintText: '',
+                                              ),
+                                          style: TextStyle(
+                                            fontSize: 22 * scale,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        
+                                          onChanged: (value) {
+                                            setState(() {
+                                              snap.billAmount = value;
+                                            });
+                                          },
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -293,234 +324,223 @@ void initState() {
                       // _buildBillDetailsParamCard(params),
                       Padding(
                         padding: EdgeInsets.only(left: 18.w, right: 18.w),
-                        child: Form(
-                          key: _coponKey,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      readOnly: coupnApplyed,
-                                      controller: _controller,
-                                      maxLength: 15, // Max length 15 characters
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.allow(
-                                          RegExp(r'[A-Za-z0-9]'),
-                                        ),
-                                        UpperCaseTextFormatter(),
-                                        LengthLimitingTextInputFormatter(15),
-                                      ],
-                                      decoration: InputDecoration(
-                                        hintText: 'Gift card or discount code',
-                                        counterText:
-                                            '', // Hide character counter
-                                        contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 14,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            6,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color:
-                                                isInvalid
-                                                    ? Colors.red
-                                                    : Colors.grey,
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            6,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color:
-                                                isInvalid
-                                                    ? Colors.red
-                                                    : Colors.grey,
-                                          ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            6,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color:
-                                                isInvalid
-                                                    ? Colors.red
-                                                    : Colors.black,
-                                            width: 1.5,
-                                          ),
-                                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    readOnly: coupnApplyed,
+                                    controller: _controller,
+                                    maxLength: 15, // Max length 15 characters
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                        RegExp(r'[A-Za-z0-9]'),
                                       ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Code is required";
-                                        }
-                                        if (value.length < 5) {
-                                          return "Minimum 5 characters required";
-                                        }
-                                        if (value.length > 15) {
-                                          return "Maximum 15 characters allowed";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      if (_coponKey.currentState!.validate()) {
-                                        if (_controller.text.isEmpty ||
-                                            _controller.text.trim().isEmpty) {
-                                          Fluttertoast.showToast(
-                                            msg: "Coupon code is required",
-                                            backgroundColor: Colors.black,
-                                            textColor: Colors.white,
-                                          );
-                                        } else {
-                                          if (coupnApplyed == false) {
-                                            setState(() {
-                                              applyBtnLoder = true;
-                                            });
-                                            final state = APIStateNetwork(
-                                              await createDio(),
-                                            );
-                                            final response = await state
-                                                .checkCoupn(
-                                                  CheckCouponModel(
-                                                    ipAddress: "152.59.109.59",
-                                                    macAddress: "not found",
-                                                    latitude: "26.917979",
-                                                    longitude: "75.814593",
-                                                    billerCode:
-                                                        fetchRequest
-                                                            .data
-                                                            .billerCode,
-                                                    billerName:
-                                                        fetchRequest
-                                                            .data
-                                                            .billerName,
-                                                    param1:
-                                                        fetchRequest
-                                                            .data
-                                                            .param1,
-                                                    transAmount:
-                                                        double.parse(
-                                                          _amountController.text,
-                                                        ).toInt().toString(),
-                                                    couponCode:
-                                                        _controller.text.trim(),
-                                                  ),
-                                                );
-                                            if (response
-                                                    .response
-                                                    .data['status'] ==
-                                                true) {
-                                              setState(() {
-                                                applyBtnLoder = false;
-                                                coupnApplyed = true;
-                                              });
-                                              log("Trsing1");
-
-                                              Fluttertoast.showToast(
-                                                msg:
-                                                    response
-                                                        .response
-                                                        .data['status_desc'],
-                                                backgroundColor: Colors.black,
-                                                textColor: Colors.white,
-                                              );
-                                            } else {
-                                              setState(() {
-                                                applyBtnLoder = false;
-                                                _controller.clear();
-                                              });
-                                              log("Trsing2");
-                                              Fluttertoast.showToast(
-                                                msg:
-                                                    response
-                                                        .response
-                                                        .data['status_desc'],
-                                                backgroundColor: Colors.black,
-                                                textColor: Colors.white,
-                                              );
-                                            }
-                                          } else {
-                                            setState(() {
-                                              coupnApplyed = false;
-                                              _controller.clear();
-                                            });
-                                          }
-                                        }
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 20,
+                                      UpperCaseTextFormatter(),
+                                      LengthLimitingTextInputFormatter(15),
+                                    ],
+                                    decoration: InputDecoration(
+                                      hintText: 'Gift card or discount code',
+                                      counterText: '', // Hide character counter
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12,
                                         vertical: 14,
                                       ),
-                                      shape: RoundedRectangleBorder(
+                                      border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(6),
+                                        borderSide: BorderSide(
+                                          color:
+                                              isInvalid
+                                                  ? Colors.red
+                                                  : Colors.grey,
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: BorderSide(
+                                          color:
+                                              isInvalid
+                                                  ? Colors.red
+                                                  : Colors.grey,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: BorderSide(
+                                          color:
+                                              isInvalid
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                          width: 1.5,
+                                        ),
                                       ),
                                     ),
-                                    child:
-                                        applyBtnLoder == true
-                                            ? CircularProgressIndicator(
-                                              color: Colors.white,
-                                              strokeWidth: 2.5,
-                                            )
-                                            : Text(
-                                              coupnApplyed == false
-                                                  ? 'Apply'
-                                                  : 'Remove',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Code is required";
+                                      }
+                                      if (value.length < 5) {
+                                        return "Minimum 5 characters required";
+                                      }
+                                      if (value.length > 15) {
+                                        return "Maximum 15 characters allowed";
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                ],
-                              ),
-                              SizedBox(height: 5),
-                              if (coupnApplyed == true) ...[
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    if (_coponKey.currentState!.validate()) {
+                                      if (_controller.text.isEmpty ||
+                                          _controller.text.trim().isEmpty) {
+                                        Fluttertoast.showToast(
+                                          msg: "Coupon code is required",
+                                          backgroundColor: Colors.black,
+                                          textColor: Colors.white,
+                                        );
+                                      } else {
+                                        if (coupnApplyed == false) {
+                                          setState(() {
+                                            applyBtnLoder = true;
+                                          });
+                                          final state = APIStateNetwork(
+                                            await createDio(),
+                                          );
+                                          final response = await state
+                                              .checkCoupnFastTag(
+                                                CheckCouponModel(
+                                                  ipAddress: "152.59.109.59",
+                                                  macAddress: "not found",
+                                                  latitude: "26.917979",
+                                                  longitude: "75.814593",
+                                                  billerCode:
+                                                      fetchRequest
+                                                          .data
+                                                          .billerCode,
+                                                  billerName:
+                                                      fetchRequest
+                                                          .data
+                                                          .billerName,
+                                                  param1:
+                                                      fetchRequest.data.param1,
+                                                  transAmount:
+                                                      double.parse(
+                                                        snap.billAmount ??
+                                                            "0.00",
+                                                      ).toInt().toString(),
+                                                  couponCode:
+                                                      _controller.text.trim(),
+                                                ),
+                                              );
+                                          if (response
+                                                  .response
+                                                  .data['status'] ==
+                                              true) {
+                                            setState(() {
+                                              applyBtnLoder = false;
+                                              coupnApplyed = true;
+                                            });
+                                            log("Trsing1");
 
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 6,
-                                      right: 6,
-                                      top: 2,
-                                      bottom: 2,
+                                            Fluttertoast.showToast(
+                                              msg:
+                                                  response
+                                                      .response
+                                                      .data['status_desc'],
+                                              backgroundColor: Colors.black,
+                                              textColor: Colors.white,
+                                            );
+                                          } else {
+                                            setState(() {
+                                              applyBtnLoder = false;
+                                              _controller.clear();
+                                            });
+                                            log("Trsing2");
+                                            Fluttertoast.showToast(
+                                              msg:
+                                                  response
+                                                      .response
+                                                      .data['status_desc'],
+                                              backgroundColor: Colors.black,
+                                              textColor: Colors.white,
+                                            );
+                                          }
+                                        } else {
+                                          setState(() {
+                                            coupnApplyed = false;
+                                            _controller.clear();
+                                          });
+                                        }
+                                      }
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 14,
                                     ),
-                                    child: Text(
-                                      "Coupon Applied",
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                  ),
+                                  child:
+                                      applyBtnLoder == true
+                                          ? CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2.5,
+                                          )
+                                          : Text(
+                                            coupnApplyed == false
+                                                ? 'Apply'
+                                                : 'Remove',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            if (coupnApplyed == true) ...[
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 6,
+                                    right: 6,
+                                    top: 2,
+                                    bottom: 2,
+                                  ),
+                                  child: Text(
+                                    "Coupon Applied",
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
-                              ],
+                              ),
                             ],
-                          ),
+                          ],
                         ),
                       ),
                       SizedBox(height: 10.h),
                       Padding(
                         padding: EdgeInsets.only(left: 18.w, right: 18.w),
                         child: TextFormField(
-                            obscureText: true,
+                          obscureText: true,
                           controller: _mpinControllr,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -615,7 +635,10 @@ void initState() {
                                         snap.returnTransid.toString(),
                                     returnFetchid: snap.returnFetchid,
                                     returnBillid: snap.returnBillid,
-                                      couponCode: coupnApplyed == true?  _controller.text.trim() : "",
+                                    couponCode:
+                                        coupnApplyed == true
+                                            ? _controller.text.trim()
+                                            : "",
                                     userMpin: "${_mpinControllr.text}",
                                   ),
                                 );
