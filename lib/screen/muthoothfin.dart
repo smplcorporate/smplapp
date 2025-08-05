@@ -780,57 +780,57 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
                         ),
                         SizedBox(height: 10.h),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _mpinControllr.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color:
-                                  _isValid || _mpinControllr.text.isEmpty
-                                      ? Colors.grey.shade600
-                                      : Colors.red,
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: TextFormField(
-                                  obscureText: true,
-                                  controller: _mpinControllr,
-                                  keyboardType: TextInputType.number,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "This field is required";
-                                    }
-                                    if (value.length < 6) {
-                                      return "MPIN must be at least 6 digits";
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    // ref.read(paramsProvider.notifier).updateParam5(value);
-                                  },
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter
-                                        .digitsOnly, // Only digits 0-9
-                                    LengthLimitingTextInputFormatter(
-                                      6,
-                                    ), // Max 6 digits
-                                  ],
-                                  decoration: InputDecoration(
-                                    hintText: "MPIN",
-                                    border: InputBorder.none,
-                                  ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                obscureText: true,
+                                controller: _mpinControllr,
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                  if (value.length < 6) {
+                                    return "MPIN must be at least 6 digits";
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  // ref.read(paramsProvider.notifier).updateParam5(value);
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter
+                                      .digitsOnly, // Only digits 0-9
+                                  LengthLimitingTextInputFormatter(
+                                    6,
+                                  ), // Max 6 digits
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "MPIN",
+                                  border: InputBorder.none,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
+                      ),
                       ],
                       SizedBox(height: 20.h),
                       SizedBox(

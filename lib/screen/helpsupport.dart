@@ -124,7 +124,9 @@ void didChangeDependencies() {
           }
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error loading tickets', style: GoogleFonts.inter(fontSize: 16, color: Colors.red))),
+        error: (error, stack) => Center(
+          child: Text("No Tickets Found", style: GoogleFonts.inter(fontSize: 18, color: Colors.black)),
+        ),
       ),
       bottomSheet: Container(
         color: const Color.fromARGB(255, 232, 243, 235),
