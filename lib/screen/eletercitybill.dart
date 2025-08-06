@@ -868,9 +868,17 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
       ),
     );
   }
-
+ 
   void paynow() async {
-    if (_formKey.currentState!.validate()) {
+    if(_controller.text.isNotEmpty && coupnApplyed == false) {
+      Fluttertoast.showToast(
+        msg: "Please apply coupon code or enter amount",
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+      );
+      return;
+    }else{
+      if (_formKey.currentState!.validate()) {
       setState(() {
         btnLoder = true;
       });
@@ -980,6 +988,7 @@ class _LoanAccountScreenState extends ConsumerState<Eletercitybill> {
           },
         );
       }
+    }
     }
   }
 }

@@ -78,8 +78,7 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
       _isEditable = !_isEditable;
     });
     _focusNode.requestFocus();
-  SystemChannels.textInput.invokeMethod('TextInput.show');
-
+    SystemChannels.textInput.invokeMethod('TextInput.show');
   }
 
   bool applyBtnLoder = false;
@@ -291,31 +290,35 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                     ),
                                   ),
                                   child: Center(
-                                    child:  TextField(
+                                    child: TextFormField(
                                       onTap: () {
                                         _handleTap();
                                       },
-                                        focusNode: _focusNode,
-                                        controller: _amountController,
-                                        readOnly: _isEditable,
-                                        showCursor: true,
-                                        decoration:
-                                            const InputDecoration.collapsed(
-                                              hintText: '',
-                                            ),
-                                        style: TextStyle(
-                                          fontSize: 22 * scale,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                        textAlign: TextAlign.center,
-
-                                        onChanged: (value) {
-                                          setState(() {
-                                            snap.billAmount = value;
-                                          });
-                                        },
+                                      focusNode: _focusNode,
+                                      controller: _amountController,
+                                      readOnly: _isEditable,
+                                      showCursor: true,
+                                      decoration:
+                                          const InputDecoration.collapsed(
+                                            hintText: '',
+                                          ),
+                                      style: TextStyle(
+                                        fontSize: 22 * scale,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
                                       ),
+                                      textAlign: TextAlign.center,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "This field is required";
+                                        }
+                                      },
+                                      onChanged: (value) {
+                                        setState(() {
+                                          snap.billAmount = value;
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],
@@ -350,13 +353,16 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                       ],
                                       decoration: InputDecoration(
                                         hintText: 'Gift card or discount code',
-                                        counterText: '', // Hide character counter
+                                        counterText:
+                                            '', // Hide character counter
                                         contentPadding: EdgeInsets.symmetric(
                                           horizontal: 12,
                                           vertical: 14,
                                         ),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                           borderSide: BorderSide(
                                             color:
                                                 isInvalid
@@ -365,7 +371,9 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                           ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                           borderSide: BorderSide(
                                             color:
                                                 isInvalid
@@ -374,7 +382,9 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                           borderSide: BorderSide(
                                             color:
                                                 isInvalid
@@ -433,7 +443,9 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                                             .data
                                                             .billerName,
                                                     param1:
-                                                        fetchRequest.data.param1,
+                                                        fetchRequest
+                                                            .data
+                                                            .param1,
                                                     transAmount:
                                                         double.parse(
                                                           snap.billAmount ??
@@ -452,7 +464,7 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                                 coupnApplyed = true;
                                               });
                                               log("Trsing1");
-                          
+
                                               Fluttertoast.showToast(
                                                 msg:
                                                     response
@@ -519,7 +531,7 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                     color: Colors.green,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                          
+
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                       left: 6,
@@ -599,7 +611,23 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
+                            if(_amountController.text.trim().isEmpty){
+                              Fluttertoast.showToast(
+                                msg: "Amount is required",
+                                textColor: Colors.white,
+                                backgroundColor: Colors.red,
+                              );
+                              return;
+                            }else{
+                              if(_controller.text.isNotEmpty && coupnApplyed == false){
+                                Fluttertoast.showToast(
+                                  msg: "Please apply coupon code or enter amount",
+                                  textColor: Colors.white,
+                                  backgroundColor: Colors.red,
+                                );
+                                return;
+                              }else{
+                                if (_formKey.currentState!.validate()) {
                               if (_mpinControllr.text.isEmpty ||
                                   _mpinControllr.text == "") {
                                 Fluttertoast.showToast(
@@ -739,6 +767,9 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                 }
                               }
                             }
+                              }
+                            }
+                            
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: buttonColor,

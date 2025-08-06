@@ -50,7 +50,6 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
   bool isInvalid = false;
   bool btnLoder = false;
 
-
   void _validateInput(String input) {
     setState(() {
       _isValid = RegExp(r'^[a-zA-Z0-9]{12}$').hasMatch(input);
@@ -127,7 +126,7 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
 
   @override
   Widget build(BuildContext context) {
-        final billerParam = ref.watch(fetchBillerParamProvider(fetchBillerParam));
+    final billerParam = ref.watch(fetchBillerParamProvider(fetchBillerParam));
     final params = ref.watch(paramsProvider);
     return WillPopScope(
       onWillPop: () => _onBackPressed(context),
@@ -518,112 +517,109 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
                           child: Form(
                             key: _copounCodeKey,
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            readOnly: coupnApplyed,
-                                            controller: _controller,
-                                            maxLength: 15,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter.allow(
-                                                RegExp(r'[A-Za-z0-9]'),
-                                              ),
-                                              UpperCaseTextFormatter(),
-                                              LengthLimitingTextInputFormatter(
-                                                15,
-                                              ),
-                                            ],
-                                            decoration: InputDecoration(
-                                              hintText:
-                                                  'Gift card or discount code',
-                                              counterText: '',
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 14,
-                                                  ),
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                borderSide: BorderSide(
-                                                  color:
-                                                      isInvalid
-                                                          ? Colors.red
-                                                          : Colors.grey,
-                                                ),
-                                              ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                borderSide: BorderSide(
-                                                  color:
-                                                      isInvalid
-                                                          ? Colors.red
-                                                          : Colors.grey,
-                                                ),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                borderSide: BorderSide(
-                                                  color:
-                                                      isInvalid
-                                                          ? Colors.red
-                                                          : Colors.black,
-                                                  width: 1.5,
-                                                ),
-                                              ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        readOnly: coupnApplyed,
+                                        controller: _controller,
+                                        maxLength: 15,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(
+                                            RegExp(r'[A-Za-z0-9]'),
+                                          ),
+                                          UpperCaseTextFormatter(),
+                                          LengthLimitingTextInputFormatter(15),
+                                        ],
+                                        decoration: InputDecoration(
+                                          hintText:
+                                              'Gift card or discount code',
+                                          counterText: '',
+                                          contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 14,
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              6,
                                             ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return "Code is required";
-                                              }
-                                              if (value.length < 5) {
-                                                return "Minimum 5 characters required";
-                                              }
-                                              if (value.length > 15) {
-                                                return "Maximum 15 characters allowed";
-                                              }
-                                              return null;
-                                            },
+                                            borderSide: BorderSide(
+                                              color:
+                                                  isInvalid
+                                                      ? Colors.red
+                                                      : Colors.grey,
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              6,
+                                            ),
+                                            borderSide: BorderSide(
+                                              color:
+                                                  isInvalid
+                                                      ? Colors.red
+                                                      : Colors.grey,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              6,
+                                            ),
+                                            borderSide: BorderSide(
+                                              color:
+                                                  isInvalid
+                                                      ? Colors.red
+                                                      : Colors.black,
+                                              width: 1.5,
+                                            ),
                                           ),
                                         ),
-                                        SizedBox(width: 8),
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            if (_copounCodeKey.currentState!
-                                                .validate()) {
-                                              if (_controller.text.isNotEmpty ||
-                                                  _controller.text
-                                                      .trim()
-                                                      .isNotEmpty) {
-                                                if (_amountController
-                                                        .text
-                                                        .isNotEmpty ||
-                                                    _amountController.text
-                                                        .trim()
-                                                        .isNotEmpty) {
-                                                  if (_parm1Controller.text
-                                                      .trim()
-                                                      .isNotEmpty) {
-                                                    if (coupnApplyed == false) {
-                                                      setState(() {
-                                                        applyBtnLoder = true;
-                                                      });
-                                                      final state =
-                                                          APIStateNetwork(
-                                                            await createDio(),
-                                                          );
-                                                      final response = await state.checkCoupnLoan(
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Code is required";
+                                          }
+                                          if (value.length < 5) {
+                                            return "Minimum 5 characters required";
+                                          }
+                                          if (value.length > 15) {
+                                            return "Maximum 15 characters allowed";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        if (_copounCodeKey.currentState!
+                                            .validate()) {
+                                          if (_controller.text.isNotEmpty ||
+                                              _controller.text
+                                                  .trim()
+                                                  .isNotEmpty) {
+                                            if (_amountController
+                                                    .text
+                                                    .isNotEmpty ||
+                                                _amountController.text
+                                                    .trim()
+                                                    .isNotEmpty) {
+                                              if (_parm1Controller.text
+                                                  .trim()
+                                                  .isNotEmpty) {
+                                                if (coupnApplyed == false) {
+                                                  setState(() {
+                                                    applyBtnLoder = true;
+                                                  });
+                                                  final state = APIStateNetwork(
+                                                    await createDio(),
+                                                  );
+                                                  final response = await state
+                                                      .checkCoupnLoan(
                                                         CheckCouponModel(
                                                           ipAddress:
                                                               "152.59.109.59",
@@ -649,188 +645,182 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
                                                                   .trim(),
                                                         ),
                                                       );
-                                                      if (response
-                                                              .response
-                                                              .data['status'] ==
-                                                          true) {
-                                                        setState(() {
-                                                          applyBtnLoder = false;
-                                                          coupnApplyed = true;
-                                                        });
-                                                        log("testing1");
-                                                        Fluttertoast.showToast(
-                                                          msg:
-                                                              response
-                                                                  .response
-                                                                  .data['status_desc'],
-                                                          backgroundColor:
-                                                              Colors.black,
-                                                          textColor:
-                                                              Colors.white,
-                                                        );
-                                                      } else {
-                                                        setState(() {
-                                                          applyBtnLoder = false;
-                                                          _controller.clear();
-                                                        });
-                                                        log("testing2");
-                                                        Fluttertoast.showToast(
-                                                          msg:
-                                                              response
-                                                                  .response
-                                                                  .data['status_desc'],
-                                                          backgroundColor:
-                                                              Colors.black,
-                                                          textColor:
-                                                              Colors.white,
-                                                        );
-                                                      }
-                                                    } else {
-                                                      setState(() {
-                                                        coupnApplyed = false;
-                                                        _controller.clear();
-                                                      });
-                                                    }
-                                                  } else {
+                                                  if (response
+                                                          .response
+                                                          .data['status'] ==
+                                                      true) {
+                                                    setState(() {
+                                                      applyBtnLoder = false;
+                                                      coupnApplyed = true;
+                                                    });
+                                                    log("testing1");
                                                     Fluttertoast.showToast(
                                                       msg:
-                                                          "${snap.param1.name} is required",
+                                                          response
+                                                              .response
+                                                              .data['status_desc'],
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      textColor: Colors.white,
+                                                    );
+                                                  } else {
+                                                    setState(() {
+                                                      applyBtnLoder = false;
+                                                      _controller.clear();
+                                                    });
+                                                    log("testing2");
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          response
+                                                              .response
+                                                              .data['status_desc'],
                                                       backgroundColor:
                                                           Colors.black,
                                                       textColor: Colors.white,
                                                     );
                                                   }
                                                 } else {
-                                                  Fluttertoast.showToast(
-                                                    msg:
-                                                        "Amount is required to apply Coupon code",
-                                                    backgroundColor:
-                                                        Colors.black,
-                                                    textColor: Colors.white,
-                                                  );
+                                                  setState(() {
+                                                    coupnApplyed = false;
+                                                    _controller.clear();
+                                                  });
                                                 }
                                               } else {
                                                 Fluttertoast.showToast(
                                                   msg:
-                                                      "Coupon Code is required",
+                                                      "${snap.param1.name} is required",
                                                   backgroundColor: Colors.black,
                                                   textColor: Colors.white,
                                                 );
                                               }
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "Amount is required to apply Coupon code",
+                                                backgroundColor: Colors.black,
+                                                textColor: Colors.white,
+                                              );
                                             }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.black,
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 20,
-                                              vertical: 14,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                            ),
-                                          ),
-                                          child:
-                                              applyBtnLoder == true
-                                                  ? CircularProgressIndicator(
-                                                    color: Colors.white,
-                                                    strokeWidth: 2.5,
-                                                  )
-                                                  : Text(
-                                                    coupnApplyed == false
-                                                        ? 'Apply'
-                                                        : 'Remove',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
+                                          } else {
+                                            Fluttertoast.showToast(
+                                              msg: "Coupon Code is required",
+                                              backgroundColor: Colors.black,
+                                              textColor: Colors.white,
+                                            );
+                                          }
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.black,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 14,
                                         ),
-                                      ],
-                                    ),
-                                    if (coupnApplyed == true) ...[
-                                      SizedBox(
-                                        height: 8,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
                                       ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 6,
-                                      right: 6,
-                                      top: 2,
-                                      bottom: 2,
+                                      child:
+                                          applyBtnLoder == true
+                                              ? CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2.5,
+                                              )
+                                              : Text(
+                                                coupnApplyed == false
+                                                    ? 'Apply'
+                                                    : 'Remove',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                     ),
-                                    child: Text(
-                                      "Coupon Applied",
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ]
                                   ],
                                 ),
+                                if (coupnApplyed == true) ...[
+                                  SizedBox(height: 8),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 6,
+                                        right: 6,
+                                        top: 2,
+                                        bottom: 2,
+                                      ),
+                                      child: Text(
+                                        "Coupon Applied",
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(height: 10.h),
                         Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color:
-                                _isValid || _mpinControllr.text.isEmpty
-                                    ? Colors.grey.shade600
-                                    : Colors.red,
-                            width: 2.0,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextFormField(
-                                obscureText: true,
-                                controller: _mpinControllr,
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "This field is required";
-                                  }
-                                  if (value.length < 6) {
-                                    return "MPIN must be at least 6 digits";
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  // ref.read(paramsProvider.notifier).updateParam5(value);
-                                },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter
-                                      .digitsOnly, // Only digits 0-9
-                                  LengthLimitingTextInputFormatter(
-                                    6,
-                                  ), // Max 6 digits
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: "MPIN",
-                                  border: InputBorder.none,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color:
+                                  _isValid || _mpinControllr.text.isEmpty
+                                      ? Colors.grey.shade600
+                                      : Colors.red,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextFormField(
+                                  obscureText: true,
+                                  controller: _mpinControllr,
+                                  keyboardType: TextInputType.number,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "This field is required";
+                                    }
+                                    if (value.length < 6) {
+                                      return "MPIN must be at least 6 digits";
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    // ref.read(paramsProvider.notifier).updateParam5(value);
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter
+                                        .digitsOnly, // Only digits 0-9
+                                    LengthLimitingTextInputFormatter(
+                                      6,
+                                    ), // Max 6 digits
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: "MPIN",
+                                    border: InputBorder.none,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
                       ],
                       SizedBox(height: 20.h),
                       SizedBox(
@@ -853,7 +843,9 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
                             ),
                           ),
                           child: Text(
-                              snap.fetchOption == true? "Proceed" : "Proceed to Pay",
+                            snap.fetchOption == true
+                                ? "Proceed"
+                                : "Proceed to Pay",
                             style: GoogleFonts.inter(
                               fontSize: 20,
                               color: Colors.white,
@@ -875,116 +867,125 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
       ),
     );
   }
+
   void paynow() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        btnLoder = true;
-      });
-      final box = Hive.box('userdata');
-      final mobile = box.get('@mobile');
-      final service = APIStateNetwork(await createDio());
-      final reponse = await service.payNow(
-        'b2c_bills_loanrepayment',
-        PayNowModel(
-          ipAddress: "152.59.109.59",
-          macAddress: "not found",
-          latitude: "26.917979",
-          longitude: "75.814593",
-          billerCode: widget.billerCode,
-          billerName: widget.billerName,
-          circleCode: widget.circleCode,
-          param1: _parm1Controller.text,
-          param2: _parm2Controller.text,
-          param3: _parm3Controller.text,
-          param4: _parm4Controller.text,
-          param5: _parm5Controller.text,
-          customerName: "",
-          billNo: "",
-          dueDate: "",
-          billDate: "",
-          billAmount: _amountController.text,
-          returnTransid: "",
-          returnFetchid: "",
-          returnBillid: "",
-          couponCode: coupnApplyed == true?  _controller.text.trim() : "",
-          userMpin: "${_mpinControllr.text}",
-        ),
+    if (_controller.text.isNotEmpty && coupnApplyed == false) {
+      Fluttertoast.showToast(
+        msg: "Please apply coupon code first",
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
       );
-      if (reponse.response.data["status"] == false) {
+    } else {
+      if (_formKey.currentState!.validate()) {
         setState(() {
-          btnLoder = false;
+          btnLoder = true;
         });
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(
-                '',
-                style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-              ),
-              content: Text(
-                '${reponse.response.data["status_desc"]}',
-                style: GoogleFonts.inter(),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'OK',
-                    style: GoogleFonts.inter(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+        final box = Hive.box('userdata');
+        final mobile = box.get('@mobile');
+        final service = APIStateNetwork(await createDio());
+        final reponse = await service.payNow(
+          'b2c_bills_loanrepayment',
+          PayNowModel(
+            ipAddress: "152.59.109.59",
+            macAddress: "not found",
+            latitude: "26.917979",
+            longitude: "75.814593",
+            billerCode: widget.billerCode,
+            billerName: widget.billerName,
+            circleCode: widget.circleCode,
+            param1: _parm1Controller.text,
+            param2: _parm2Controller.text,
+            param3: _parm3Controller.text,
+            param4: _parm4Controller.text,
+            param5: _parm5Controller.text,
+            customerName: "",
+            billNo: "",
+            dueDate: "",
+            billDate: "",
+            billAmount: _amountController.text,
+            returnTransid: "",
+            returnFetchid: "",
+            returnBillid: "",
+            couponCode: coupnApplyed == true ? _controller.text.trim() : "",
+            userMpin: "${_mpinControllr.text}",
+          ),
         );
-      } else {
-        setState(() {
-          btnLoder = false;
-        });
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(
-                '${reponse.response.data['trans_status']}',
-                style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-              ),
-              content: Text(
-                '${reponse.response.data["status_desc"]}',
-                style: GoogleFonts.inter(),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (_) => PaymentDetailsScreen(
-                              trnxId: '${reponse.response.data['trans_id']}',
-                            ),
+        if (reponse.response.data["status"] == false) {
+          setState(() {
+            btnLoder = false;
+          });
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                  '',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                ),
+                content: Text(
+                  '${reponse.response.data["status_desc"]}',
+                  style: GoogleFonts.inter(),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      'OK',
+                      style: GoogleFonts.inter(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                  child: Text(
-                    'OK',
-                    style: GoogleFonts.inter(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                ],
+              );
+            },
+          );
+        } else {
+          setState(() {
+            btnLoder = false;
+          });
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                  '${reponse.response.data['trans_status']}',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
                 ),
-              ],
-            );
-          },
-        );
+                content: Text(
+                  '${reponse.response.data["status_desc"]}',
+                  style: GoogleFonts.inter(),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => PaymentDetailsScreen(
+                                trnxId: '${reponse.response.data['trans_id']}',
+                              ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'OK',
+                      style: GoogleFonts.inter(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       }
     }
   }

@@ -80,115 +80,123 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
   }
 
   void paynow() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        btnLoder = true;
-      });
-      final box = Hive.box('userdata');
-      final mobile = box.get('@mobile');
-      final service = APIStateNetwork(await createDio());
-      final reponse = await service.payNow(
-        'b2c_bills_water',
-        PayNowModel(
-          ipAddress: "152.59.109.59",
-          macAddress: "not found",
-          latitude: "26.917979",
-          longitude: "75.814593",
-          billerCode: widget.billerCode,
-          billerName: widget.billerName,
-          circleCode: widget.circleId,
-          param1: _parm1Controller.text,
-          param2: _parm2Controller.text,
-          param3: _parm3Controller.text,
-          param4: _parm4Controller.text,
-          param5: _parm5Controller.text,
-          customerName: "",
-          billNo: "",
-          dueDate: "",
-          billDate: "",
-          billAmount: _amountController.text,
-          returnTransid: "",
-          returnFetchid: "",
-          returnBillid: "",
-          couponCode: coupnApplyed == true ? _controller.text.trim() : "",
-          userMpin: "${_mpinControllr.text}",
-        ),
+    if (_controller.text.isNotEmpty && coupnApplyed == false) {
+      Fluttertoast.showToast(
+        msg: "Mpin is required",
+        textColor: Colors.white,
+        backgroundColor: Colors.red,
       );
-      if (reponse.response.data["status"] == false) {
+    } else {
+      if (_formKey.currentState!.validate()) {
         setState(() {
-          btnLoder = false;
+          btnLoder = true;
         });
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(
-                '',
-                style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-              ),
-              content: Text(
-                '${reponse.response.data["status_desc"]}',
-                style: GoogleFonts.inter(),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'OK',
-                    style: GoogleFonts.inter(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+        final box = Hive.box('userdata');
+        final mobile = box.get('@mobile');
+        final service = APIStateNetwork(await createDio());
+        final reponse = await service.payNow(
+          'b2c_bills_water',
+          PayNowModel(
+            ipAddress: "152.59.109.59",
+            macAddress: "not found",
+            latitude: "26.917979",
+            longitude: "75.814593",
+            billerCode: widget.billerCode,
+            billerName: widget.billerName,
+            circleCode: widget.circleId,
+            param1: _parm1Controller.text,
+            param2: _parm2Controller.text,
+            param3: _parm3Controller.text,
+            param4: _parm4Controller.text,
+            param5: _parm5Controller.text,
+            customerName: "",
+            billNo: "",
+            dueDate: "",
+            billDate: "",
+            billAmount: _amountController.text,
+            returnTransid: "",
+            returnFetchid: "",
+            returnBillid: "",
+            couponCode: coupnApplyed == true ? _controller.text.trim() : "",
+            userMpin: "${_mpinControllr.text}",
+          ),
         );
-      } else {
-        setState(() {
-          btnLoder = false;
-        });
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(
-                '${reponse.response.data['trans_status']}',
-                style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-              ),
-              content: Text(
-                '${reponse.response.data["status_desc"]}',
-                style: GoogleFonts.inter(),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (_) => PaymentDetailsScreen(
-                              trnxId: '${reponse.response.data['trans_id']}',
-                            ),
+        if (reponse.response.data["status"] == false) {
+          setState(() {
+            btnLoder = false;
+          });
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                  '',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                ),
+                content: Text(
+                  '${reponse.response.data["status_desc"]}',
+                  style: GoogleFonts.inter(),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      'OK',
+                      style: GoogleFonts.inter(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                  child: Text(
-                    'OK',
-                    style: GoogleFonts.inter(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                ],
+              );
+            },
+          );
+        } else {
+          setState(() {
+            btnLoder = false;
+          });
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                  '${reponse.response.data['trans_status']}',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
                 ),
-              ],
-            );
-          },
-        );
+                content: Text(
+                  '${reponse.response.data["status_desc"]}',
+                  style: GoogleFonts.inter(),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => PaymentDetailsScreen(
+                                trnxId: '${reponse.response.data['trans_id']}',
+                              ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'OK',
+                      style: GoogleFonts.inter(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       }
     }
   }
