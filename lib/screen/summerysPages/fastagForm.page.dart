@@ -872,7 +872,8 @@ class _LoanAccountScreenState extends ConsumerState<FastagFormPage> {
   }
 
   void paynow() async {
-    if(_controller.text.isNotEmpty && coupnApplyed == false) {
+    if(btnLoder == false){
+      if(_controller.text.isNotEmpty && coupnApplyed == false) {
       Fluttertoast.showToast(
         msg: "Please remove coupon code to proceed",
         backgroundColor: Colors.black,
@@ -990,6 +991,7 @@ class _LoanAccountScreenState extends ConsumerState<FastagFormPage> {
           },
         );
       }
+    }
     }
     }
   }

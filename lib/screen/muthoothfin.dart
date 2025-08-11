@@ -869,7 +869,8 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
   }
 
   void paynow() async {
-    if (_controller.text.isNotEmpty && coupnApplyed == false) {
+    if(btnLoder == false){
+      if (_controller.text.isNotEmpty && coupnApplyed == false) {
       Fluttertoast.showToast(
         msg: "Please apply coupon code first",
         backgroundColor: Colors.black,
@@ -987,6 +988,7 @@ class _MuthootFinScreenState extends ConsumerState<MuthootFinScreen> {
           );
         }
       }
+    }
     }
   }
 }

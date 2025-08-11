@@ -867,7 +867,8 @@ class _LoanAccountScreenState extends ConsumerState<PipeGasForm> {
   }
 
   void paynow() async {
-    if (_controller.text.isNotEmpty && coupnApplyed == false) {
+    if(btnLoder == false){
+      if (_controller.text.isNotEmpty && coupnApplyed == false) {
       Fluttertoast.showToast(
         msg: "Please apply coupon code first",
         backgroundColor: Colors.black,
@@ -985,6 +986,7 @@ class _LoanAccountScreenState extends ConsumerState<PipeGasForm> {
           );
         }
       }
+    }
     }
   }
 }

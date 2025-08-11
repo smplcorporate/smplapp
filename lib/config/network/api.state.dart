@@ -21,6 +21,7 @@ import 'package:home/data/model/loginRequest.req.dart';
 import 'package:home/data/model/lpgBillerList.model.dart';
 import 'package:home/data/model/mobilePrepaid.res.dart';
 import 'package:home/data/model/mobileplanRes.model.dart';
+import 'package:home/data/model/offersModel.res.dart';
 import 'package:home/data/model/order.details.body.dart';
 import 'package:home/data/model/orderDetails.res.dart';
 import 'package:home/data/model/orderList.res.dart';
@@ -190,4 +191,15 @@ abstract class APIStateNetwork {
   );
   @POST('others/b2c_dashboard/support')
   Future<SupportLoadResponse> getAllTickets();
+
+  @POST("verify/b2c_kyc_account/kyc_upload")
+  @MultiPart()
+  Future<HttpResponse> uploadKycDocument(
+    @Part(name: 'ip_address') String ipAddreess,
+    @Part(name: 'document_id') String subject,
+    @Part(name: "kyc_proof") File? proof,
+  );
+
+  @POST('others/b2c_dashboard/offers')
+  Future<OfferListmodelResponse> getAllOffers();
 }

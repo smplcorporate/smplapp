@@ -29,14 +29,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-     signingConfigs {
-    create("release") {
-        storeFile = file("upload-keystore.jks")
-        storePassword = project.property("MY_KEYSTORE_PASSWORD") as String
-        keyAlias = project.property("MY_KEY_ALIAS") as String
-        keyPassword = project.property("MY_KEY_PASSWORD") as String
-    }
-    }
+
     buildTypes {
     getByName("release") {
         isMinifyEnabled = true
@@ -45,11 +38,11 @@ android {
             getDefaultProguardFile("proguard-android-optimize.txt"),
             "proguard-rules.pro"
         )
-        signingConfig = signingConfigs.getByName("release")
+        signingConfig = signingConfigs.getByName("debug")
     }
 
     getByName("debug") {
-        signingConfig = signingConfigs.getByName("release") // optional: only if needed
+        signingConfig = signingConfigs.getByName("debug") // optional: only if needed
     }
 }
 }

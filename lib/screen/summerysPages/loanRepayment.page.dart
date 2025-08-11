@@ -561,7 +561,8 @@ class _LoanRepaymentSummeryState extends ConsumerState<LoanRepaymentSummery> {
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_controller.text.isNotEmpty &&
+                            if(btnLoder == false){
+                              if (_controller.text.isNotEmpty &&
                                 coupnApplyed == false) {
                               Fluttertoast.showToast(
                                 msg: "Please apply coupon code first",
@@ -710,6 +711,7 @@ class _LoanRepaymentSummeryState extends ConsumerState<LoanRepaymentSummery> {
                                   }
                                 }
                               }
+                            }
                             }
                           },
                           style: ElevatedButton.styleFrom(

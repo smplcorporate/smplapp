@@ -80,7 +80,8 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
   }
 
   void paynow() async {
-    if (_controller.text.isNotEmpty && coupnApplyed == false) {
+    if(btnLoder == false){
+      if (_controller.text.isNotEmpty && coupnApplyed == false) {
       Fluttertoast.showToast(
         msg: "Mpin is required",
         textColor: Colors.white,
@@ -198,6 +199,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
           );
         }
       }
+    }
     }
   }
 

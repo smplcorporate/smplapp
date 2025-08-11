@@ -561,7 +561,8 @@ class _InsurancesummeryPageState extends ConsumerState<InsurancesummeryPage> {
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_controller.text.isEmpty &&
+                            if(btnLoder == false){
+                              if (_controller.text.isNotEmpty &&
                                 coupnApplyed == false) {
                               Fluttertoast.showToast(
                                 msg: "Please apply coupon code first",
@@ -711,6 +712,9 @@ class _InsurancesummeryPageState extends ConsumerState<InsurancesummeryPage> {
                                 }
                               }
                             }
+                            }
+                              
+                            
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: buttonColor,

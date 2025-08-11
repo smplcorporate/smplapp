@@ -560,7 +560,8 @@ class _PipeGasSumeryState extends ConsumerState<PipeGasSumery> {
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
+                            if(btnLoder == false){
+                              if (_formKey.currentState!.validate()) {
                               if (_mpinControllr.text.isEmpty ||
                                   _mpinControllr.text == "") {
                                 Fluttertoast.showToast(
@@ -699,6 +700,7 @@ class _PipeGasSumeryState extends ConsumerState<PipeGasSumery> {
                                   );
                                 }
                               }
+                            }
                             }
                           },
                           style: ElevatedButton.styleFrom(

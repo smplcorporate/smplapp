@@ -1,0 +1,8 @@
+     signingConfigs {
+    create("release") {
+        storeFile = file("upload-keystore.jks")
+        storePassword = project.property("MY_KEYSTORE_PASSWORD") as String
+        keyAlias = project.property("MY_KEY_ALIAS") as String
+        keyPassword = project.property("MY_KEY_PASSWORD") as String
+    }
+    }

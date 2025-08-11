@@ -298,6 +298,7 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                       controller: _amountController,
                                       readOnly: _isEditable,
                                       showCursor: true,
+                                      keyboardType: TextInputType.number,
                                       decoration:
                                           const InputDecoration.collapsed(
                                             hintText: '',
@@ -611,7 +612,8 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if(_amountController.text.trim().isEmpty){
+                            if(btnLoder == false){
+                              if(_amountController.text.trim().isEmpty){
                               Fluttertoast.showToast(
                                 msg: "Amount is required",
                                 textColor: Colors.white,
@@ -768,6 +770,7 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                               }
                             }
                               }
+                            }
                             }
                             
                           },
