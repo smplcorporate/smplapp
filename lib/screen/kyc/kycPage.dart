@@ -139,7 +139,15 @@ class _KYCVerificationFormState extends State<KYCVerificationForm> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () async {
-                    if (_isLoading == false) {
+                    if (_selectedImage == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please select an image to upload.'),
+                        ),
+                      );
+                      return;
+                    }else{
+                      if (_isLoading == false) {
                       try {
                         // Call your upload function here
                         setState(() {
@@ -176,6 +184,7 @@ class _KYCVerificationFormState extends State<KYCVerificationForm> {
                           ),
                         );
                       }
+                    }
                     }
                   },
                   child: Container(

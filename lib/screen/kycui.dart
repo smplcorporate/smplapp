@@ -299,113 +299,118 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
             );
           }
 
-          return Stack(
-            children: [
-              Positioned(
-                top: screenHeight * 0.15,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(kycProvider);
+            },
+            child: Stack(
+              children: [
+                Positioned(
+                  top: screenHeight * 0.15,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              ListView(
-                padding: const EdgeInsets.only(bottom: 30),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
-                    child: Text(
-                      'Complete your KYC to unlock secure digital transactions.',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color.fromARGB(255, 130, 130, 130),
-                      ),
-                    ),
-                  ),
-                  if (kycModel.requireDocsList.isNotEmpty) ...[
+                ListView(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
-                        vertical: 8,
+                        vertical: 16,
                       ),
                       child: Text(
-                        'Required Documents',
+                        'Complete your KYC to unlock secure digital transactions.',
                         style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 68, 128, 106),
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 130, 130, 130),
                         ),
                       ),
                     ),
-                    ...kycModel.requireDocsList.map(
-                      (doc) => requiredDocCard(
-                        documentId: doc.documentId,
-                        documentValue: doc.documentValue,
-                      ),
-                    ),
-                  ],
-                  if (kycModel.kycList.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: Text(
-                        'Your KYC Documents',
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 68, 128, 106),
-                        ),
-                      ),
-                    ),
-                    ...kycModel.kycList.map((kyc) => uploadedKycCard(kyc: kyc)),
-                  ],
-                  if (kycModel.instructionsList.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: Text(
-                        'Instructions',
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 68, 128, 106),
-                        ),
-                      ),
-                    ),
-                    ...kycModel.instructionsList.map(
-                      (inst) => Padding(
+                    if (kycModel.requireDocsList.isNotEmpty) ...[
+                      Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
-                          vertical: 4,
+                          vertical: 8,
                         ),
                         child: Text(
-                          '• $inst',
+                          'Required Documents',
                           style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 68, 128, 106),
                           ),
                         ),
                       ),
-                    ),
+                      ...kycModel.requireDocsList.map(
+                        (doc) => requiredDocCard(
+                          documentId: doc.documentId,
+                          documentValue: doc.documentValue,
+                        ),
+                      ),
+                    ],
+                    if (kycModel.kycList.isNotEmpty) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: Text(
+                          'Your KYC Documents',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 68, 128, 106),
+                          ),
+                        ),
+                      ),
+                      ...kycModel.kycList.map((kyc) => uploadedKycCard(kyc: kyc)),
+                    ],
+                    if (kycModel.instructionsList.isNotEmpty) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: Text(
+                          'Instructions',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 68, 128, 106),
+                          ),
+                        ),
+                      ),
+                      ...kycModel.instructionsList.map(
+                        (inst) => Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          child: Text(
+                            '• $inst',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 24),
                   ],
-                  const SizedBox(height: 24),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           );
         },
         error:
@@ -419,4 +424,5 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
       ),
     );
   }
+
 }
