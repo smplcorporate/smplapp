@@ -32,6 +32,8 @@ import 'package:home/data/model/paynow.model.dart';
 import 'package:home/data/model/profileDetails.model.dart';
 import 'package:home/data/model/register.body.validate.dart';
 import 'package:home/data/model/register.model1.dart';
+import 'package:home/data/model/ticketModel.req.dart';
+import 'package:home/data/model/ticketRes.model.dart';
 import 'package:home/data/model/updateProfilereq.dart';
 import 'package:home/data/model/updateUserProfile.res.dart';
 import 'package:home/data/model/userDetails.res.dart';
@@ -138,6 +140,8 @@ abstract class APIStateNetwork {
   Future<HttpResponse<dynamic>> checkCoupnPipeGas(@Body() CheckCouponModel body);
   @POST('bbps/b2c_bills_fastag/check_coupon')
   Future<HttpResponse<dynamic>> checkCoupnFastTag(@Body() CheckCouponModel body);
+   @POST('bbps/b2c_bills_landline/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnLandline(@Body() CheckCouponModel body);
 
   // Wallet
   @POST('profile/b2c_wallet/wallet_balance')
@@ -202,4 +206,12 @@ abstract class APIStateNetwork {
 
   @POST('others/b2c_dashboard/offers')
   Future<OfferListmodelResponse> getAllOffers();
+  @POST('bbps/b2c_bills_landline/get_billers')
+  Future<HttpResponse<ElectricityModel>> landlineProvider(
+    @Body() ElectricityBody body,
+  );
+
+  @POST("others/b2c_dashboard/support_details")
+  Future<TicketDetailsResponse> getTicketDetails(@Body() TicketDetailsRequest body);
+
 }

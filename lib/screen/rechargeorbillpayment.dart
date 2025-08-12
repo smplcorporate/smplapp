@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:home/screen/biller.dart';
 import 'package:home/screen/dth1.dart';
 import 'package:home/screen/fastag1.dart';
+import 'package:home/screen/landline/landline.page.dart';
 import 'package:home/screen/lender2.dart';
 import 'package:home/screen/lic insurance.dart';
 import 'package:home/screen/rechargebill.dart';
@@ -35,11 +36,12 @@ class RechargeOrBill extends StatelessWidget {
         IconLabel("Insurance / LIC", "assets/lic.png"),
         IconLabel("Credit Card Bill", "assets/creditb.png"),
         IconLabel("Mobile Postpaid", "assets/mpostpaid.png"),
-        IconLabel("Broadband Landline", "assets/landline.png"),
+        IconLabel("Broadband", "assets/landline.png"),
         IconLabel("Piped Gas", "assets/pergas.png"),
         IconLabel("Prepaid Meter", "assets/pmeter.png"),
         IconLabel("Education Fees", "assets/educationfees.png"),
         IconLabel("Rental", "assets/rent.png"),
+        IconLabel("Landline", "assets/icons8-landline-66.png"),
       ],
     ),
     SectionModel(
@@ -185,8 +187,10 @@ class SectionWidget extends StatelessWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => FastagScreen()));
                     } else if(item.label == "Piped Gas"){
                        Navigator.push(context, MaterialPageRoute(builder: (_) => PipeGasPage()));
-                    } else if(item.label == "Broadband Landline"){
+                    } else if(item.label == "Broadband"){
                       Navigator.push(context, MaterialPageRoute(builder: (_) => BoardBansPage()));
+                    }else if(item.label == "Landline"){
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => LandlinePage()));
                     }
                     else {
                       ScaffoldMessenger.of(context).showSnackBar(

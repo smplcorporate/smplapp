@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/controller/userAllTickets.provider.dart';
+import 'package:home/screen/ticket/ticketDetails.page.dart';
 import 'package:image_picker/image_picker.dart';
 
 
@@ -102,6 +103,9 @@ void didChangeDependencies() {
                         return Card(
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           child: ListTile(
+                            onTap: () {
+                              Navigator.push(context, CupertinoPageRoute(builder: (context) => TicketDetailsPage(tiketId: ticket.ticketId)));
+                            },
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
