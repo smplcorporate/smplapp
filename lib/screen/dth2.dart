@@ -84,7 +84,7 @@ class _DTHMobilePrepaid2State extends ConsumerState<DTHMobilePrepaid2> {
     if (btnLoder == false) {
       if (_controller.text.isNotEmpty && coupnApplyed == false) {
         Fluttertoast.showToast(
-          msg: "Mpin is required",
+          msg: "Apply coupon first",
           textColor: Colors.white,
           backgroundColor: Colors.red,
         );
@@ -298,6 +298,7 @@ class _DTHMobilePrepaid2State extends ConsumerState<DTHMobilePrepaid2> {
                                     15,
                                   ), // Enforce length limit
                                   UpperCaseTextFormatter(),
+                                   FilteringTextInputFormatter.digitsOnly
                                 ],
                                 decoration: InputDecoration(
                                   hintText: snap.param1.name,
@@ -362,6 +363,7 @@ class _DTHMobilePrepaid2State extends ConsumerState<DTHMobilePrepaid2> {
                                     15,
                                   ), // Enforce length limit
                                   UpperCaseTextFormatter(),
+                                  FilteringTextInputFormatter.digitsOnly
                                 ],
                                 decoration: InputDecoration(
                                   hintText: snap.param2.name,
@@ -665,7 +667,8 @@ class _DTHMobilePrepaid2State extends ConsumerState<DTHMobilePrepaid2> {
                                   SizedBox(width: 8),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if (_parm1Controller.text
+                                      if(applyBtnLoder == false){
+                                        if (_parm1Controller.text
                                           .trim()
                                           .isNotEmpty) {
                                         if (_copounCodeKey.currentState!
@@ -775,6 +778,7 @@ class _DTHMobilePrepaid2State extends ConsumerState<DTHMobilePrepaid2> {
                                           backgroundColor: Colors.black,
                                           textColor: Colors.white,
                                         );
+                                      }
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

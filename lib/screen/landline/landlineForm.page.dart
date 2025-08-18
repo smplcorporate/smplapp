@@ -595,7 +595,8 @@ class _LoanAccountScreenState extends ConsumerState<LandlineFormPage> {
                                     SizedBox(width: 8),
                                     ElevatedButton(
                                       onPressed: () async {
-                                        if (_copounCodeKey.currentState!
+                                        if(applyBtnLoder == false){
+                                          if (_copounCodeKey.currentState!
                                             .validate()) {
                                           if (_controller.text.isNotEmpty ||
                                               _controller.text
@@ -707,6 +708,7 @@ class _LoanAccountScreenState extends ConsumerState<LandlineFormPage> {
                                               textColor: Colors.white,
                                             );
                                           }
+                                        }
                                         }
                                       },
                                       style: ElevatedButton.styleFrom(

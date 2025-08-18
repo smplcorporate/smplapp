@@ -360,7 +360,8 @@ class _BroadBandSumeeryState extends ConsumerState<BroadBandSumeery> {
                                   SizedBox(width: 8),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if (_coponKey.currentState!.validate()) {
+                                      if(applyBtnLoder == false){
+                                        if (_coponKey.currentState!.validate()) {
                                         if (_controller.text.isEmpty ||
                                             _controller.text.trim().isEmpty) {
                                           Fluttertoast.showToast(
@@ -377,7 +378,7 @@ class _BroadBandSumeeryState extends ConsumerState<BroadBandSumeery> {
                                               await createDio(),
                                             );
                                             final response = await state
-                                                .checkCoupn(
+                                                .checkCoupnBroadband(
                                                   CheckCouponModel(
                                                     ipAddress: "152.59.109.59",
                                                     macAddress: "not found",
@@ -444,6 +445,7 @@ class _BroadBandSumeeryState extends ConsumerState<BroadBandSumeery> {
                                             });
                                           }
                                         }
+                                      }
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -560,7 +562,8 @@ class _BroadBandSumeeryState extends ConsumerState<BroadBandSumeery> {
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_controller.text.isNotEmpty &&
+                            if(btnLoder == false){
+                              if (_controller.text.isNotEmpty &&
                                 coupnApplyed == false) {
                               Fluttertoast.showToast(
                                 msg: "Please apply coupon code first",
@@ -709,6 +712,7 @@ class _BroadBandSumeeryState extends ConsumerState<BroadBandSumeery> {
                                   }
                                 }
                               }
+                            }
                             }
                           },
                           style: ElevatedButton.styleFrom(

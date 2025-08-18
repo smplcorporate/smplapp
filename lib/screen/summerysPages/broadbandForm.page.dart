@@ -317,7 +317,7 @@ class _LoanAccountScreenState extends ConsumerState<BroadBandFormnPage> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: TextFormField(
-                                  controller: _parm2Controller,
+                                  controller: _parm3Controller,
 
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
@@ -489,7 +489,8 @@ class _LoanAccountScreenState extends ConsumerState<BroadBandFormnPage> {
                                     SizedBox(width: 8),
                                     ElevatedButton(
                                       onPressed: () async {
-                                        if (_parm1Controller.text
+                                        if(applyBtnLoder == false){
+                                          if (_parm1Controller.text
                                             .trim()
                                             .isNotEmpty) {
                                           if (_copounCodeKey.currentState!
@@ -601,6 +602,7 @@ class _LoanAccountScreenState extends ConsumerState<BroadBandFormnPage> {
                                             backgroundColor: Colors.black,
                                             textColor: Colors.white,
                                           );
+                                        }
                                         }
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -763,7 +765,8 @@ class _LoanAccountScreenState extends ConsumerState<BroadBandFormnPage> {
   }
 
   void paynow() async {
-    if (_controller.text.isNotEmpty && coupnApplyed == false) {
+    if(btnLoder == false){
+      if (_controller.text.isNotEmpty && coupnApplyed == false) {
       Fluttertoast.showToast(
         msg: "Please apply coupon code first",
         backgroundColor: Colors.black,
@@ -881,6 +884,7 @@ class _LoanAccountScreenState extends ConsumerState<BroadBandFormnPage> {
           );
         }
       }
+    }
     }
   }
 }
