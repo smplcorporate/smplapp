@@ -106,7 +106,7 @@ class OldRecharge {
     String transId;
     String serviceProvider;
     String serviceAccount;
-    int transAmount;
+    double transAmount;
     String transStatus;
 
     OldRecharge({

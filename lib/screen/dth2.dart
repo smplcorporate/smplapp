@@ -1,165 +1,929 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/adapters.dart' show Hive;
+import 'package:home/config/network/api.state.dart';
+import 'package:home/config/utils/preety.dio.dart';
+import 'package:home/data/controller/billerParam.notier.dart';
+import 'package:home/data/controller/fetchBills.provider.dart';
+import 'package:home/data/model/billerParms.req.model.dart';
+import 'package:home/data/model/checkCopoun.model.dart';
+import 'package:home/data/model/fetchBill.model.dart';
+import 'package:home/data/model/payNowMobilePrepaid.model.dart';
+import 'package:home/data/model/paynow.model.dart';
 import 'package:home/screen/dth3.dart';
-import 'package:home/screen/gasbill.dart';
-import 'package:home/screen/licsumarry.dart'; // Ensure this exists
+import 'package:home/screen/elebillsummary.dart';
+import 'package:home/screen/order.details.page.dart';
 
-class Dth2 extends StatefulWidget {
-  final String billerName;
+class DTHMobilePrepaid2 extends ConsumerStatefulWidget {
   final String billerCode;
-
-  const Dth2({super.key,required this.billerName, required this.billerCode,});
+  final String billerName;
+  final String circleId;
+  const DTHMobilePrepaid2({
+    super.key,
+    required this.billerCode,
+    required this.billerName,
+    required this.circleId,
+  });
 
   @override
-  State<Dth2> createState() => _Dth2State();
+  ConsumerState<DTHMobilePrepaid2> createState() => _DTHMobilePrepaid2State();
 }
 
-class _Dth2State extends State<Dth2> {
+class _DTHMobilePrepaid2State extends ConsumerState<DTHMobilePrepaid2> {
   final TextEditingController _controller = TextEditingController();
-  bool _isValid = false;
+  bool _isValid = true; // Start as true to avoid red border initially
+  String? _errorText;
 
   void _validateInput(String input) {
+    final isValidCID = RegExp(r'^[a-zA-Z0-9]{10}$').hasMatch(input);
     setState(() {
-      _isValid = RegExp(r'^[0-9]{10}$').hasMatch(input); // 10 digits only
+      _isValid = isValidCID;
+      _errorText =
+          isValidCID ? null : "Please enter a valid 10-character CID code";
     });
   }
 
   void _submitAccount() {
-    if (_isValid) {
+    final cidCode = _controller.text.trim();
+    if (_formKey.currentState!.validate()) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Dth3(accountNumber: _controller.text, billerName: '${widget.billerName}', billerCode: '${widget.billerCode}',),
-        ),
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Invalid Input"),
-          content: const Text("Please enter a valid 10-digit contact number."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("OK"),
-            ),
-          ],
+          builder:
+              (context) => DthPrepaid3Page(
+                body: FetchBodymodel(
+                  data: FetchBillModel(
+                    ipAddress: "152.59.109.59",
+                    macAddress: "not found",
+                    latitude: "26.917979",
+                    longitude: "75.814593",
+                    circleCode: widget.circleId,
+                    billerCode: widget.billerCode,
+                    billerName: widget.billerName,
+                    param1: _parm1Controller.text,
+                    param2: _parm2Controller.text,
+                    param3: _parm3Controller.text,
+                    param4: _parm4Controller.text,
+                    param5: _parm5Controller.text,
+                  ),
+                  path: "b2c_prepaid_dth",
+                ),
+              ),
         ),
       );
     }
   }
 
+  void paynow() async {
+    if (btnLoder == false) {
+      if (_controller.text.isNotEmpty && coupnApplyed == false) {
+        Fluttertoast.showToast(
+          msg: "Mpin is required",
+          textColor: Colors.white,
+          backgroundColor: Colors.red,
+        );
+      } else {
+        if (_formKey.currentState!.validate()) {
+          setState(() {
+            btnLoder = true;
+          });
+          final box = Hive.box('userdata');
+          final mobile = box.get('@mobile');
+          final service = APIStateNetwork(await createDio());
+          final response = await service.payDthRecharge(
+            PaymentRequest(
+              ipAddress: "127.0.0.1",
+              macAddress: "Not found",
+              latitude: "27.033342",
+              longitude: "37.0342434",
+              billerCode: widget.billerCode,
+              billerName: widget.billerName,
+              param1: _parm1Controller.text ?? "",
+              transAmount: _amountController.text,
+              userMpin: _mpinControllr.text,
+              circleCode: widget.circleId,
+              param2: _parm2Controller.text,
+
+              couponCode: coupnApplyed == true ? _controller.text : "",
+            ),
+          );
+          ;
+          if (response.response.data["status"] == false) {
+            setState(() {
+              btnLoder = false;
+            });
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    '',
+                    style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                    '${response.response.data["status_desc"]}',
+                    style: GoogleFonts.inter(),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'OK',
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            setState(() {
+              btnLoder = false;
+            });
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    '${response.response.data['trans_status']}',
+                    style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                    '${response.response.data["status_desc"]}',
+                    style: GoogleFonts.inter(),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => PaymentDetailsScreen(
+                                  trnxId:
+                                      '${response.response.data['trans_id']}',
+                                ),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'OK',
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        }
+      }
+    }
+  }
+
+  late final FetchBllerParam fetchBillerParam;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchBillerParam = FetchBllerParam(
+      path: "b2c_prepaid_dth",
+      data: BillerParamRequest(
+        ipAddress: "152.59.109.59",
+        macAddress: "not found",
+        latitude: "26.917979",
+        longitude: "26.917979",
+        billerCode: widget.billerCode,
+        billerName: widget.billerName,
+      ),
+    );
+  }
+
+  TextEditingController _parm1Controller = TextEditingController();
+  TextEditingController _parm2Controller = TextEditingController();
+  TextEditingController _parm3Controller = TextEditingController();
+  TextEditingController _parm4Controller = TextEditingController();
+  TextEditingController _parm5Controller = TextEditingController();
+
+  final TextEditingController _mpinControllr = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _copounCodeKey = GlobalKey<FormState>();
+  bool applyBtnLoder = false;
+  bool coupnApplyed = false;
+  bool isInvalid = false;
+  bool btnLoder = false;
   @override
   Widget build(BuildContext context) {
+    final billerParam = ref.watch(fetchBillerParamProvider2(fetchBillerParam));
+    final params = ref.watch(paramsProvider);
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(255, 232, 243, 235),
+      backgroundColor: const Color.fromARGB(255, 232, 243, 235),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 232, 243, 235),
+        elevation: 0,
+        title: Text(
+          widget.billerName,
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SafeArea(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: billerParam.when(
+        data: (snap) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 232, 243, 235),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 80),
+                    if (snap.isParam1 == true) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
-                        child: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _parm1Controller.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _parm1Controller,
+
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9]'),
+                                  ),
+                                  LengthLimitingTextInputFormatter(
+                                    15,
+                                  ), // Enforce length limit
+                                  UpperCaseTextFormatter(),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: snap.param1.name,
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (value) {
+                                  ref
+                                      .read(paramsProvider.notifier)
+                                      .updateParam1(value);
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    if (snap.isParam2 == true) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _parm2Controller.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _parm2Controller,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                },
+                                onChanged: (value) {
+                                  ref
+                                      .read(paramsProvider.notifier)
+                                      .updateParam2(value);
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9]'),
+                                  ),
+                                  LengthLimitingTextInputFormatter(
+                                    15,
+                                  ), // Enforce length limit
+                                  UpperCaseTextFormatter(),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: snap.param2.name,
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    if (snap.isParam3 == true) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _parm3Controller.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _parm3Controller,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                },
+                                onChanged: (value) {
+                                  ref
+                                      .read(paramsProvider.notifier)
+                                      .updateParam3(value);
+                                },
+                                inputFormatters: [],
+                                decoration: InputDecoration(
+                                  hintText: snap.param3?.name,
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    if (snap.isParam4 == true) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _parm4Controller.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _parm4Controller,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                },
+                                onChanged: (value) {
+                                  ref
+                                      .read(paramsProvider.notifier)
+                                      .updateParam4(value);
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9]'),
+                                  ),
+                                  LengthLimitingTextInputFormatter(
+                                    15,
+                                  ), // Enforce length limit
+                                  UpperCaseTextFormatter(),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: snap.param4?.name,
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    if (snap.isParam5 == true) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _parm5Controller.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _parm5Controller,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                },
+                                onChanged: (value) {
+                                  ref
+                                      .read(paramsProvider.notifier)
+                                      .updateParam5(value);
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9]'),
+                                  ),
+                                  LengthLimitingTextInputFormatter(
+                                    15,
+                                  ), // Enforce length limit
+                                  UpperCaseTextFormatter(),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: snap.param5?.name,
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    if (snap.fetchOption == false) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _amountController.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _amountController,
+                                keyboardType:
+                                    TextInputType.number, // Use number keyboard
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  // Handle logic if needed
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]'), // Only numbers allowed
+                                  ),
+                                  LengthLimitingTextInputFormatter(
+                                    7,
+                                  ), // Max 7 digits
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "Amount",
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Divider(),
+                      SizedBox(height: 10.h),
+                      Padding(
+                        padding: EdgeInsets.only(left: 0.w, right: 0.w),
+                        child: Form(
+                          key: _copounCodeKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      readOnly: coupnApplyed,
+                                      controller: _controller,
+                                      maxLength: 15,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp(r'[A-Za-z0-9]'),
+                                        ),
+                                        UpperCaseTextFormatter(),
+                                        LengthLimitingTextInputFormatter(15),
+                                      ],
+                                      decoration: InputDecoration(
+                                        hintText: 'Gift card or discount code',
+                                        counterText: '',
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 14,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                          borderSide: BorderSide(
+                                            color:
+                                                isInvalid
+                                                    ? Colors.red
+                                                    : Colors.grey,
+                                          ),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                          borderSide: BorderSide(
+                                            color:
+                                                isInvalid
+                                                    ? Colors.red
+                                                    : Colors.grey,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                          borderSide: BorderSide(
+                                            color:
+                                                isInvalid
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Code is required";
+                                        }
+                                        if (value.length < 5) {
+                                          return "Minimum 5 characters required";
+                                        }
+                                        if (value.length > 15) {
+                                          return "Maximum 15 characters allowed";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      if (_parm1Controller.text
+                                          .trim()
+                                          .isNotEmpty) {
+                                        if (_copounCodeKey.currentState!
+                                            .validate()) {
+                                          if (_controller.text.isNotEmpty ||
+                                              _controller.text
+                                                  .trim()
+                                                  .isNotEmpty) {
+                                            if (_amountController
+                                                    .text
+                                                    .isNotEmpty ||
+                                                _amountController.text
+                                                    .trim()
+                                                    .isNotEmpty) {
+                                              if (coupnApplyed == false) {
+                                                setState(() {
+                                                  applyBtnLoder = true;
+                                                });
+                                                final state = APIStateNetwork(
+                                                  await createDio(),
+                                                );
+                                                final response = await state
+                                                    .checkCoupnDthPrepaid(
+                                                      CheckCouponModel(
+                                                        ipAddress:
+                                                            "152.59.109.59",
+                                                        macAddress: "not found",
+                                                        latitude: "26.917979",
+                                                        longitude: "75.814593",
+                                                        billerCode:
+                                                            widget.billerCode,
+                                                        billerName:
+                                                            widget.billerName,
+                                                        param1:
+                                                            _parm1Controller
+                                                                .text,
+                                                        transAmount:
+                                                            double.parse(
+                                                              _amountController
+                                                                  .text,
+                                                            ).toInt().toString(),
+                                                        couponCode:
+                                                            _controller.text
+                                                                .trim(),
+                                                      ),
+                                                    );
+                                                if (response
+                                                        .response
+                                                        .data['status'] ==
+                                                    true) {
+                                                  setState(() {
+                                                    applyBtnLoder = false;
+                                                    coupnApplyed = true;
+                                                  });
+                                                  log("testing1");
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        response
+                                                            .response
+                                                            .data['status_desc'],
+                                                    backgroundColor:
+                                                        Colors.black,
+                                                    textColor: Colors.white,
+                                                  );
+                                                } else {
+                                                  setState(() {
+                                                    applyBtnLoder = false;
+                                                    _controller.clear();
+                                                  });
+                                                  log("testing2");
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        response
+                                                            .response
+                                                            .data['status_desc'],
+                                                    backgroundColor:
+                                                        Colors.black,
+                                                    textColor: Colors.white,
+                                                  );
+                                                }
+                                              } else {
+                                                setState(() {
+                                                  coupnApplyed = false;
+                                                  _controller.clear();
+                                                });
+                                              }
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "Amount is required to apply Coupon code",
+                                                backgroundColor: Colors.black,
+                                                textColor: Colors.white,
+                                              );
+                                            }
+                                          } else {
+                                            Fluttertoast.showToast(
+                                              msg: "Coupon Code is required",
+                                              backgroundColor: Colors.black,
+                                              textColor: Colors.white,
+                                            );
+                                          }
+                                        }
+                                      } else {
+                                        Fluttertoast.showToast(
+                                          msg:
+                                              "${snap.param1.name} is required",
+                                          backgroundColor: Colors.black,
+                                          textColor: Colors.white,
+                                        );
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 14,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                    ),
+                                    child:
+                                        applyBtnLoder == true
+                                            ? CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2.5,
+                                            )
+                                            : Text(
+                                              coupnApplyed == false
+                                                  ? 'Apply'
+                                                  : 'Remove',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                  ),
+                                ],
+                              ),
+                              if (coupnApplyed == true) ...[
+                                SizedBox(height: 8),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 6,
+                                      right: 6,
+                                      top: 2,
+                                      bottom: 2,
+                                    ),
+                                    child: Text(
+                                      "Coupon Applied",
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _mpinControllr.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                obscureText: true,
+                                controller: _mpinControllr,
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                  if (value.length < 6) {
+                                    return "MPIN must be at least 6 digits";
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  // ref.read(paramsProvider.notifier).updateParam5(value);
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter
+                                      .digitsOnly, // Only digits 0-9
+                                  LengthLimitingTextInputFormatter(
+                                    6,
+                                  ), // Max 6 digits
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "MPIN",
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: 50),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed:
+                            snap.fetchOption == true ? _submitAccount : paynow,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            68,
+                            128,
+                            106,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: Text(
+                          snap.fetchOption == true
+                              ? "Process"
+                              : "Processd to Pay",
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  Center(
-                    child: Text(
-                      "${widget.billerName}",
-                      style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 60),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Registered Mobile Number or Subscriber ID",
-                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: _isValid || _controller.text.isEmpty
-                      ? Colors.grey.shade600
-                      : Colors.red,
-                  width: 2.0,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
-                      decoration: const InputDecoration(
-                        counterText: "",
-                        border: InputBorder.none,
-                      ),
-                      onChanged: _validateInput,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Please enter a valid 10-digit contact number",
-                style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 10),
-            if (!_isValid && _controller.text.isNotEmpty)
-              const Text(
-                "Please enter a valid 10-digit number",
-                style: TextStyle(color: Colors.red, fontSize: 16),
-              ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: ElevatedButton(
-                onPressed: _submitAccount,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 68, 128, 106),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-                child: Text(
-                  "Confirm",
-                  style: GoogleFonts.inter(fontSize: 18, color: Colors.white),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text("Error: $error, $stack")),
       ),
     );
   }

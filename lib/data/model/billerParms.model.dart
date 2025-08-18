@@ -14,7 +14,7 @@ class BillerParamResponse {
     String billerType;
     String billerCode;
     String billerName;
-    bool fetchOption;
+    bool? fetchOption;
     bool isParam1;
     Param param1;
     bool isParam2;
@@ -51,7 +51,7 @@ class BillerParamResponse {
         billerType: json["biller_type"],
         billerCode: json["biller_code"],
         billerName: json["biller_name"],
-        fetchOption: json["fetch_option"],
+        fetchOption: json["fetch_option"] ?? false,
         isParam1: json["is_param1"],
         param1: Param.fromJson(json["param1"]),
         isParam2: json["is_param2"],

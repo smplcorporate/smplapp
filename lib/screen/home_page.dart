@@ -267,7 +267,7 @@ class HomePage extends StatelessWidget {
             } else if (label.contains("dth")) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => Dth1()),
+                MaterialPageRoute(builder: (_) => DTHPreapaidPage1()),
               );
             } else if (label.contains("credit")) {
               Navigator.push(

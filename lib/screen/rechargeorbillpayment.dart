@@ -6,6 +6,7 @@ import 'package:home/screen/fastag1.dart';
 import 'package:home/screen/landline/landline.page.dart';
 import 'package:home/screen/lender2.dart';
 import 'package:home/screen/lic insurance.dart';
+import 'package:home/screen/mobilePospaid/postpaidBiller.page.dart';
 import 'package:home/screen/rechargebill.dart';
 import 'package:home/screen/selectgas.dart';
 import 'package:home/screen/summerysPages/boardBand.page.dart';
@@ -24,6 +25,8 @@ class RechargeOrBill extends StatelessWidget {
         IconLabel("NCMC Recharge", "assets/ncmc.png"),
         IconLabel("Cable TV Recharge", "assets/cabletv.png"),
         IconLabel("Metro Recharge", "assets/metro.png"),
+        IconLabel("Mobile Postpaid", "assets/mre.png"),
+        // IconLabel("DTH Postpaid", "assets/dth.png"),
       ],
     ),
     SectionModel(
@@ -172,7 +175,7 @@ class SectionWidget extends StatelessWidget {
                     if (item.label == "Mobile Recharge") {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => RechargeBillPage()));
                     } else if (item.label == "DTH Recharge") {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => Dth1()));
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => DTHPreapaidPage1()));
                     } else if (item.label == "Electricity Bill") {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => Biller()));
                     } else if (item.label == "Insurance / LIC") {
@@ -191,6 +194,8 @@ class SectionWidget extends StatelessWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => BoardBansPage()));
                     }else if(item.label == "Landline"){
                       Navigator.push(context, MaterialPageRoute(builder: (_) => LandlinePage()));
+                    }else if(item.label == "Mobile Postpaid"){
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => MobilePostpaidPage()));
                     }
                     else {
                       ScaffoldMessenger.of(context).showSnackBar(

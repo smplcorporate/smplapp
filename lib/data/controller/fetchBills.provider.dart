@@ -21,6 +21,11 @@ final fetchBillerParamProvider = FutureProvider.family<BillerParamResponse, Fetc
   return state.fetchBillerParm(body.path, body.data);
 });
 
+final fetchBillerParamProvider2 = FutureProvider.family<BillerParamResponse, FetchBllerParam>((ref, body) async {
+  final state = APIStateNetwork(await createDio());
+  return state.dthBillerParm(body.path, body.data);
+});
+
 
 class FetchBodymodel{
   final String path;

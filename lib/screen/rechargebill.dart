@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/data/controller/mobilePrepaid.notifier.dart';
 import 'package:home/data/controller/mobilePrepaid.provider.dart';
-
 import 'package:home/screen/home_page.dart';
 import 'package:home/screen/rechargebill2.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,7 +19,9 @@ class RechargeBillPage extends ConsumerStatefulWidget {
 
 class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
   List<Contact> contacts = [];
+  List<Contact> filteredContacts = []; // NEW
   bool isLoading = false;
+  TextEditingController searchController = TextEditingController(); // NEW
 
   @override
   void initState() {
@@ -32,12 +35,13 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
       setState(() => isLoading = true);
       try {
         final result = await FlutterContacts.getContacts(
-          withProperties: true, // Only this is needed to get phone numbers
+          withProperties: true,
           withPhoto: false,
         );
 
         setState(() {
           contacts = result;
+          filteredContacts = result; // init filtered list
           isLoading = false;
         });
       } catch (e) {
@@ -75,6 +79,27 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
         ).showSnackBar(SnackBar(content: Text('Contacts permission denied')));
       }
     }
+  }
+
+  // NEW: Search filter
+  void filterContacts(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        filteredContacts = contacts;
+      });
+      return;
+    }
+    final lowerQuery = query.toLowerCase();
+    setState(() {
+      filteredContacts =
+          contacts.where((contact) {
+            final name = contact.displayName.toLowerCase();
+            final phoneMatches = contact.phones.any(
+              (p) => p.number.toLowerCase().contains(lowerQuery),
+            );
+            return name.contains(lowerQuery) || phoneMatches;
+          }).toList();
+    });
   }
 
   @override
@@ -155,13 +180,15 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                           Expanded(
                             child: SizedBox(
                               height: 45,
-                              child: TextField(
+                              child: TextFormField(
+                                controller: searchController,
+                                onChanged: filterContacts,
                                 style: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.black,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: 'Search by Biller',
+                                  hintText: 'Search by name or number',
                                   hintStyle: GoogleFonts.inter(
                                     fontSize: 16,
                                     color: Color(0xFF9E9E9E),
@@ -234,7 +261,89 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Contact List
+                  // Contact List (filtered)
+                  if (filteredContacts.length == 0) ...[
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
+                      child: SizedBox(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Container(
+                            height: 60,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            margin: const EdgeInsets.only(top: 12),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.dialer_sip,
+                                  color: Colors.black,
+                                  size: 30,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 45,
+                                    child: TextFormField(
+                                      maxLength: 10, // limit to 10 digits
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter
+                                            .digitsOnly, // allow only numbers
+                                        LengthLimitingTextInputFormatter(10),
+                                      ],
+                                      style: GoogleFonts.inter(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        counterText: "", // hide length counter
+                                        hintText:
+                                            'Enter Mobile Number manually',
+                                        hintStyle: GoogleFonts.inter(
+                                          fontSize: 16,
+                                          color: const Color(0xFF9E9E9E),
+                                        ),
+                                        border: InputBorder.none,
+                                        contentPadding: const EdgeInsets.only(
+                                          bottom: 10,
+                                        ),
+                                      ),
+                                      textInputAction: TextInputAction.done,
+                                      onFieldSubmitted: (value) {
+                                        if (value.length == 10) {
+                                          billerNotifier.setNumber(value);
+                                          showBillerBottomSheet(
+                                            context,
+                                            snap.billersList,
+                                            snap.circleList,
+                                            ref,
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                "Please enter 10 digits",
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                   Expanded(
                     child: Container(
                       width: double.infinity,
@@ -247,9 +356,9 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                           horizontal: 16.0,
                           vertical: 12,
                         ),
-                        itemCount: contacts.length,
+                        itemCount: filteredContacts.length,
                         itemBuilder: (context, index) {
-                          final contact = contacts[index];
+                          final contact = filteredContacts[index];
                           final phone =
                               contact.phones.isNotEmpty
                                   ? contact.phones.first.number
@@ -290,7 +399,6 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                             ),
                             onTap: () {
                               if (phone != 'No number') {
-                         
                                 billerNotifier.setNumber(phone);
                                 showBillerBottomSheet(
                                   context,
@@ -348,7 +456,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header with close button
+                  // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -504,7 +612,6 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                     ),
                   ],
 
-                  // Green Confirm Button
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
@@ -512,22 +619,21 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                       onPressed:
                           selectedBiller != null && selectedCircle != null
                               ? () {
-                                      Navigator.push(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => RechargePlansPage(),
                                   ),
                                 );
-                                // Add further action here
                               }
                               : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(
-                                255,
-                                68,
-                                128,
-                                106,
-                              ),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          68,
+                          128,
+                          106,
+                        ),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -552,4 +658,12 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
       },
     );
   }
+}
+
+
+String removeDotZero(String value) {
+  if (value.endsWith('.0')) {
+    return value.replaceAll('.0', '');
+  }
+  return value;
 }

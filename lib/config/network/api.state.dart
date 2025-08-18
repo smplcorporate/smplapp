@@ -28,6 +28,7 @@ import 'package:home/data/model/orderList.res.dart';
 import 'package:home/data/model/otpverfiy.model.dart';
 import 'package:home/data/model/passwordResponse.dart';
 import 'package:home/data/model/passwordUpdatae.req.dart';
+import 'package:home/data/model/payNowMobilePrepaid.model.dart';
 import 'package:home/data/model/paynow.model.dart';
 import 'package:home/data/model/profileDetails.model.dart';
 import 'package:home/data/model/register.body.validate.dart';
@@ -77,8 +78,16 @@ abstract class APIStateNetwork {
   Future<HttpResponse<ElectricityModel>> getPipeGasBillers(
     @Body() ElectricityBody body,
   );
+  @POST('bbps/b2c_bills_mobile/get_billers')
+  Future<HttpResponse<ElectricityModel>> getMobilePostpaidBillers(
+    @Body() ElectricityBody body,
+  );
   @POST('bbps/b2c_bills_loanrepayment/get_billers')
   Future<HttpResponse<ElectricityModel>> getLoanRepaymentBillers(
+    @Body() ElectricityBody body,
+  );
+  @POST('bbps/b2c_prepaid_dth/get_billers')
+  Future<HttpResponse<ElectricityModel>> getDTHPrepaidBillers(
     @Body() ElectricityBody body,
   );
   @POST('bbps/b2c_bills_broadband/get_billers')
@@ -89,10 +98,7 @@ abstract class APIStateNetwork {
   Future<HttpResponse<MobilePrepaidResponse>> getMoblePrepaidBillers(
     @Body() ElectricityBody body,
   );
-  @POST('recharges/b2c_prepaid_dth/get_billers')
-  Future<HttpResponse<DthPrepaidResponse>> getDTHPrepaidBillers(
-    @Body() ElectricityBody body,
-  );
+
   @POST('bbps/b2c_bills_fastag/get_billers')
   Future<HttpResponse<ElectricityModel>> getFastTagBillers(
     @Body() ElectricityBody body,
@@ -124,6 +130,11 @@ abstract class APIStateNetwork {
     @Path('path') String path,
     @Body() BillerParamRequest body,
   );
+  @POST('/recharges/{path}/get_billers_param')
+  Future<BillerParamResponse> dthBillerParm(
+    @Path('path') String path,
+    @Body() BillerParamRequest body,
+  );
   @POST('bbps/b2c_bills_electricity/check_coupon')
   Future<HttpResponse<dynamic>> checkCoupn(@Body() CheckCouponModel body);
   @POST('bbps/b2c_bills_water/check_coupon')
@@ -133,16 +144,33 @@ abstract class APIStateNetwork {
   @POST('bbps/b2c_bills_loanrepayment/check_coupon')
   Future<HttpResponse<dynamic>> checkCoupnLoan(@Body() CheckCouponModel body);
   @POST('bbps/b2c_bills_broadband/check_coupon')
-  Future<HttpResponse<dynamic>> checkCoupnBroadband(@Body() CheckCouponModel body);
+  Future<HttpResponse<dynamic>> checkCoupnBroadband(
+    @Body() CheckCouponModel body,
+  );
   @POST('bbps/b2c_bills_Insurance/check_coupon')
-  Future<HttpResponse<dynamic>> checkCoupnInsurance(@Body() CheckCouponModel body);
+  Future<HttpResponse<dynamic>> checkCoupnInsurance(
+    @Body() CheckCouponModel body,
+  );
   @POST('bbps/b2c_bills_pipedgas/check_coupon')
-  Future<HttpResponse<dynamic>> checkCoupnPipeGas(@Body() CheckCouponModel body);
+  Future<HttpResponse<dynamic>> checkCoupnPipeGas(
+    @Body() CheckCouponModel body,
+  );
   @POST('bbps/b2c_bills_fastag/check_coupon')
-  Future<HttpResponse<dynamic>> checkCoupnFastTag(@Body() CheckCouponModel body);
-   @POST('bbps/b2c_bills_landline/check_coupon')
-  Future<HttpResponse<dynamic>> checkCoupnLandline(@Body() CheckCouponModel body);
-
+  Future<HttpResponse<dynamic>> checkCoupnFastTag(
+    @Body() CheckCouponModel body,
+  );
+  @POST('bbps/b2c_bills_landline/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnLandline(
+    @Body() CheckCouponModel body,
+  );
+  @POST('recharges/b2c_prepaid_mobile/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnMobilePrepaid(
+    @Body() CheckCouponModel body,
+  );
+  @POST('recharges/b2c_prepaid_dth/check_coupon')
+  Future<HttpResponse<dynamic>> checkCoupnDthPrepaid(
+    @Body() CheckCouponModel body,
+  );
   // Wallet
   @POST('profile/b2c_wallet/wallet_balance')
   Future<WalletBalancemodel> getWallet();
@@ -212,6 +240,12 @@ abstract class APIStateNetwork {
   );
 
   @POST("others/b2c_dashboard/support_details")
-  Future<TicketDetailsResponse> getTicketDetails(@Body() TicketDetailsRequest body);
+  Future<TicketDetailsResponse> getTicketDetails(
+    @Body() TicketDetailsRequest body,
+  );
 
+  @POST("recharges/b2c_prepaid_mobile/paynow")
+  Future<HttpResponse> payMobileRecharge(@Body() PaymentRequest body);
+  @POST("recharges/b2c_prepaid_dth/paynow")
+  Future<HttpResponse> payDthRecharge(@Body() PaymentRequest body);
 }
