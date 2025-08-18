@@ -375,7 +375,8 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
                                   SizedBox(width: 8),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if (_coponKey.currentState!.validate()) {
+                                      if(applyBtnLoder == false){
+                                        if (_coponKey.currentState!.validate()) {
                                         if (_controller.text.isEmpty ||
                                             _controller.text.trim().isEmpty) {
                                           Fluttertoast.showToast(
@@ -459,6 +460,7 @@ class _WaterBill3State extends ConsumerState<WaterBill3> {
                                             });
                                           }
                                         }
+                                      }
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -223,6 +225,11 @@ class _FastagSummaryState extends ConsumerState<FastagSummary> {
                                   ),
                                   textAlign: TextAlign.center,
                                   keyboardType: TextInputType.none,
+                                  onChanged: (value){
+                                    setState(() {
+                                      snap.billAmount = value;
+                                    });
+                                  },
                                 ),
                               ),
                             ),
@@ -280,7 +287,11 @@ class _FastagSummaryState extends ConsumerState<FastagSummary> {
                         SizedBox(width: 8),
                         ElevatedButton(
                           onPressed: () async {
-                            if (coupnApplyed == false) {
+                            log(snap.billAmount.toString());
+                            if(snap.billAmount!.trim().isEmpty){
+                              Fluttertoast.showToast(msg: "Billing amount required", textColor: Colors.white, backgroundColor: Colors.black);
+                            }else{
+                              if (coupnApplyed == false) {
                               setState(() {
                                 applyBtnLoder = true;
                               });
@@ -327,6 +338,7 @@ class _FastagSummaryState extends ConsumerState<FastagSummary> {
                                 coupnApplyed = false;
                                 _controller.clear();
                               });
+                            }
                             }
                           },
                           style: ElevatedButton.styleFrom(

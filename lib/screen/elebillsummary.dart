@@ -560,7 +560,8 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_controller.text.isNotEmpty &&
+                            if(applyBtnLoder == false){
+                              if (_controller.text.isNotEmpty &&
                                 coupnApplyed == false) {
                               Fluttertoast.showToast(
                                 msg: "Please apply coupon code first",
@@ -717,6 +718,7 @@ class _EleBillSummaryState extends ConsumerState<EleBillSummary> {
                                   }
                                 }
                               }
+                            }
                             }
                           },
                           style: ElevatedButton.styleFrom(

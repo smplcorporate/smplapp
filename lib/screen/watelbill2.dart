@@ -415,7 +415,15 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                       .read(paramsProvider.notifier)
                                       .updateParam3(value);
                                 },
-                                inputFormatters: [],
+                                inputFormatters: [
+                                   FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9]'),
+                                  ),
+                                  LengthLimitingTextInputFormatter(
+                                    15,
+                                  ), // Enforce length limit
+                                  UpperCaseTextFormatter(),
+                                ],
                                 decoration: InputDecoration(
                                   hintText: snap.param3?.name,
                                   border: InputBorder.none,
@@ -672,7 +680,8 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                   SizedBox(width: 8),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if (_parm1Controller.text
+                                      if(applyBtnLoder == false){
+                                        if (_parm1Controller.text
                                           .trim()
                                           .isNotEmpty) {
                                         if (_copounCodeKey.currentState!
@@ -782,6 +791,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                           backgroundColor: Colors.black,
                                           textColor: Colors.white,
                                         );
+                                      }
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

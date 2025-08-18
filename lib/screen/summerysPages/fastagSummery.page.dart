@@ -299,6 +299,13 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                       readOnly: _isEditable,
                                       showCursor: true,
                                       keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(
+                                          6,
+                                        ), // max 6 digits
+                                        FilteringTextInputFormatter
+                                            .digitsOnly, // केवल नंबर
+                                      ],
                                       decoration:
                                           const InputDecoration.collapsed(
                                             hintText: '',
@@ -412,90 +419,103 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                                   SizedBox(width: 8),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if (_coponKey.currentState!.validate()) {
-                                        if (_controller.text.isEmpty ||
-                                            _controller.text.trim().isEmpty) {
-                                          Fluttertoast.showToast(
-                                            msg: "Coupon code is required",
-                                            backgroundColor: Colors.black,
-                                            textColor: Colors.white,
-                                          );
-                                        } else {
-                                          if (coupnApplyed == false) {
-                                            setState(() {
-                                              applyBtnLoder = true;
-                                            });
-                                            final state = APIStateNetwork(
-                                              await createDio(),
+                                      if(applyBtnLoder == false){
+                                        if (snap.billAmount!.trim().isEmpty) {
+                                        Fluttertoast.showToast(
+                                          msg: "Billing amount required",
+                                          backgroundColor: Colors.black,
+                                          textColor: Colors.white,
+                                        );
+                                      } else {
+                                        if (_coponKey.currentState!
+                                            .validate()) {
+                                          if (_controller.text.isEmpty ||
+                                              _controller.text.trim().isEmpty) {
+                                            Fluttertoast.showToast(
+                                              msg: "Coupon code is required",
+                                              backgroundColor: Colors.black,
+                                              textColor: Colors.white,
                                             );
-                                            final response = await state
-                                                .checkCoupnFastTag(
-                                                  CheckCouponModel(
-                                                    ipAddress: "152.59.109.59",
-                                                    macAddress: "not found",
-                                                    latitude: "26.917979",
-                                                    longitude: "75.814593",
-                                                    billerCode:
-                                                        fetchRequest
-                                                            .data
-                                                            .billerCode,
-                                                    billerName:
-                                                        fetchRequest
-                                                            .data
-                                                            .billerName,
-                                                    param1:
-                                                        fetchRequest
-                                                            .data
-                                                            .param1,
-                                                    transAmount:
-                                                        double.parse(
-                                                          snap.billAmount ??
-                                                              "0.00",
-                                                        ).toInt().toString(),
-                                                    couponCode:
-                                                        _controller.text.trim(),
-                                                  ),
-                                                );
-                                            if (response
-                                                    .response
-                                                    .data['status'] ==
-                                                true) {
+                                          } else {
+                                            if (coupnApplyed == false) {
                                               setState(() {
-                                                applyBtnLoder = false;
-                                                coupnApplyed = true;
+                                                applyBtnLoder = true;
                                               });
-                                              log("Trsing1");
-
-                                              Fluttertoast.showToast(
-                                                msg:
-                                                    response
-                                                        .response
-                                                        .data['status_desc'],
-                                                backgroundColor: Colors.black,
-                                                textColor: Colors.white,
+                                              final state = APIStateNetwork(
+                                                await createDio(),
                                               );
+                                              final response = await state
+                                                  .checkCoupnFastTag(
+                                                    CheckCouponModel(
+                                                      ipAddress:
+                                                          "152.59.109.59",
+                                                      macAddress: "not found",
+                                                      latitude: "26.917979",
+                                                      longitude: "75.814593",
+                                                      billerCode:
+                                                          fetchRequest
+                                                              .data
+                                                              .billerCode,
+                                                      billerName:
+                                                          fetchRequest
+                                                              .data
+                                                              .billerName,
+                                                      param1:
+                                                          fetchRequest
+                                                              .data
+                                                              .param1,
+                                                      transAmount:
+                                                          double.parse(
+                                                            snap.billAmount ??
+                                                                "0.00",
+                                                          ).toInt().toString(),
+                                                      couponCode:
+                                                          _controller.text
+                                                              .trim(),
+                                                    ),
+                                                  );
+                                              if (response
+                                                      .response
+                                                      .data['status'] ==
+                                                  true) {
+                                                setState(() {
+                                                  applyBtnLoder = false;
+                                                  coupnApplyed = true;
+                                                });
+                                                log("Trsing1");
+
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      response
+                                                          .response
+                                                          .data['status_desc'],
+                                                  backgroundColor: Colors.black,
+                                                  textColor: Colors.white,
+                                                );
+                                              } else {
+                                                setState(() {
+                                                  applyBtnLoder = false;
+                                                  _controller.clear();
+                                                });
+                                                log("Trsing2");
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      response
+                                                          .response
+                                                          .data['status_desc'],
+                                                  backgroundColor: Colors.black,
+                                                  textColor: Colors.white,
+                                                );
+                                              }
                                             } else {
                                               setState(() {
-                                                applyBtnLoder = false;
+                                                coupnApplyed = false;
                                                 _controller.clear();
                                               });
-                                              log("Trsing2");
-                                              Fluttertoast.showToast(
-                                                msg:
-                                                    response
-                                                        .response
-                                                        .data['status_desc'],
-                                                backgroundColor: Colors.black,
-                                                textColor: Colors.white,
-                                              );
                                             }
-                                          } else {
-                                            setState(() {
-                                              coupnApplyed = false;
-                                              _controller.clear();
-                                            });
                                           }
                                         }
+                                      }
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -612,167 +632,174 @@ class _FastagSummeryPageState extends ConsumerState<FastagSummeryPage> {
                         padding: EdgeInsets.all(16.0 * scale),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if(btnLoder == false){
-                              if(_amountController.text.trim().isEmpty){
-                              Fluttertoast.showToast(
-                                msg: "Amount is required",
-                                textColor: Colors.white,
-                                backgroundColor: Colors.red,
-                              );
-                              return;
-                            }else{
-                              if(_controller.text.isNotEmpty && coupnApplyed == false){
+                            if (btnLoder == false) {
+                              if (_amountController.text.trim().isEmpty) {
                                 Fluttertoast.showToast(
-                                  msg: "Please apply coupon code or enter amount",
+                                  msg: "Amount is required",
                                   textColor: Colors.white,
                                   backgroundColor: Colors.red,
                                 );
                                 return;
-                              }else{
-                                if (_formKey.currentState!.validate()) {
-                              if (_mpinControllr.text.isEmpty ||
-                                  _mpinControllr.text == "") {
-                                Fluttertoast.showToast(
-                                  msg: "Mpin is required",
-                                  textColor: Colors.white,
-                                  backgroundColor: Colors.red,
-                                );
                               } else {
-                                setState(() {
-                                  btnLoder = true;
-                                });
-                                final box = Hive.box('userdata');
-                                final mobile = box.get('@mobile');
-                                final service = APIStateNetwork(
-                                  await createDio(),
-                                );
-                                final reponse = await service.payNow(
-                                  'b2c_bills_fastag',
-                                  PayNowModel(
-                                    ipAddress: "152.59.109.59",
-                                    macAddress: "not found",
-                                    latitude: "26.917979",
-                                    longitude: "75.814593",
-                                    billerCode: fetchRequest.data.billerCode,
-                                    billerName: fetchRequest.data.billerName,
-                                    circleCode: fetchRequest.data.circleCode,
-                                    param1: fetchRequest.data.param1,
-                                    param2: fetchRequest.data.param2,
-                                    param3: fetchRequest.data.param3,
-                                    param4: fetchRequest.data.param4,
-                                    param5: fetchRequest.data.param5,
-                                    customerName: snap.customerName ?? "",
-                                    billNo: snap.billNo,
-                                    dueDate: snap.dueDate,
-                                    billDate: snap.billDate,
-                                    billAmount: _amountController.text,
-                                    returnTransid:
-                                        snap.returnTransid.toString(),
-                                    returnFetchid: snap.returnFetchid,
-                                    returnBillid: snap.returnBillid,
-                                    couponCode:
-                                        coupnApplyed == true
-                                            ? _controller.text.trim()
-                                            : "",
-                                    userMpin: "${_mpinControllr.text}",
-                                  ),
-                                );
-
-                                if (reponse.response.data["status"] == false) {
-                                  setState(() {
-                                    btnLoder = false;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(
-                                          '',
-                                          style: GoogleFonts.inter(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        content: Text(
-                                          '${reponse.response.data["status_desc"]}',
-                                          style: GoogleFonts.inter(),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                              'OK',
-                                              style: GoogleFonts.inter(
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).primaryColor,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                                if (_controller.text.isNotEmpty &&
+                                    coupnApplyed == false) {
+                                  Fluttertoast.showToast(
+                                    msg:
+                                        "Please apply coupon code or enter amount",
+                                    textColor: Colors.white,
+                                    backgroundColor: Colors.red,
                                   );
+                                  return;
                                 } else {
-                                  setState(() {
-                                    btnLoder = false;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(
-                                          '${reponse.response.data['trans_status']}',
-                                          style: GoogleFonts.inter(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        content: Text(
-                                          '${reponse.response.data["status_desc"]}',
-                                          style: GoogleFonts.inter(),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (
-                                                        _,
-                                                      ) => PaymentDetailsScreen(
-                                                        trnxId:
-                                                            '${reponse.response.data['trans_id']}',
-                                                      ),
-                                                ),
-                                              );
-                                            },
-                                            child: Text(
-                                              'OK',
-                                              style: GoogleFonts.inter(
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).primaryColor,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                  if (_formKey.currentState!.validate()) {
+                                    if (_mpinControllr.text.isEmpty ||
+                                        _mpinControllr.text == "") {
+                                      Fluttertoast.showToast(
+                                        msg: "Mpin is required",
+                                        textColor: Colors.white,
+                                        backgroundColor: Colors.red,
                                       );
-                                    },
-                                  );
+                                    } else {
+                                      setState(() {
+                                        btnLoder = true;
+                                      });
+                                      final box = Hive.box('userdata');
+                                      final mobile = box.get('@mobile');
+                                      final service = APIStateNetwork(
+                                        await createDio(),
+                                      );
+                                      final reponse = await service.payNow(
+                                        'b2c_bills_fastag',
+                                        PayNowModel(
+                                          ipAddress: "152.59.109.59",
+                                          macAddress: "not found",
+                                          latitude: "26.917979",
+                                          longitude: "75.814593",
+                                          billerCode:
+                                              fetchRequest.data.billerCode,
+                                          billerName:
+                                              fetchRequest.data.billerName,
+                                          circleCode:
+                                              fetchRequest.data.circleCode,
+                                          param1: fetchRequest.data.param1,
+                                          param2: fetchRequest.data.param2,
+                                          param3: fetchRequest.data.param3,
+                                          param4: fetchRequest.data.param4,
+                                          param5: fetchRequest.data.param5,
+                                          customerName: snap.customerName ?? "",
+                                          billNo: snap.billNo,
+                                          dueDate: snap.dueDate,
+                                          billDate: snap.billDate,
+                                          billAmount: _amountController.text,
+                                          returnTransid:
+                                              snap.returnTransid.toString(),
+                                          returnFetchid: snap.returnFetchid,
+                                          returnBillid: snap.returnBillid,
+                                          couponCode:
+                                              coupnApplyed == true
+                                                  ? _controller.text.trim()
+                                                  : "",
+                                          userMpin: "${_mpinControllr.text}",
+                                        ),
+                                      );
+
+                                      if (reponse.response.data["status"] ==
+                                          false) {
+                                        setState(() {
+                                          btnLoder = false;
+                                        });
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                '',
+                                                style: GoogleFonts.inter(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              content: Text(
+                                                '${reponse.response.data["status_desc"]}',
+                                                style: GoogleFonts.inter(),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text(
+                                                    'OK',
+                                                    style: GoogleFonts.inter(
+                                                      color:
+                                                          Theme.of(
+                                                            context,
+                                                          ).primaryColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        setState(() {
+                                          btnLoder = false;
+                                        });
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                '${reponse.response.data['trans_status']}',
+                                                style: GoogleFonts.inter(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              content: Text(
+                                                '${reponse.response.data["status_desc"]}',
+                                                style: GoogleFonts.inter(),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                    Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder:
+                                                            (
+                                                              _,
+                                                            ) => PaymentDetailsScreen(
+                                                              trnxId:
+                                                                  '${reponse.response.data['trans_id']}',
+                                                            ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Text(
+                                                    'OK',
+                                                    style: GoogleFonts.inter(
+                                                      color:
+                                                          Theme.of(
+                                                            context,
+                                                          ).primaryColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
+                                    }
+                                  }
                                 }
                               }
                             }
-                              }
-                            }
-                            }
-                            
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: buttonColor,
