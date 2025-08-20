@@ -10,6 +10,7 @@ import 'package:home/screen/mobilePospaid/postpaidBiller.page.dart';
 import 'package:home/screen/rechargebill.dart';
 import 'package:home/screen/selectgas.dart';
 import 'package:home/screen/summerysPages/boardBand.page.dart';
+import 'package:home/screen/summerysPages/fastagBiller.page.dart';
 import 'package:home/screen/summerysPages/pipeGas.page.dart';
 import 'package:home/screen/waterbill1.dart';
 
@@ -22,9 +23,9 @@ class RechargeOrBill extends StatelessWidget {
         IconLabel("Mobile Recharge", "assets/mre.png"),
         IconLabel("DTH Recharge", "assets/dth.png"),
         IconLabel("FASTag Recharge", "assets/fastag.png"),
-        IconLabel("NCMC Recharge", "assets/ncmc.png"),
-        IconLabel("Cable TV Recharge", "assets/cabletv.png"),
-        IconLabel("Metro Recharge", "assets/metro.png"),
+        // IconLabel("NCMC Recharge", "assets/ncmc.png"),
+        // IconLabel("Cable TV Recharge", "assets/cabletv.png"),
+        // IconLabel("Metro Recharge", "assets/metro.png"),
         IconLabel("Mobile Postpaid", "assets/mre.png"),
         // IconLabel("DTH Postpaid", "assets/dth.png"),
       ],
@@ -37,13 +38,13 @@ class RechargeOrBill extends StatelessWidget {
         IconLabel("Book Gas Cylinder", "assets/gbook.png"),
         IconLabel("Loan/EMI Payment", "assets/emi.png"),
         IconLabel("Insurance / LIC", "assets/lic.png"),
-        IconLabel("Credit Card Bill", "assets/creditb.png"),
+        // IconLabel("Credit Card Bill", "assets/creditb.png"),
         IconLabel("Mobile Postpaid", "assets/mpostpaid.png"),
         IconLabel("Broadband", "assets/landline.png"),
         IconLabel("Piped Gas", "assets/pergas.png"),
-        IconLabel("Prepaid Meter", "assets/pmeter.png"),
-        IconLabel("Education Fees", "assets/educationfees.png"),
-        IconLabel("Rental", "assets/rent.png"),
+        // IconLabel("Prepaid Meter", "assets/pmeter.png"),
+        // IconLabel("Education Fees", "assets/educationfees.png"),
+        // IconLabel("Rental", "assets/rent.png"),
         IconLabel("Landline", "assets/icons8-landline-66.png"),
       ],
     ),
@@ -187,7 +188,7 @@ class SectionWidget extends StatelessWidget {
                     }  else if (item.label == "Book Gas Cylinder") {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => SelectGasProviderScreen()));
                     }  else if (item.label == "FASTag Recharge") {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => FastagScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => FastTagBillerPage()));
                     } else if(item.label == "Piped Gas"){
                        Navigator.push(context, MaterialPageRoute(builder: (_) => PipeGasPage()));
                     } else if(item.label == "Broadband"){

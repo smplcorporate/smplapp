@@ -580,7 +580,7 @@ class HomePage extends StatelessWidget {
                   ["DTH \nRecharge", "assets/dth.png"],
                   ["Water Bill \npayment", "assets/water1.png"],
                   ["Loan\nPayment", "assets/emi.png"],
-                  ["Credit Card \nBill", "assets/creditb.png"],
+                  // ["Credit Card \nBill", "assets/creditb.png"],
                 ], context),
               ),
               SizedBox(height: 20),

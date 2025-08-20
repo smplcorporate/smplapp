@@ -6,7 +6,6 @@ import 'dart:convert';
 
 MobilePrepaidResponse mobilePrepaidResponseFromJson(String str) => MobilePrepaidResponse.fromJson(json.decode(str));
 
-String mobilePrepaidResponseToJson(MobilePrepaidResponse data) => json.encode(data.toJson());
 
 class MobilePrepaidResponse {
     bool status;
@@ -15,7 +14,7 @@ class MobilePrepaidResponse {
     String billerType;
     List<BillersList> billersList;
     bool isCircle;
-    List<CircleList> circleList;
+    List<CircleList>? circleList;
     String defaultBillerCode;
     bool isPlanfetch;
     List<OldRecharge> oldRecharges;
@@ -40,24 +39,24 @@ class MobilePrepaidResponse {
         billerType: json["biller_type"],
         billersList: List<BillersList>.from(json["billers_list"].map((x) => BillersList.fromJson(x))),
         isCircle: json["is_circle"],
-        circleList: List<CircleList>.from(json["circle_list"].map((x) => CircleList.fromJson(x))),
+        circleList: json["circle_list"] == null ? [] : List<CircleList>.from(json["circle_list"].map((x) => CircleList.fromJson(x))) ,
         defaultBillerCode: json["default_biller_code"],
         isPlanfetch: json["is_planfetch"],
         oldRecharges: List<OldRecharge>.from(json["old_recharges"].map((x) => OldRecharge.fromJson(x))),
     );
 
-    Map<String, dynamic> toJson() => {
-        "status": status,
-        "status_desc": statusDesc,
-        "user_balance": userBalance.toJson(),
-        "biller_type": billerType,
-        "billers_list": List<dynamic>.from(billersList.map((x) => x.toJson())),
-        "is_circle": isCircle,
-        "circle_list": List<dynamic>.from(circleList.map((x) => x.toJson())),
-        "default_biller_code": defaultBillerCode,
-        "is_planfetch": isPlanfetch,
-        "old_recharges": List<dynamic>.from(oldRecharges.map((x) => x.toJson())),
-    };
+    // Map<String, dynamic> toJson() => {
+    //     "status": status,
+    //     "status_desc": statusDesc,
+    //     "user_balance": userBalance.toJson(),
+    //     "biller_type": billerType,
+    //     "billers_list": List<dynamic>.from(billersList.map((x) => x.toJson())),
+    //     "is_circle": isCircle,
+    //     "circle_list": List<dynamic>.from(circleList.map((x) => x.toJson())),
+    //     "default_biller_code": defaultBillerCode,
+    //     "is_planfetch": isPlanfetch,
+    //     "old_recharges": List<dynamic>.from(oldRecharges.map((x) => x.toJson())),
+    // };
 }
 
 class BillersList {

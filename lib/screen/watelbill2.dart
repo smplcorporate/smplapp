@@ -51,6 +51,12 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
   void _submitAccount() {
     final cidCode = _controller.text.trim();
     if (_formKey.currentState!.validate()) {
+      ref.read(paramsProvider.notifier).clearData();
+      ref.read(paramsProvider.notifier).updateParam1(_parm1Controller.text);
+      ref.read(paramsProvider.notifier).updateParam2(_parm2Controller.text);
+      ref.read(paramsProvider.notifier).updateParam3(_parm3Controller.text);
+      ref.read(paramsProvider.notifier).updateParam4(_parm4Controller.text);
+      ref.read(paramsProvider.notifier).updateParam5(_parm5Controller.text);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -208,6 +214,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     fetchBillerParam = FetchBllerParam(
       path: "b2c_bills_water",
       data: BillerParamRequest(
@@ -227,6 +234,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
   TextEditingController _parm4Controller = TextEditingController();
   TextEditingController _parm5Controller = TextEditingController();
 
+  
   final TextEditingController _mpinControllr = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -235,6 +243,17 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
   bool coupnApplyed = false;
   bool isInvalid = false;
   bool btnLoder = false;
+
+  @override
+  void dispose() {
+    // 👇 controller ko properly dispose karna jaruri hai
+    _parm1Controller.dispose();
+    _parm2Controller.dispose();
+    _parm3Controller.dispose();
+    _parm4Controller.dispose();
+    _parm5Controller.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final billerParam = ref.watch(fetchBillerParamProvider(fetchBillerParam));
@@ -298,7 +317,7 @@ class _WaterBill2State extends ConsumerState<WaterBill2> {
                                 controller: _parm1Controller,
 
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
+                            FilteringTextInputFormatter.allow(
                                     RegExp(r'[a-zA-Z0-9]'),
                                   ),
                                   LengthLimitingTextInputFormatter(

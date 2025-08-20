@@ -319,7 +319,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                                           showBillerBottomSheet(
                                             context,
                                             snap.billersList,
-                                            snap.circleList,
+                                            snap.circleList ?? [],
                                             ref,
                                           );
                                         } else {
@@ -403,7 +403,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                                 showBillerBottomSheet(
                                   context,
                                   snap.billersList,
-                                  snap.circleList,
+                                  snap.circleList ?? [],
                                   ref,
                                 );
                               }
@@ -413,6 +413,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                       ),
                     ),
                   ),
+                  
                 ],
               );
         },
