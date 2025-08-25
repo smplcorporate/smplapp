@@ -6,6 +6,10 @@ import 'package:home/data/model/allTickets.res.dart';
 import 'package:home/data/model/billerParms.model.dart';
 import 'package:home/data/model/billerParms.req.model.dart';
 import 'package:home/data/model/checkCopoun.model.dart';
+import 'package:home/data/model/distrctBody.res.dart' show DistrcBodyResponse;
+import 'package:home/data/model/districtBody.req.dart';
+import 'package:home/data/model/distrubiterBody.req.dart';
+import 'package:home/data/model/distubiterBody.res.dart';
 import 'package:home/data/model/dthPrepaid.res.dart';
 import 'package:home/data/model/electritysityModel.dart';
 import 'package:home/data/model/fastTag.res.dart';
@@ -19,6 +23,7 @@ import 'package:home/data/model/loadRepayment.res.dart';
 import 'package:home/data/model/login.body.model.dart';
 import 'package:home/data/model/loginRequest.req.dart';
 import 'package:home/data/model/lpgBillerList.model.dart';
+import 'package:home/data/model/lpgState.res.dart';
 import 'package:home/data/model/mobilePrepaid.res.dart';
 import 'package:home/data/model/mobileplanRes.model.dart';
 import 'package:home/data/model/offersModel.res.dart';
@@ -67,7 +72,7 @@ abstract class APIStateNetwork {
   @POST('transactions/b2c_wallet/order_list_bbps')
   Future<OrderListResponse> getAllOrderList();
   @POST('bbps/b2c_bills_lpg/get_billers')
-  Future<HttpResponse<LpgResponseModel>> getGasBillers(
+  Future<HttpResponse<ElectricityModel>> getGasBillers(
     @Body() ElectricityBody body,
   );
   @POST('bbps/b2c_bills_Insurance/get_billers')
@@ -130,6 +135,7 @@ abstract class APIStateNetwork {
     @Path('path') String path,
     @Body() BillerParamRequest body,
   );
+  
   @POST('/recharges/{path}/get_billers_param')
   Future<BillerParamResponse> dthBillerParm(
     @Path('path') String path,
@@ -170,6 +176,10 @@ abstract class APIStateNetwork {
   @POST('recharges/b2c_prepaid_dth/check_coupon')
   Future<HttpResponse<dynamic>> checkCoupnDthPrepaid(
     @Body() CheckCouponModel body,
+  );
+  @POST('bbps/b2c_bills_mobile/check_coupon')
+  Future<HttpResponse<dynamic>> checkMobilePostpaidCoupon(
+    @Body() CheckCouponModel body
   );
   // Wallet
   @POST('profile/b2c_wallet/wallet_balance')
@@ -248,4 +258,12 @@ abstract class APIStateNetwork {
   Future<HttpResponse> payMobileRecharge(@Body() PaymentRequest body);
   @POST("recharges/b2c_prepaid_dth/paynow")
   Future<HttpResponse> payDthRecharge(@Body() PaymentRequest body);
+
+  // State & city list
+  @POST("onetime/b2c_common/get_lpgmbk_state")
+  Future<LpgStateListRes> getAllLPgState();
+  @POST("onetime/b2c_common/get_lpgmbk_district")
+  Future<DistrcBodyResponse> getDistrct(@Body() DistrcBodyRequest body);
+  @POST("onetime/b2c_common/get_lpgmbk_distributor")
+  Future<DistrubuterBodyRes> fetchDistrubter(@Body() DistrubuterBodyReq body);
 }

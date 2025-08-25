@@ -1,12 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home/data/controller/fetchBills.provider.dart';
 import 'package:home/data/controller/mobilePrepaid.notifier.dart';
 import 'package:home/data/controller/mobilePrepaid.provider.dart';
+import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/screen/home_page.dart';
+import 'package:home/screen/mobilepreapid/mobilepreapid3.page.dart';
 import 'package:home/screen/rechargebill2.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -262,82 +267,103 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                   const SizedBox(height: 20),
 
                   // Contact List (filtered)
-                  if (filteredContacts.length == 0) ...[
+                  if (filteredContacts.isEmpty) ...[
                     Padding(
                       padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
                       child: SizedBox(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Container(
-                            height: 60,
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             margin: const EdgeInsets.only(top: 12),
                             decoration: BoxDecoration(
                               color: Color.fromARGB(255, 255, 255, 255),
                               borderRadius: BorderRadius.circular(11),
                             ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.dialer_sip,
-                                  color: Colors.black,
-                                  size: 30,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 45,
-                                    child: TextFormField(
-                                      maxLength: 10, // limit to 10 digits
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter
-                                            .digitsOnly, // allow only numbers
-                                        LengthLimitingTextInputFormatter(10),
-                                      ],
-                                      style: GoogleFonts.inter(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                      ),
-                                      decoration: InputDecoration(
-                                        counterText: "", // hide length counter
-                                        hintText:
-                                            'Enter Mobile Number manually',
-                                        hintStyle: GoogleFonts.inter(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.dialer_sip,
+                                    color: Colors.black,
+                                    size: 30,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: SizedBox(
+                                      height: 45,
+                                      child: TextFormField(
+                                        maxLength: 10,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                        ],
+                                        style: GoogleFonts.inter(
                                           fontSize: 16,
-                                          color: const Color(0xFF9E9E9E),
+                                          color: Colors.black,
                                         ),
-                                        border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.only(
-                                          bottom: 10,
+                                        decoration: InputDecoration(
+                                          counterText: "",
+                                          hintText:
+                                              'Enter Mobile Number manually',
+                                          hintStyle: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            color: const Color(0xFF9E9E9E),
+                                          ),
+                                          border: InputBorder.none,
+                                          contentPadding: const EdgeInsets.only(
+                                            bottom: 10,
+                                          ),
                                         ),
-                                      ),
-                                      textInputAction: TextInputAction.done,
-                                      onFieldSubmitted: (value) {
-                                        if (value.length == 10) {
-                                          billerNotifier.setNumber(value);
-                                          showBillerBottomSheet(
-                                            context,
-                                            snap.billersList,
-                                            snap.circleList ?? [],
-                                            ref,
-                                          );
-                                        } else {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                "Please enter 10 digits",
+
+                                        // ✅ Auto validate enable
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Please enter mobile number";
+                                          } else if (!RegExp(
+                                            r'^[6-9]\d{9}$',
+                                          ).hasMatch(value)) {
+                                            return "Enter valid 10-digit Indian mobile number";
+                                          }
+                                          return null;
+                                        },
+
+                                        textInputAction: TextInputAction.done,
+                                        onFieldSubmitted: (value) {
+                                          if (RegExp(
+                                            r'^[6-9]\d{9}$',
+                                          ).hasMatch(value)) {
+                                            billerNotifier.setNumber(value);
+                                            showBillerBottomSheet(
+                                              context,
+                                              snap.billersList,
+                                              snap.circleList ?? [],
+                                              ref,
+                                              snap.isPlanfetch,
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  "Please enter valid 10-digit Indian mobile number",
+                                                ),
                                               ),
-                                            ),
-                                          );
-                                        }
-                                      },
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -405,6 +431,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                                   snap.billersList,
                                   snap.circleList ?? [],
                                   ref,
+                                  snap.isPlanfetch,
                                 );
                               }
                             },
@@ -413,7 +440,6 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                       ),
                     ),
                   ),
-                  
                 ],
               );
         },
@@ -430,6 +456,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
     List<BillersList> billers,
     List<CircleList> circles,
     WidgetRef ref,
+    bool planFetch,
   ) {
     showModalBottomSheet(
       context: context,
@@ -447,6 +474,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
             final selectedCircle = ref.watch(
               billerProvider.select((state) => state.selectedCircle),
             );
+            final biller = ref.watch(billerProvider);
 
             return Container(
               constraints: BoxConstraints(
@@ -544,90 +572,187 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
 
                   // Circle Dropdown
                   if (selectedBiller != null) ...[
-                    const SizedBox(height: 24),
-                    Text(
-                      "Circle",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                    if (circles.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      Text(
+                        "Circle",
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.outline,
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<CircleList>(
-                          value: selectedCircle,
-                          hint: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(
-                              "-- Select Circle --",
-                              style: TextStyle(color: Colors.grey),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<CircleList>(
+                            value: selectedCircle,
+                            hint: const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: Text(
+                                "-- Select Circle --",
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             ),
-                          ),
-                          isExpanded: true,
-                          icon: const Icon(Icons.arrow_drop_down, size: 30),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          items:
-                              circles.isEmpty
-                                  ? [
-                                    const DropdownMenuItem<CircleList>(
-                                      enabled: false,
-                                      child: Text("No circles available"),
-                                    ),
-                                  ]
-                                  : circles.map((circle) {
-                                    return DropdownMenuItem<CircleList>(
-                                      value: circle,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 8,
-                                        ),
-                                        child: Text(
-                                          circle.circleName,
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.bodyLarge,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                            isExpanded: true,
+                            icon: const Icon(Icons.arrow_drop_down, size: 30),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
+                            items:
+                                circles.isEmpty
+                                    ? [
+                                      const DropdownMenuItem<CircleList>(
+                                        enabled: false,
+                                        child: Text("No circles available"),
                                       ),
-                                    );
-                                  }).toList(),
-                          onChanged: (circle) {
-                            if (circle != null) {
-                              ref
-                                  .read(billerProvider.notifier)
-                                  .setCircle(circle);
-                            }
-                          },
+                                    ]
+                                    : circles.map((circle) {
+                                      return DropdownMenuItem<CircleList>(
+                                        value: circle,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                          ),
+                                          child: Text(
+                                            circle.circleName,
+                                            style:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.bodyLarge,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                            onChanged: (circle) {
+                              if (circle != null) {
+                                ref
+                                    .read(billerProvider.notifier)
+                                    .setCircle(circle);
+                              }
+                            },
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
 
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed:
-                          selectedBiller != null && selectedCircle != null
-                              ? () {
+                      onPressed: () {
+                        if (circles.isNotEmpty) {
+                          if (selectedCircle == null) {
+                            Fluttertoast.showToast(
+                              msg: "Please select Circl first",
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              gravity: ToastGravity.TOP,
+                            );
+                          } else {
+                            if (selectedBiller == null) {
+                              Fluttertoast.showToast(
+                                msg: "Please select Biller!",
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.TOP,
+                              );
+                            } else {
+                              if (planFetch == true) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => RechargePlansPage(),
                                   ),
                                 );
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder:
+                                        (context) => MobilePrepaid3(
+                                          body: FetchBodymodel(
+                                            path: "",
+                                            data: FetchBillModel(
+                                              ipAddress: "127.0.0.1",
+                                              macAddress: "not found",
+                                              latitude: "26.917979",
+                                              longitude: "75.814593",
+                                              billerCode:
+                                                  selectedBiller.billerCode,
+                                              billerName:
+                                                  selectedBiller.billerName,
+                                              circleCode:
+                                                  selectedCircle?.circleId ??
+                                                  "",
+                                              param1: biller.number ?? "",
+                                              param2: "",
+                                              param3: "",
+                                              param4: "",
+                                              param5: "",
+                                            ),
+                                          ),
+                                        ),
+                                  ),
+                                );
                               }
-                              : null,
+                            }
+                          }
+                        } else {
+                          if (selectedBiller == null) {
+                            Fluttertoast.showToast(
+                              msg: "Please select Biller!",
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              gravity: ToastGravity.TOP,
+                            );
+                          } else {
+                            if (planFetch == true) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => RechargePlansPage(),
+                                ),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder:
+                                      (context) => MobilePrepaid3(
+                                        body: FetchBodymodel(
+                                          path: "",
+                                          data: FetchBillModel(
+                                            ipAddress: "127.0.0.1",
+                                            macAddress: "not found",
+                                            latitude: "26.917979",
+                                            longitude: "75.814593",
+                                            billerCode:
+                                                selectedBiller.billerCode,
+                                            billerName:
+                                                selectedBiller.billerName,
+                                            circleCode:
+                                                selectedCircle?.circleId ?? "",
+                                            param1: biller.number ?? "",
+                                            param2: "",
+                                            param3: "",
+                                            param4: "",
+                                            param5: "",
+                                          ),
+                                        ),
+                                      ),
+                                ),
+                              );
+                            }
+                          }
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(
                           255,
@@ -660,7 +785,6 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
     );
   }
 }
-
 
 String removeDotZero(String value) {
   if (value.endsWith('.0')) {

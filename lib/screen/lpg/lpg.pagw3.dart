@@ -19,16 +19,16 @@ import 'package:home/screen/order.details.page.dart';
 import 'package:home/screen/waterbill1.dart';
 import 'package:intl/intl.dart';
 
-class MobilePostpaidPage3 extends ConsumerStatefulWidget {
+class LpgPage3 extends ConsumerStatefulWidget {
   final FetchBodymodel body;
 
-  MobilePostpaidPage3({Key? key, required this.body}) : super(key: key);
+  LpgPage3({Key? key, required this.body}) : super(key: key);
 
   @override
-  ConsumerState<MobilePostpaidPage3> createState() => _MobilePostpaidPage3State();
+  ConsumerState<LpgPage3> createState() => _LpgPage3State();
 }
 
-class _MobilePostpaidPage3State extends ConsumerState<MobilePostpaidPage3> {
+class _LpgPage3State extends ConsumerState<LpgPage3> {
   final Color buttonColor = const Color.fromARGB(255, 68, 128, 106);
 
   late final FetchBodymodel fetchRequest;
@@ -41,9 +41,9 @@ class _MobilePostpaidPage3State extends ConsumerState<MobilePostpaidPage3> {
   void initState() {
     super.initState();
     fetchRequest = FetchBodymodel(
-      path: 'b2c_bills_mobile',
+      path: 'b2c_bills_lpg',
       data: FetchBillModel(
-        circleCode: "",
+        circleCode: widget.body.data.circleCode,
         ipAddress: "152.59.109.59",
         macAddress: "not found",
         latitude: "26.917979",
@@ -217,8 +217,8 @@ class _MobilePostpaidPage3State extends ConsumerState<MobilePostpaidPage3> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     _infoColumn([
-                                      if (snap.customerName != null 
-                                          )
+                                      if (snap.customerName != null ||
+                                          snap.customerName!.isNotEmpty)
                                         "Customer Name",
                                       if (snap.billNo.isNotEmpty) "Bill Number",
                                       if (snap.billDate.isNotEmpty) "Bill Date",
@@ -228,7 +228,8 @@ class _MobilePostpaidPage3State extends ConsumerState<MobilePostpaidPage3> {
                                     ], scale),
                                     _infoColumn(
                                       [
-                                        if (snap.customerName != null )
+                                        if (snap.customerName != null ||
+                                            snap.customerName!.isNotEmpty)
                                           snap.customerName ?? "No name",
                                         if (snap.billNo.isNotEmpty)
                                           snap.billNo.toString(),
@@ -392,7 +393,7 @@ class _MobilePostpaidPage3State extends ConsumerState<MobilePostpaidPage3> {
                                               await createDio(),
                                             );
                                             final response = await state
-                                                .checkMobilePostpaidCoupon(
+                                                .checkCoupnGas(
                                                   CheckCouponModel(
                                                     ipAddress: "152.59.109.59",
                                                     macAddress: "not found",
@@ -603,7 +604,7 @@ class _MobilePostpaidPage3State extends ConsumerState<MobilePostpaidPage3> {
                                     await createDio(),
                                   );
                                   final reponse = await service.payNow(
-                                    'b2c_bills_mobile',
+                                    'b2c_bills_lpg',
                                     PayNowModel(
                                       ipAddress: "152.59.109.59",
                                       macAddress: "not found",

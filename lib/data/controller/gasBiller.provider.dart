@@ -4,7 +4,7 @@ import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/model/electritysityModel.dart';
 import 'package:home/data/model/lpgBillerList.model.dart';
 
-final getGasBillerProvider = FutureProvider<LpgResponseModel>((ref) async {
+final getGasBillerProvider = FutureProvider<ElectricityModel>((ref) async {
   final service = APIStateNetwork(await createDio());
   final data = await service.getGasBillers(
     ElectricityBody(

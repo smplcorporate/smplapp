@@ -25,6 +25,7 @@ class BillerParamResponse {
     Param? param4;
     bool? isParam5;
     Param? param5;
+    bool? lpgStatesList;
 
     BillerParamResponse({
         required this.status,
@@ -43,6 +44,7 @@ class BillerParamResponse {
         required this.param4,
         required this.isParam5,
         required this.param5,
+        required this.lpgStatesList,
     });
 
     factory BillerParamResponse.fromJson(Map<String, dynamic> json) => BillerParamResponse(
@@ -62,6 +64,7 @@ class BillerParamResponse {
         param4: json["param4"] == null ? null :Param.fromJson(json["param4"]),
         isParam5: json["is_param5"] ?? false,
         param5: json["param5"]  == null ? null :Param.fromJson(json["param5"]),
+        lpgStatesList: json['lpg_states_list'] ?? false
     );
 
     Map<String, dynamic> toJson() => {

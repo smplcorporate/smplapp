@@ -6,6 +6,7 @@ import 'package:home/screen/fastag1.dart';
 import 'package:home/screen/landline/landline.page.dart';
 import 'package:home/screen/lender2.dart';
 import 'package:home/screen/lic insurance.dart';
+import 'package:home/screen/lpg/lpg.page1.dart';
 import 'package:home/screen/mobilePospaid/postpaidBiller.page.dart';
 import 'package:home/screen/rechargebill.dart';
 import 'package:home/screen/selectgas.dart';
@@ -186,7 +187,7 @@ class SectionWidget extends StatelessWidget {
                     } else if (item.label == "Water Bill") {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => WaterBill()));
                     }  else if (item.label == "Book Gas Cylinder") {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => SelectGasProviderScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => LPGPage1()));
                     }  else if (item.label == "FASTag Recharge") {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => FastTagBillerPage()));
                     } else if(item.label == "Piped Gas"){

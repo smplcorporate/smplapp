@@ -33,7 +33,8 @@ class MobilePostpaidPage2 extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MobilePostpaidPage2> createState() => _MobilePostpaidPageState();
+  ConsumerState<MobilePostpaidPage2> createState() =>
+      _MobilePostpaidPageState();
 }
 
 class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
@@ -82,126 +83,127 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
   }
 
   void paynow() async {
-    if(btnLoder == false){
+    if (btnLoder == false) {
       if (_controller.text.isNotEmpty && coupnApplyed == false) {
-      Fluttertoast.showToast(
-        msg: "Mpin is required",
-        textColor: Colors.white,
-        backgroundColor: Colors.red,
-      );
-    } else {
-      if (_formKey.currentState!.validate()) {
-        setState(() {
-          btnLoder = true;
-        });
-        final box = Hive.box('userdata');
-        final mobile = box.get('@mobile');
-        final service = APIStateNetwork(await createDio());
-        final reponse = await service.payNow(
-          'b2c_bills_mobile',
-          PayNowModel(
-            ipAddress: "152.59.109.59",
-            macAddress: "not found",
-            latitude: "26.917979",
-            longitude: "75.814593",
-            billerCode: widget.billerCode,
-            billerName: widget.billerName,
-            circleCode: widget.circleId,
-            param1: _parm1Controller.text,
-            param2: _parm2Controller.text,
-            param3: _parm3Controller.text,
-            param4: _parm4Controller.text,
-            param5: _parm5Controller.text,
-            customerName: "",
-            billNo: "",
-            dueDate: "",
-            billDate: "",
-            billAmount: _amountController.text,
-            returnTransid: "",
-            returnFetchid: "",
-            returnBillid: "",
-            couponCode: coupnApplyed == true ? _controller.text.trim() : "",
-            userMpin: "${_mpinControllr.text}",
-          ),
+        Fluttertoast.showToast(
+          msg: "Apply Coupon first",
+          textColor: Colors.white,
+          backgroundColor: Colors.red,
         );
-        if (reponse.response.data["status"] == false) {
+      } else {
+        if (_formKey.currentState!.validate()) {
           setState(() {
-            btnLoder = false;
+            btnLoder = true;
           });
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(
-                  '',
-                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-                ),
-                content: Text(
-                  '${reponse.response.data["status_desc"]}',
-                  style: GoogleFonts.inter(),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'OK',
-                      style: GoogleFonts.inter(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
+          final box = Hive.box('userdata');
+          final mobile = box.get('@mobile');
+          final service = APIStateNetwork(await createDio());
+          final reponse = await service.payNow(
+            'b2c_bills_mobile',
+            PayNowModel(
+              ipAddress: "152.59.109.59",
+              macAddress: "not found",
+              latitude: "26.917979",
+              longitude: "75.814593",
+              billerCode: widget.billerCode,
+              billerName: widget.billerName,
+              circleCode: widget.circleId,
+              param1: _parm1Controller.text,
+              param2: _parm2Controller.text,
+              param3: _parm3Controller.text,
+              param4: _parm4Controller.text,
+              param5: _parm5Controller.text,
+              customerName: "",
+              billNo: "",
+              dueDate: "",
+              billDate: "",
+              billAmount: _amountController.text,
+              returnTransid: "",
+              returnFetchid: "",
+              returnBillid: "",
+              couponCode: coupnApplyed == true ? _controller.text.trim() : "",
+              userMpin: "${_mpinControllr.text}",
+            ),
           );
-        } else {
-          setState(() {
-            btnLoder = false;
-          });
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(
-                  '${reponse.response.data['trans_status']}',
-                  style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-                ),
-                content: Text(
-                  '${reponse.response.data["status_desc"]}',
-                  style: GoogleFonts.inter(),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) => PaymentDetailsScreen(
-                                trnxId: '${reponse.response.data['trans_id']}',
-                              ),
+          if (reponse.response.data["status"] == false) {
+            setState(() {
+              btnLoder = false;
+            });
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    '',
+                    style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                    '${reponse.response.data["status_desc"]}',
+                    style: GoogleFonts.inter(),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'OK',
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    },
-                    child: Text(
-                      'OK',
-                      style: GoogleFonts.inter(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ],
+                );
+              },
+            );
+          } else {
+            setState(() {
+              btnLoder = false;
+            });
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    '${reponse.response.data['trans_status']}',
+                    style: GoogleFonts.inter(fontWeight: FontWeight.bold),
                   ),
-                ],
-              );
-            },
-          );
+                  content: Text(
+                    '${reponse.response.data["status_desc"]}',
+                    style: GoogleFonts.inter(),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => PaymentDetailsScreen(
+                                  trnxId:
+                                      '${reponse.response.data['trans_id']}',
+                                ),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'OK',
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         }
       }
-    }
     }
   }
 
@@ -298,15 +300,12 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
                             Expanded(
                               child: TextFormField(
                                 controller: _parm1Controller,
-
+                                keyboardType: TextInputType.phone,
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'[a-zA-Z0-9]'),
-                                  ),
+                                  FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(
-                                    15,
+                                    10,
                                   ), // Enforce length limit
-                                  UpperCaseTextFormatter(),
                                 ],
                                 decoration: InputDecoration(
                                   hintText: snap.param1.name,
@@ -320,7 +319,12 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "This field is required";
+                                  } else if (!RegExp(
+                                    r'^[6-9]\d{9}$',
+                                  ).hasMatch(value)) {
+                                    return "Enter a valid 10-digit Indian mobile number";
                                   }
+                                  return null; // Valid input
                                 },
                               ),
                             ),
@@ -328,214 +332,10 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
                         ),
                       ),
                     ],
-                    if (snap.isParam2 == true) ...[
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color:
-                                _isValid || _parm2Controller.text.isEmpty
-                                    ? Colors.grey.shade600
-                                    : Colors.red,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _parm2Controller,
-
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "This field is required";
-                                  }
-                                },
-                                onChanged: (value) {
-                                  ref
-                                      .read(paramsProvider.notifier)
-                                      .updateParam2(value);
-                                },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'[a-zA-Z0-9]'),
-                                  ),
-                                  LengthLimitingTextInputFormatter(
-                                    15,
-                                  ), // Enforce length limit
-                                  UpperCaseTextFormatter(),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: snap.param2.name,
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    if (snap.isParam3 == true) ...[
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color:
-                                _isValid || _parm3Controller.text.isEmpty
-                                    ? Colors.grey.shade600
-                                    : Colors.red,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _parm3Controller,
-
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "This field is required";
-                                  }
-                                },
-                                onChanged: (value) {
-                                  ref
-                                      .read(paramsProvider.notifier)
-                                      .updateParam3(value);
-                                },
-                                inputFormatters: [],
-                                decoration: InputDecoration(
-                                  hintText: snap.param3?.name,
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    if (snap.isParam4 == true) ...[
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color:
-                                _isValid || _parm4Controller.text.isEmpty
-                                    ? Colors.grey.shade600
-                                    : Colors.red,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _parm4Controller,
-
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "This field is required";
-                                  }
-                                },
-                                onChanged: (value) {
-                                  ref
-                                      .read(paramsProvider.notifier)
-                                      .updateParam4(value);
-                                },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'[a-zA-Z0-9]'),
-                                  ),
-                                  LengthLimitingTextInputFormatter(
-                                    15,
-                                  ), // Enforce length limit
-                                  UpperCaseTextFormatter(),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: snap.param4?.name,
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    if (snap.isParam5 == true) ...[
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color:
-                                _isValid || _parm5Controller.text.isEmpty
-                                    ? Colors.grey.shade600
-                                    : Colors.red,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _parm5Controller,
-
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "This field is required";
-                                  }
-                                },
-                                onChanged: (value) {
-                                  ref
-                                      .read(paramsProvider.notifier)
-                                      .updateParam5(value);
-                                },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'[a-zA-Z0-9]'),
-                                  ),
-                                  LengthLimitingTextInputFormatter(
-                                    15,
-                                  ), // Enforce length limit
-                                  UpperCaseTextFormatter(),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: snap.param5?.name,
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    // ,
+                    
+                    
+                    
                     if (snap.fetchOption == false) ...[
                       const SizedBox(height: 10),
                       Container(
@@ -674,7 +474,8 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
                                   SizedBox(width: 8),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if (_parm1Controller.text
+                                      if(applyBtnLoder == false){
+                                        if (_parm1Controller.text
                                           .trim()
                                           .isNotEmpty) {
                                         if (_copounCodeKey.currentState!
@@ -697,7 +498,7 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
                                                   await createDio(),
                                                 );
                                                 final response = await state
-                                                    .checkCoupnWater(
+                                                    .checkMobilePostpaidCoupon(
                                                       CheckCouponModel(
                                                         ipAddress:
                                                             "152.59.109.59",
@@ -785,6 +586,7 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
                                           textColor: Colors.white,
                                         );
                                       }
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.black,
@@ -843,7 +645,7 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePostpaidPage2> {
                         ),
                       ),
                       SizedBox(height: 10.h),
-                    SizedBox(height: 10.h,),
+                      SizedBox(height: 10.h),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
