@@ -33,11 +33,20 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
   bool btnLoder = false;
   bool coupnApplyed = false;
 
-  bool applyBtnLoder = false;
+  bool applyBtnLoder = false; 
   final TextEditingController _controller = TextEditingController();
   final TextEditingController _mpinControllr = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
   final _coponKey = GlobalKey<FormState>();
   bool isInvalid = false;
+  
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _amountController.text = "${widget.plan.planAmount.toString()}";
+  }
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -110,13 +119,38 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "₹${widget.plan.planAmount}",
-                        style: GoogleFonts.inter(
-                          fontSize: 23 * scale,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(
+                                vertical: 23 * scale,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 232, 243, 235),
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(10 * scale),
+                              ),
+                              child: Center(
+                                child: TextField(
+                                  controller: _amountController,
+                                  readOnly: false,
+                                  showCursor: true,
+                                  decoration: const InputDecoration.collapsed(
+                                    hintText: '',
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: 22 * scale,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (value){
+                                    
+                                  },
+                                ),
+                              ),
+                            ),
+                      
                       SizedBox(height: 8 * scale),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -229,7 +263,8 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
                         SizedBox(width: 8),
                         ElevatedButton(
                           onPressed: () async {
-                            if (_coponKey.currentState!.validate()) {
+                            if(applyBtnLoder == false){
+                              if (_coponKey.currentState!.validate()) {
                               if (_controller.text.isEmpty ||
                                   _controller.text.trim().isEmpty) {
                                 Fluttertoast.showToast(
@@ -302,6 +337,7 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
                                   });
                                 }
                               }
+                            }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -408,9 +444,10 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
               padding: EdgeInsets.all(16.0 * scale),
               child: ElevatedButton(
                 onPressed: () async {
-                  if (_mpinControllr.text.trim().isEmpty) {
+                  if(btnLoder == false){
+                    if (_mpinControllr.text.trim().isEmpty) {
                     Fluttertoast.showToast(
-                      msg: "MPIN is required",
+                      msg: "Apply coupon first",
                       backgroundColor: Colors.black,
                       textColor: Colors.white,
                     );
@@ -541,6 +578,7 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
                         }
                       }
                     }
+                  }
                   }
                 },
                 style: ElevatedButton.styleFrom(

@@ -57,6 +57,7 @@ class _LPGPage2screenState extends ConsumerState<LPGPage2screen> {
 
   void _submitAccount() {
     final cidCode = _controller.text.trim();
+
     if (_formKey.currentState!.validate()) {
       ref.read(paramsProvider.notifier).clearData();
       ref.read(paramsProvider.notifier).updateParam1(_parm1Controller.text);
@@ -89,8 +90,12 @@ class _LPGPage2screenState extends ConsumerState<LPGPage2screen> {
               ),
         ),
       );
-    }else{
-      Fluttertoast.showToast(msg: "Select all dropdowns", backgroundColor: Colors.black, textColor: Colors.white);
+    } else {
+      Fluttertoast.showToast(
+        msg: "Select all dropdowns",
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+      );
     }
   }
 
@@ -98,7 +103,7 @@ class _LPGPage2screenState extends ConsumerState<LPGPage2screen> {
     if (btnLoder == false) {
       if (_controller.text.isNotEmpty && coupnApplyed == false) {
         Fluttertoast.showToast(
-          msg: "Mpin is required",
+          msg: "Apply coupon first",
           textColor: Colors.white,
           backgroundColor: Colors.red,
         );
@@ -904,7 +909,44 @@ class _LPGPage2screenState extends ConsumerState<LPGPage2screen> {
                       height: 60,
                       child: ElevatedButton(
                         onPressed:
-                            snap.fetchOption == true ? _submitAccount : paynow,
+                            snap.fetchOption == true
+                                ? () {
+                                  if (snap.isParam1 == true &&
+                                      _parm1Controller.text.trim().isEmpty) {
+                                    showErrorMessage(name: snap.param1.name);
+                                    return;
+                                  }
+                                  if (snap.isParam2 == true &&
+                                      _parm2Controller.text.trim().isEmpty) {
+                                    showErrorMessage(name: snap.param2.name);
+                                    return;
+                                  }
+
+                                  if (snap.isParam3 == true &&
+                                      _parm3Controller.text.trim().isEmpty) {
+                                    showErrorMessage(
+                                      name: snap.param3?.name ?? "",
+                                    );
+                                    return;
+                                  }
+                                  if (snap.isParam4 == true &&
+                                      _parm4Controller.text.trim().isEmpty) {
+                                    showErrorMessage(
+                                      name: snap.param4?.name ?? "",
+                                    );
+                                    return;
+                                  }
+                                  if (snap.isParam5 == true &&
+                                      _parm5Controller.text.trim().isEmpty) {
+                                    showErrorMessage(
+                                      name: snap.param5?.name ?? "",
+                                    );
+                                    return;
+                                  }
+
+                                  _submitAccount();
+                                }
+                                : paynow,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(
                             255,
@@ -1397,4 +1439,12 @@ class _DistibruterLisDropDownState
       loading: () => const CircularProgressIndicator(),
     );
   }
+}
+
+void showErrorMessage({required String name}) {
+  Fluttertoast.showToast(
+    msg: "$name is required",
+    backgroundColor: Colors.black,
+    textColor: Colors.white,
+  );
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -210,60 +212,59 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-
+         
                   // Recent Bill Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Recent Bill",
-                            style: GoogleFonts.inter(
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Image.asset("assets/airtel.png", height: 30),
-                              const SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Airtel",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    "9875867346",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13,
-                                      color: Color(0xFFB3B3B3),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  //   child: Container(
+                  //     padding: const EdgeInsets.all(12),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(12),
+                  //     ),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         Text(
+                  //           "Recent Bill",
+                  //           style: GoogleFonts.inter(
+                  //             fontSize: 15,
+                  //             color: Colors.black,
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ),
+                  //         const SizedBox(height: 10),
+                  //         Row(
+                  //           children: [
+                  //             Image.asset("assets/airtel.png", height: 30),
+                  //             const SizedBox(width: 12),
+                  //             Column(
+                  //               crossAxisAlignment: CrossAxisAlignment.start,
+                  //               children: [
+                  //                 Text(
+                  //                   "Airtel",
+                  //                   style: GoogleFonts.inter(
+                  //                     fontSize: 16,
+                  //                     color: Colors.black,
+                  //                     fontWeight: FontWeight.bold,
+                  //                   ),
+                  //                 ),
+                  //                 Text(
+                  //                   "9875867346",
+                  //                   style: GoogleFonts.inter(
+                  //                     fontSize: 13,
+                  //                     color: Color(0xFFB3B3B3),
+                  //                     fontWeight: FontWeight.bold,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(height: 20),
 
                   // Contact List (filtered)
@@ -385,6 +386,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                         itemCount: filteredContacts.length,
                         itemBuilder: (context, index) {
                           final contact = filteredContacts[index];
+                          log(contact.phones.toString());
                           final phone =
                               contact.phones.isNotEmpty
                                   ? contact.phones.first.number
@@ -425,7 +427,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                             ),
                             onTap: () {
                               if (phone != 'No number') {
-                                billerNotifier.setNumber(phone);
+                                billerNotifier.setNumber(stripCountryCode(phone));
                                 showBillerBottomSheet(
                                   context,
                                   snap.billersList,
@@ -791,4 +793,16 @@ String removeDotZero(String value) {
     return value.replaceAll('.0', '');
   }
   return value;
+}
+
+
+String stripCountryCode(String number) {
+  // remove all non-digits
+  String digits = number.replaceAll(RegExp(r'\D'), '');
+
+  // agar 10 ya usse zyada digits hai to last 10 return karo (local number)
+  if (digits.length >= 10) {
+    return digits.substring(digits.length - 10);
+  }
+  return digits;
 }

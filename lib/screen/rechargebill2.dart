@@ -16,8 +16,10 @@ import 'package:home/data/controller/mobilePrepaid.notifier.dart';
 import 'package:home/data/controller/mobilePrepaid.provider.dart';
 import 'package:home/data/model/billerParms.req.model.dart';
 import 'package:home/data/model/checkCopoun.model.dart';
+import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/data/model/mobileplanRes.model.dart';
 import 'package:home/data/model/paynow.model.dart';
+import 'package:home/screen/mobilePospaid/mobilePostPaid3.page.dart';
 import 'package:home/screen/order.details.page.dart';
 import 'package:home/screen/rechargebill3.dart';
 import 'package:home/screen/summerysPages/pipeGas.summery.page.dart';
@@ -266,31 +268,31 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePrepaid2> {
   void _submitAccount() {
     final cidCode = _controller.text.trim();
     if (_formKey.currentState!.validate()) {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder:
-      //         (context) => MobilePostpaidPage3(
-      //           body: FetchBodymodel(
-      //             data: FetchBillModel(
-      //               ipAddress: "152.59.109.59",
-      //               macAddress: "not found",
-      //               latitude: "26.917979",
-      //               longitude: "75.814593",
-      //               circleCode: widget.circleId,
-      //               billerCode: widget.billerCode,
-      //               billerName: widget.billerName,
-      //               param1: _parm1Controller.text,
-      //               param2: _parm2Controller.text,
-      //               param3: _parm3Controller.text,
-      //               param4: _parm4Controller.text,
-      //               param5: _parm5Controller.text,
-      //             ),
-      //             path: "b2c_bills_mobile",
-      //           ),
-      //         ),
-      //   ),
-      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => MobilePostpaidPage3(
+                body: FetchBodymodel(
+                  data: FetchBillModel(
+                    ipAddress: "152.59.109.59",
+                    macAddress: "not found",
+                    latitude: "26.917979",
+                    longitude: "75.814593",
+                    circleCode: widget.circleId,
+                    billerCode: widget.billerCode,
+                    billerName: widget.billerName,
+                    param1: _parm1Controller.text,
+                    param2: _parm2Controller.text,
+                    param3: _parm3Controller.text,
+                    param4: _parm4Controller.text,
+                    param5: _parm5Controller.text,
+                  ),
+                  path: "b2c_bills_mobile",
+                ),
+              ),
+        ),
+      );
     }
   }
 
