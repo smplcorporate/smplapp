@@ -33,13 +33,12 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
   bool btnLoder = false;
   bool coupnApplyed = false;
 
-  bool applyBtnLoder = false; 
+  bool applyBtnLoder = false;
   final TextEditingController _controller = TextEditingController();
   final TextEditingController _mpinControllr = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final _coponKey = GlobalKey<FormState>();
   bool isInvalid = false;
-  
 
   @override
   void initState() {
@@ -47,6 +46,7 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
     super.initState();
     _amountController.text = "${widget.plan.planAmount.toString()}";
   }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -120,37 +120,33 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(
-                                vertical: 23 * scale,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 232, 243, 235),
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(10 * scale),
-                              ),
-                              child: Center(
-                                child: TextField(
-                                  controller: _amountController,
-                                  readOnly: false,
-                                  showCursor: true,
-                                  decoration: const InputDecoration.collapsed(
-                                    hintText: '',
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: 22 * scale,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  onChanged: (value){
-                                    
-                                  },
-                                ),
-                              ),
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 23 * scale),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 232, 243, 235),
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(10 * scale),
+                        ),
+                        child: Center(
+                          child: TextField(
+                            controller: _amountController,
+                            readOnly: false,
+                            showCursor: true,
+                            decoration: const InputDecoration.collapsed(
+                              hintText: '',
                             ),
-                      
+                            style: TextStyle(
+                              fontSize: 22 * scale,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {},
+                          ),
+                        ),
+                      ),
+
                       SizedBox(height: 8 * scale),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -263,81 +259,87 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
                         SizedBox(width: 8),
                         ElevatedButton(
                           onPressed: () async {
-                            if(applyBtnLoder == false){
+                            if (applyBtnLoder == false) {
                               if (_coponKey.currentState!.validate()) {
-                              if (_controller.text.isEmpty ||
-                                  _controller.text.trim().isEmpty) {
-                                Fluttertoast.showToast(
-                                  msg: "Coupon code is required",
-                                  backgroundColor: Colors.black,
-                                  textColor: Colors.white,
-                                );
-                              } else {
-                                if (coupnApplyed == false) {
-                                  setState(() {
-                                    applyBtnLoder = true;
-                                  });
-                                  final state = APIStateNetwork(
-                                    await createDio(),
+                                if (_controller.text.isEmpty ||
+                                    _controller.text.trim().isEmpty) {
+                                  Fluttertoast.showToast(
+                                    msg: "Coupon code is required",
+                                    backgroundColor: Colors.black,
+                                    textColor: Colors.white,
                                   );
-                                  final response = await state
-                                      .checkCoupnMobilePrepaid(
-                                        CheckCouponModel(
-                                          ipAddress: "152.59.109.59",
-                                          macAddress: "not found",
-                                          latitude: "26.917979",
-                                          longitude: "75.814593",
-                                          billerCode:
-                                              userBillerData
-                                                  .selectedBiller
-                                                  ?.billerCode ??
-                                              "",
-                                          billerName:
-                                              userBillerData
-                                                  .selectedBiller
-                                                  ?.billerName ??
-                                              "",
-                                          param1: userBillerData.number ?? "",
-                                          transAmount: removeDotZero(widget.plan.planAmount.toString()),
-                                          
-                                          couponCode: _controller.text.trim(),
-                                        ),
-                                      );
-                                  if (response.response.data['status'] ==
-                                      true) {
+                                } else {
+                                  if (coupnApplyed == false) {
                                     setState(() {
-                                      applyBtnLoder = false;
-                                      coupnApplyed = true;
+                                      applyBtnLoder = true;
                                     });
-                                    log("Trsing1");
-
-                                    Fluttertoast.showToast(
-                                      msg:
-                                          response.response.data['status_desc'],
-                                      backgroundColor: Colors.black,
-                                      textColor: Colors.white,
+                                    final state = APIStateNetwork(
+                                      await createDio(),
                                     );
+                                    final response = await state
+                                        .checkCoupnMobilePrepaid(
+                                          CheckCouponModel(
+                                            ipAddress: "152.59.109.59",
+                                            macAddress: "not found",
+                                            latitude: "26.917979",
+                                            longitude: "75.814593",
+                                            billerCode:
+                                                userBillerData
+                                                    .selectedBiller
+                                                    ?.billerCode ??
+                                                "",
+                                            billerName:
+                                                userBillerData
+                                                    .selectedBiller
+                                                    ?.billerName ??
+                                                "",
+                                            param1: userBillerData.number ?? "",
+                                            transAmount: removeDotZero(
+                                              widget.plan.planAmount.toString(),
+                                            ),
+
+                                            couponCode: _controller.text.trim(),
+                                          ),
+                                        );
+                                    if (response.response.data['status'] ==
+                                        true) {
+                                      setState(() {
+                                        applyBtnLoder = false;
+                                        coupnApplyed = true;
+                                      });
+                                      log("Trsing1");
+
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            response
+                                                .response
+                                                .data['status_desc'],
+                                        backgroundColor: Colors.black,
+                                        textColor: Colors.white,
+                                      );
+                                    } else {
+                                      setState(() {
+                                        applyBtnLoder = false;
+                                        _controller.clear();
+                                      });
+                                      log("Trsing2");
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            response
+                                                .response
+                                                .data['status_desc'],
+                                        backgroundColor: Colors.black,
+                                        textColor: Colors.white,
+                                      );
+                                    }
                                   } else {
                                     setState(() {
-                                      applyBtnLoder = false;
+                                      coupnApplyed = false;
                                       _controller.clear();
                                     });
-                                    log("Trsing2");
-                                    Fluttertoast.showToast(
-                                      msg:
-                                          response.response.data['status_desc'],
-                                      backgroundColor: Colors.black,
-                                      textColor: Colors.white,
-                                    );
                                   }
-                                } else {
-                                  setState(() {
-                                    coupnApplyed = false;
-                                    _controller.clear();
-                                  });
                                 }
                               }
-                            }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -444,141 +446,148 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
               padding: EdgeInsets.all(16.0 * scale),
               child: ElevatedButton(
                 onPressed: () async {
-                  if(btnLoder == false){
+                  if (btnLoder == false) {
                     if (_mpinControllr.text.trim().isEmpty) {
-                    Fluttertoast.showToast(
-                      msg: "Apply coupon first",
-                      backgroundColor: Colors.black,
-                      textColor: Colors.white,
-                    );
-                  } else {
-                    if (_controller.text.trim().isNotEmpty &&
-                        coupnApplyed == false) {
                       Fluttertoast.showToast(
-                        msg: "Please apply coupon code",
+                        msg: "Enter mpin first",
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
                       );
-                      return;
                     } else {
-                      if (btnLoder == false) {
-                        try {
-                          setState(() {
-                            btnLoder = false;
-                          });
-                          final api = APIStateNetwork(await createDio());
-                          final response = await api.payMobileRecharge(
-                            PaymentRequest(
-                              ipAddress: "127.0.0.1",
-                              macAddress: "Not found",
-                              latitude: "27.033342",
-                              longitude: "37.0342434",
-                              billerCode:
-                                  userBillerData.selectedBiller?.billerCode ??
-                                  "",
-                              billerName:
-                                  userBillerData.selectedBiller?.billerName ??
-                                  "",
-                              param1: userBillerData.number ?? "",
-                              transAmount: removeDotZero(widget.plan.planAmount.toString()),
-                              userMpin: _mpinControllr.text,
-                              circleCode:
-                                  userBillerData.selectedCircle?.circleId ?? "",
-                              param2: widget.plan.planCode.toString(),
+                      if (_controller.text.trim().isNotEmpty &&
+                          coupnApplyed == false) {
+                        Fluttertoast.showToast(
+                          msg: "Please apply coupon code",
+                          backgroundColor: Colors.black,
+                          textColor: Colors.white,
+                        );
+                        return;
+                      } else {
+                        if (btnLoder == false) {
+                          try {
+                            setState(() {
+                              btnLoder = true;
+                            });
+                            final api = APIStateNetwork(await createDio());
+                            final response = await api.payMobileRecharge(
+                              PaymentRequest(
+                                ipAddress: "127.0.0.1",
+                                macAddress: "Not found",
+                                latitude: "27.033342",
+                                longitude: "37.0342434",
+                                billerCode:
+                                    userBillerData.selectedBiller?.billerCode ??
+                                    "",
+                                billerName:
+                                    userBillerData.selectedBiller?.billerName ??
+                                    "",
+                                param1: userBillerData.number ?? "",
+                                transAmount: removeDotZero(
+                                  _amountController.text.toString(),
+                                ),
+                                userMpin: _mpinControllr.text,
+                                circleCode:
+                                    userBillerData.selectedCircle?.circleId ??
+                                    "",
+                                param2: "",
 
-                              couponCode:
-                                  coupnApplyed == true ? _controller.text : "",
-                            ),
-                          );
-                          if (response.response.data["status"] == false) {
-                            setState(() {
-                              btnLoder = false;
-                            });
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    '',
-                                    style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  content: Text(
-                                    '${response.response.data["status_desc"]}',
-                                    style: GoogleFonts.inter(),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text(
-                                        'OK',
-                                        style: GoogleFonts.inter(
-                                          color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                couponCode:
+                                    coupnApplyed == true
+                                        ? _controller.text
+                                        : "",
+                              ),
+                            );
+                            if (response.response.data["status"] == false) {
+                              setState(() {
+                                btnLoder = false;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      '',
+                                      style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ],
-                                );
-                              },
-                            );
-                          } else {
-                            setState(() {
-                              btnLoder = false;
-                            });
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    '${response.response.data['trans_status']}',
-                                    style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.bold,
+                                    content: Text(
+                                      '${response.response.data["status_desc"]}',
+                                      style: GoogleFonts.inter(),
                                     ),
-                                  ),
-                                  content: Text(
-                                    '${response.response.data["status_desc"]}',
-                                    style: GoogleFonts.inter(),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (_) => PaymentDetailsScreen(
-                                                  trnxId:
-                                                      '${response.response.data['trans_id']}',
-                                                ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          'OK',
+                                          style: GoogleFonts.inter(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        );
-                                      },
-                                      child: Text(
-                                        'OK',
-                                        style: GoogleFonts.inter(
-                                          color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              setState(() {
+                                btnLoder = false;
+                              });
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      '${response.response.data['trans_status']}',
+                                      style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ],
-                                );
-                              },
-                            );
+                                    content: Text(
+                                      '${response.response.data["status_desc"]}',
+                                      style: GoogleFonts.inter(),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => PaymentDetailsScreen(
+                                                    trnxId:
+                                                        '${response.response.data['trans_id']}',
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                        child: Text(
+                                          'OK',
+                                          style: GoogleFonts.inter(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          } on DioException {
+                            setState(() {
+                              btnLoder = false;
+                            });
                           }
-                        } on DioException {
-                          setState(() {
-                            btnLoder = false;
-                          });
                         }
                       }
                     }
-                  }
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -589,13 +598,16 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
                   padding: EdgeInsets.symmetric(vertical: 14 * scale),
                   minimumSize: Size(double.infinity, 45 * scale),
                 ),
-                child: btnLoder== false? Text(
-                  'Proceed to pay',
-                  style: GoogleFonts.inter(
-                    fontSize: 18 * scale,
-                    color: Colors.white,
-                  ),
-                ) : CircularProgressIndicator(),
+                child:
+                    btnLoder == false
+                        ? Text(
+                          'Proceed to pay',
+                          style: GoogleFonts.inter(
+                            fontSize: 18 * scale,
+                            color: Colors.white,
+                          ),
+                        )
+                        : CircularProgressIndicator(color: Colors.white,),
               ),
             ),
           ],

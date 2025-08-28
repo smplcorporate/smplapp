@@ -416,129 +416,240 @@ class _LPGPage2screenState extends ConsumerState<LPGPage2screen> {
                     ],
                     if (snap.isParam3 == true) ...[
                       const SizedBox(height: 10),
-                      // Container(
-                      //   padding: const EdgeInsets.symmetric(
-                      //     horizontal: 12,
-                      //     vertical: 8,
-                      //   ),
-                      //   decoration: BoxDecoration(
-                      //     color: Colors.white,
-                      //     border: Border.all(
-                      //       color:
-                      //           _isValid || _parm3Controller.text.isEmpty
-                      //               ? Colors.grey.shade600
-                      //               : Colors.red,
-                      //       width: 2.0,
-                      //     ),
-                      //     borderRadius: BorderRadius.circular(12),
-                      //   ),
-                      //   child: Row(
-                      //     children: [
-                      //       const SizedBox(width: 12),
-                      //       Expanded(
-                      //         child: TextFormField(
-                      //           controller: _parm3Controller,
+                      if (snap.lpgStatesList == false) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color:
+                                  _isValid || _parm3Controller.text.isEmpty
+                                      ? Colors.grey.shade600
+                                      : Colors.red,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _parm3Controller,
 
-                      //           validator: (value) {
-                      //             if (value == null || value.isEmpty) {
-                      //               return "This field is required";
-                      //             }
-                      //           },
-                      //           onChanged: (value) {
-                      //             ref
-                      //                 .read(paramsProvider.notifier)
-                      //                 .updateParam3(value);
-                      //           },
-                      //           inputFormatters: [
-                      //             FilteringTextInputFormatter.allow(
-                      //               RegExp(r'[a-zA-Z0-9]'),
-                      //             ),
-                      //             LengthLimitingTextInputFormatter(
-                      //               15,
-                      //             ), // Enforce length limit
-                      //             UpperCaseTextFormatter(),
-                      //           ],
-                      //           decoration: InputDecoration(
-                      //             hintText: snap.param3?.name,
-                      //             border: InputBorder.none,
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Select Service",
-                            style: GoogleFonts.montserrat(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "This field is required";
+                                    }
+                                  },
+                                  onChanged: (value) {
+                                    ref
+                                        .read(paramsProvider.notifier)
+                                        .updateParam3(value);
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp(r'[a-zA-Z0-9]'),
+                                    ),
+                                    LengthLimitingTextInputFormatter(
+                                      15,
+                                    ), // Enforce length limit
+                                    UpperCaseTextFormatter(),
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: snap.param3?.name,
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      StateListDropdown(
-                        callBack: (v) {
-                          setState(() {
-                            _parm3Controller.text = v.stateId;
-                          });
-                        },
-                      ),
+                        ),
+                      ] else ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Select Service",
+                              style: GoogleFonts.montserrat(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        StateListDropdown(
+                          callBack: (v) {
+                            setState(() {
+                              _parm3Controller.text = v.stateId;
+                            });
+                          },
+                        ),
+                      ],
                     ],
-                    if (snap.isParam4 == true &&
-                        _parm3Controller.text.trim().isNotEmpty) ...[
+                    if (snap.lpgStatesList == false) ...[
                       const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Select District",
-                            style: GoogleFonts.montserrat(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _parm4Controller.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
                           ),
-                        ],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _parm4Controller,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                },
+                                onChanged: (value) {
+                                  ref
+                                      .read(paramsProvider.notifier)
+                                      .updateParam4(value);
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9]'),
+                                  ),
+                                  LengthLimitingTextInputFormatter(
+                                    15,
+                                  ), // Enforce length limit
+                                  UpperCaseTextFormatter(),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: snap.param4?.name,
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      DistrctListDropDown(
-                        stateId: _parm3Controller.text,
-                        callBack: (v) {
-                          setState(() {
-                            _parm4Controller.text = v.districtId;
-                          });
-                        },
-                      ),
-                    ],
-                    if (snap.isParam5 == true &&
-                        _parm4Controller.text.trim().isNotEmpty) ...[
                       const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Select Distributor",
-                            style: GoogleFonts.montserrat(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color:
+                                _isValid || _parm5Controller.text.isEmpty
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                            width: 2.0,
                           ),
-                        ],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _parm5Controller,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                },
+                                onChanged: (value) {
+                                  ref
+                                      .read(paramsProvider.notifier)
+                                      .updateParam5(value);
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9]'),
+                                  ),
+                                  LengthLimitingTextInputFormatter(
+                                    15,
+                                  ), // Enforce length limit
+                                  UpperCaseTextFormatter(),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: snap.param5?.name,
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      DistibruterLisDropDown(
-                        callBack: (e) {
-                          setState(() {
-                            _parm5Controller.text = e.distributorId;
-                          });
-                        },
-                        stateId: _parm3Controller.text,
-                        districId: _parm4Controller.text,
-                      ),
+                    ] else ...[
+                      if (snap.isParam4 == true &&
+                          _parm3Controller.text.trim().isNotEmpty) ...[
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Select District",
+                              style: GoogleFonts.montserrat(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        DistrctListDropDown(
+                          stateId: _parm3Controller.text,
+                          callBack: (v) {
+                            setState(() {
+                              _parm4Controller.text = v.districtId;
+                            });
+                          },
+                        ),
+                      ],
+                      if (snap.isParam5 == true &&
+                          _parm4Controller.text.trim().isNotEmpty) ...[
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Select Distributor",
+                              style: GoogleFonts.montserrat(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        DistibruterLisDropDown(
+                          callBack: (e) {
+                            setState(() {
+                              _parm5Controller.text = e.distributorId;
+                            });
+                          },
+                          stateId: _parm3Controller.text,
+                          districId: _parm4Controller.text,
+                        ),
+                      ],
                     ],
+
                     if (snap.fetchOption == false) ...[
                       const SizedBox(height: 10),
                       Container(
