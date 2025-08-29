@@ -32,7 +32,7 @@ class RechargePlansPage extends ConsumerStatefulWidget {
 class _RechargePlansPageState extends ConsumerState<RechargePlansPage> {
   late final RechargeRequestModel requestModel;
   String searchQuery = "";
-
+  String tabName = "";
   @override
   void initState() {
     super.initState();
@@ -62,14 +62,23 @@ class _RechargePlansPageState extends ConsumerState<RechargePlansPage> {
         child: dynamicPlan.when(
           data: (snap) {
             // Filter data based on search query
-            final filteredPlans = snap.planData.where((plan) {
-              final planAmountStr = plan.planAmount.toString();
-              final planNameStr = plan.planName?.toLowerCase() ?? "";
-              final query = searchQuery.toLowerCase();
-        
-              return planAmountStr.contains(query) || planNameStr.contains(query);
-            }).toList();
-        
+            final filteredPlans =
+                snap.planData.where((plan) {
+                  final planAmountStr = plan.planAmount.toString();
+                  final planNameStr = plan.planName?.toLowerCase() ?? "";
+                  final query = searchQuery.toLowerCase();
+
+                  final matchesSearch =
+                      planAmountStr.contains(query) ||
+                      planNameStr.contains(query);
+
+                  final matchesTab =
+                      tabName.isEmpty ||
+                      (plan.planTab?.toLowerCase() == tabName.toLowerCase());
+
+                  return matchesSearch && matchesTab;
+                }).toList();
+
             return Scaffold(
               backgroundColor: const Color.fromARGB(255, 232, 243, 235),
               appBar: AppBar(
@@ -143,85 +152,305 @@ class _RechargePlansPageState extends ConsumerState<RechargePlansPage> {
                   ),
                 ),
               ),
-              body: filteredPlans.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No matching plans found",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: filteredPlans.length,
-                      itemBuilder: (context, index) {
-                        final plan = filteredPlans[index];
-                        final isSpecialPlan =
-                            plan.planAmount.toString() == '199';
-        
-                        final planWidget = Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 10,
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border:
-                                  Border.all(color: Colors.grey.shade300),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  plan.planAmount.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Data: ${plan.planAmount ?? '-'}"),
-                                    Text("Validity: ${plan.validity ?? '-'}"),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text("Plan Name: ${plan.planName ?? '-'}"),
-                                const SizedBox(height: 8),
-                                Text(
-                                  plan.planDescription ?? '',
-                                  style:
-                                      TextStyle(color: Colors.grey[600]),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-        
-                        return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => RechargePage3(plan: plan,),
+              body:
+                  filteredPlans.isEmpty
+                      ? const Center(
+                        child: Text(
+                          "No matching plans found",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                      : SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 30.h,
+                              width: MediaQuery.of(context).size.width,
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  SizedBox(width: 30),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        tabName = "";
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          top: 5,
+                                          bottom: 5,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "ALL",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  );
-                                },
-                                child: planWidget,
-                              )
-                           ;
-                      },
-                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        tabName = "Data";
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          top: 5,
+                                          bottom: 5,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Data",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        tabName = "Others";
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          top: 5,
+                                          bottom: 5,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Others",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        tabName = "Rate Cutter";
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          top: 5,
+                                          bottom: 5,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Rate Cutter",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        tabName = "Special Offer";
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          top: 5,
+                                          bottom: 5,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Special Offer",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        tabName = "Top Up";
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          top: 5,
+                                          bottom: 5,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Top Up",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: filteredPlans.length,
+                              itemBuilder: (context, index) {
+                                final plan = filteredPlans[index];
+                                final isSpecialPlan =
+                                    plan.planAmount.toString() == '199';
+
+                                final planWidget = Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                    vertical: 10,
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          plan.planAmount.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Data: ${plan.planAmount ?? '-'}",
+                                            ),
+                                            Text(
+                                              "Validity: ${plan.validity ?? '-'}",
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          "Plan Name: ${plan.planName ?? '-'}",
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          plan.planDescription ?? '',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => RechargePage3(plan: plan),
+                                      ),
+                                    );
+                                  },
+                                  child: planWidget,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
             );
           },
           error: (err, stack) {
-            return  Center(
-              child: Text("$err"),
-            );
+            return Center(child: Text("$err"));
           },
           loading: () => const Center(child: CircularProgressIndicator()),
         ),
@@ -229,11 +458,6 @@ class _RechargePlansPageState extends ConsumerState<RechargePlansPage> {
     );
   }
 }
-
-
-
-
-
 
 class MobilePrepaid2 extends ConsumerStatefulWidget {
   final String billerCode;
@@ -247,8 +471,7 @@ class MobilePrepaid2 extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MobilePrepaid2> createState() =>
-      _MobilePostpaidPageState();
+  ConsumerState<MobilePrepaid2> createState() => _MobilePostpaidPageState();
 }
 
 class _MobilePostpaidPageState extends ConsumerState<MobilePrepaid2> {
@@ -546,10 +769,8 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePrepaid2> {
                         ),
                       ),
                     ],
+
                     // ,
-                    
-                    
-                    
                     if (snap.fetchOption == false) ...[
                       const SizedBox(height: 10),
                       Container(
@@ -688,118 +909,120 @@ class _MobilePostpaidPageState extends ConsumerState<MobilePrepaid2> {
                                   SizedBox(width: 8),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if(applyBtnLoder == false){
+                                      if (applyBtnLoder == false) {
                                         if (_parm1Controller.text
-                                          .trim()
-                                          .isNotEmpty) {
-                                        if (_copounCodeKey.currentState!
-                                            .validate()) {
-                                          if (_controller.text.isNotEmpty ||
-                                              _controller.text
-                                                  .trim()
-                                                  .isNotEmpty) {
-                                            if (_amountController
-                                                    .text
-                                                    .isNotEmpty ||
-                                                _amountController.text
+                                            .trim()
+                                            .isNotEmpty) {
+                                          if (_copounCodeKey.currentState!
+                                              .validate()) {
+                                            if (_controller.text.isNotEmpty ||
+                                                _controller.text
                                                     .trim()
                                                     .isNotEmpty) {
-                                              if (coupnApplyed == false) {
-                                                setState(() {
-                                                  applyBtnLoder = true;
-                                                });
-                                                final state = APIStateNetwork(
-                                                  await createDio(),
-                                                );
-                                                final response = await state
-                                                    .checkMobilePostpaidCoupon(
-                                                      CheckCouponModel(
-                                                        ipAddress:
-                                                            "152.59.109.59",
-                                                        macAddress: "not found",
-                                                        latitude: "26.917979",
-                                                        longitude: "75.814593",
-                                                        billerCode:
-                                                            widget.billerCode,
-                                                        billerName:
-                                                            widget.billerName,
-                                                        param1:
-                                                            _parm1Controller
-                                                                .text,
-                                                        transAmount:
-                                                            double.parse(
-                                                              _amountController
-                                                                  .text,
-                                                            ).toInt().toString(),
-                                                        couponCode:
-                                                            _controller.text
-                                                                .trim(),
-                                                      ),
-                                                    );
-                                                if (response
-                                                        .response
-                                                        .data['status'] ==
-                                                    true) {
+                                              if (_amountController
+                                                      .text
+                                                      .isNotEmpty ||
+                                                  _amountController.text
+                                                      .trim()
+                                                      .isNotEmpty) {
+                                                if (coupnApplyed == false) {
                                                   setState(() {
-                                                    applyBtnLoder = false;
-                                                    coupnApplyed = true;
+                                                    applyBtnLoder = true;
                                                   });
-                                                  log("testing1");
-                                                  Fluttertoast.showToast(
-                                                    msg:
-                                                        response
-                                                            .response
-                                                            .data['status_desc'],
-                                                    backgroundColor:
-                                                        Colors.black,
-                                                    textColor: Colors.white,
+                                                  final state = APIStateNetwork(
+                                                    await createDio(),
                                                   );
+                                                  final response = await state
+                                                      .checkMobilePostpaidCoupon(
+                                                        CheckCouponModel(
+                                                          ipAddress:
+                                                              "152.59.109.59",
+                                                          macAddress:
+                                                              "not found",
+                                                          latitude: "26.917979",
+                                                          longitude:
+                                                              "75.814593",
+                                                          billerCode:
+                                                              widget.billerCode,
+                                                          billerName:
+                                                              widget.billerName,
+                                                          param1:
+                                                              _parm1Controller
+                                                                  .text,
+                                                          transAmount:
+                                                              double.parse(
+                                                                _amountController
+                                                                    .text,
+                                                              ).toInt().toString(),
+                                                          couponCode:
+                                                              _controller.text
+                                                                  .trim(),
+                                                        ),
+                                                      );
+                                                  if (response
+                                                          .response
+                                                          .data['status'] ==
+                                                      true) {
+                                                    setState(() {
+                                                      applyBtnLoder = false;
+                                                      coupnApplyed = true;
+                                                    });
+                                                    log("testing1");
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          response
+                                                              .response
+                                                              .data['status_desc'],
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      textColor: Colors.white,
+                                                    );
+                                                  } else {
+                                                    setState(() {
+                                                      applyBtnLoder = false;
+                                                      _controller.clear();
+                                                    });
+                                                    log("testing2");
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          response
+                                                              .response
+                                                              .data['status_desc'],
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      textColor: Colors.white,
+                                                    );
+                                                  }
                                                 } else {
                                                   setState(() {
-                                                    applyBtnLoder = false;
+                                                    coupnApplyed = false;
                                                     _controller.clear();
                                                   });
-                                                  log("testing2");
-                                                  Fluttertoast.showToast(
-                                                    msg:
-                                                        response
-                                                            .response
-                                                            .data['status_desc'],
-                                                    backgroundColor:
-                                                        Colors.black,
-                                                    textColor: Colors.white,
-                                                  );
                                                 }
                                               } else {
-                                                setState(() {
-                                                  coupnApplyed = false;
-                                                  _controller.clear();
-                                                });
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Amount is required to apply Coupon code",
+                                                  backgroundColor: Colors.black,
+                                                  textColor: Colors.white,
+                                                );
                                               }
                                             } else {
                                               Fluttertoast.showToast(
-                                                msg:
-                                                    "Amount is required to apply Coupon code",
+                                                msg: "Coupon Code is required",
                                                 backgroundColor: Colors.black,
                                                 textColor: Colors.white,
                                               );
                                             }
-                                          } else {
-                                            Fluttertoast.showToast(
-                                              msg: "Coupon Code is required",
-                                              backgroundColor: Colors.black,
-                                              textColor: Colors.white,
-                                            );
                                           }
+                                        } else {
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                "${snap.param1.name} is required",
+                                            backgroundColor: Colors.black,
+                                            textColor: Colors.white,
+                                          );
                                         }
-                                      } else {
-                                        Fluttertoast.showToast(
-                                          msg:
-                                              "${snap.param1.name} is required",
-                                          backgroundColor: Colors.black,
-                                          textColor: Colors.white,
-                                        );
-                                      }
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

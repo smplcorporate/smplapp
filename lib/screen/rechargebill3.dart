@@ -295,7 +295,7 @@ class _RechargePage3State extends ConsumerState<RechargePage3> {
                                                 "",
                                             param1: userBillerData.number ?? "",
                                             transAmount: removeDotZero(
-                                              widget.plan.planAmount.toString(),
+                                              _amountController.text,
                                             ),
 
                                             couponCode: _controller.text.trim(),

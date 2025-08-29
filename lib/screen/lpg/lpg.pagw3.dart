@@ -622,7 +622,7 @@ class _LpgPage3State extends ConsumerState<LpgPage3> {
                                       billNo: snap.billNo,
                                       dueDate: snap.dueDate,
                                       billDate: snap.billDate,
-                                      billAmount: snap.billAmount.toString(),
+                                      billAmount: snap.billAmount ?? "0",
                                       returnTransid:
                                           snap.returnTransid.toString(),
                                       returnFetchid: snap.returnFetchid,
