@@ -218,7 +218,7 @@ class _LpgPage3State extends ConsumerState<LpgPage3> {
                                   children: [
                                     _infoColumn([
                                       if (snap.customerName != null ||
-                                          snap.customerName!.isNotEmpty)
+                                          snap.customerName.toString().isNotEmpty)
                                         "Customer Name",
                                       if (snap.billNo.isNotEmpty) "Bill Number",
                                       if (snap.billDate.isNotEmpty) "Bill Date",
@@ -229,7 +229,7 @@ class _LpgPage3State extends ConsumerState<LpgPage3> {
                                     _infoColumn(
                                       [
                                         if (snap.customerName != null ||
-                                            snap.customerName!.isNotEmpty)
+                                            snap.customerName.toString().isNotEmpty)
                                           snap.customerName ?? "No name",
                                         if (snap.billNo.isNotEmpty)
                                           snap.billNo.toString(),
