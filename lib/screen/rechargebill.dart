@@ -212,60 +212,77 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                       ),
                     ),
                   ),
-         
+                  SizedBox(height: 10.h),
                   // Recent Bill Section
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  //   child: Container(
-                  //     padding: const EdgeInsets.all(12),
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.white,
-                  //       borderRadius: BorderRadius.circular(12),
-                  //     ),
-                  //     child: Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         Text(
-                  //           "Recent Bill",
-                  //           style: GoogleFonts.inter(
-                  //             fontSize: 15,
-                  //             color: Colors.black,
-                  //             fontWeight: FontWeight.bold,
-                  //           ),
-                  //         ),
-                  //         const SizedBox(height: 10),
-                  //         Row(
-                  //           children: [
-                  //             Image.asset("assets/airtel.png", height: 30),
-                  //             const SizedBox(width: 12),
-                  //             Column(
-                  //               crossAxisAlignment: CrossAxisAlignment.start,
-                  //               children: [
-                  //                 Text(
-                  //                   "Airtel",
-                  //                   style: GoogleFonts.inter(
-                  //                     fontSize: 16,
-                  //                     color: Colors.black,
-                  //                     fontWeight: FontWeight.bold,
-                  //                   ),
-                  //                 ),
-                  //                 Text(
-                  //                   "9875867346",
-                  //                   style: GoogleFonts.inter(
-                  //                     fontSize: 13,
-                  //                     color: Color(0xFFB3B3B3),
-                  //                     fontWeight: FontWeight.bold,
-                  //                   ),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Recent Bill",
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          ListView.builder(
+                            itemCount:
+                                snap.oldRecharges.length > 3
+                                    ? 3
+                                    : snap.oldRecharges.length,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.only(top: 20.0.h),
+                                child: Row(
+                                  children: [
+                                    Image.network(
+                                      snap.oldRecharges[index].transLogo,
+                                      height: 30,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                        snap.oldRecharges[index].serviceProvider,
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          snap.oldRecharges[index].serviceAccount,
+                                          style: GoogleFonts.inter(
+                                            fontSize: 13,
+                                            color: Color(0xFFB3B3B3),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
 
                   // Contact List (filtered)
                   if (filteredContacts.isEmpty) ...[
@@ -427,7 +444,9 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                             ),
                             onTap: () {
                               if (phone != 'No number') {
-                                billerNotifier.setNumber(stripCountryCode(phone));
+                                billerNotifier.setNumber(
+                                  stripCountryCode(phone),
+                                );
                                 showBillerBottomSheet(
                                   context,
                                   snap.billersList,
@@ -670,7 +689,13 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => RechargePlansPage(),
+                                    builder:
+                                        (_) => RechargePlansPage(
+                                          billerName: selectedBiller.billerName,
+                                          billerCode: selectedBiller.billerName,
+                                          circleCode:
+                                              selectedCircle?.circleId ?? "",
+                                        ),
                                   ),
                                 );
                               } else {
@@ -719,7 +744,13 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => RechargePlansPage(),
+                                  builder:
+                                      (_) => RechargePlansPage(
+                                        billerName: selectedBiller.billerName,
+                                        billerCode: selectedBiller.billerName,
+                                        circleCode:
+                                            selectedCircle?.circleId ?? "",
+                                      ),
                                 ),
                               );
                             } else {
@@ -794,7 +825,6 @@ String removeDotZero(String value) {
   }
   return value;
 }
-
 
 String stripCountryCode(String number) {
   // remove all non-digits

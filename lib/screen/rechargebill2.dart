@@ -25,6 +25,11 @@ import 'package:home/screen/rechargebill3.dart';
 import 'package:home/screen/summerysPages/pipeGas.summery.page.dart';
 
 class RechargePlansPage extends ConsumerStatefulWidget {
+  final String billerName;
+  final String billerCode;
+  final String circleCode;
+
+  RechargePlansPage({super.key, required this.billerName, required this.billerCode, required this.circleCode});
   @override
   ConsumerState<RechargePlansPage> createState() => _RechargePlansPageState();
 }
@@ -450,7 +455,7 @@ class _RechargePlansPageState extends ConsumerState<RechargePlansPage> {
             );
           },
           error: (err, stack) {
-            return Center(child: Text("$err"));
+            return MobilePrepaid2(billerCode: widget.billerCode, billerName: widget.billerName, circleId: widget.circleCode);
           },
           loading: () => const Center(child: CircularProgressIndicator()),
         ),
