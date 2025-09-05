@@ -20,6 +20,7 @@ import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/data/model/mobileplanRes.model.dart';
 import 'package:home/data/model/paynow.model.dart';
 import 'package:home/screen/mobilePospaid/mobilePostPaid3.page.dart';
+import 'package:home/screen/mobilepreapid/mobilepreapid3.page.dart';
 import 'package:home/screen/order.details.page.dart';
 import 'package:home/screen/rechargebill3.dart';
 import 'package:home/screen/summerysPages/pipeGas.summery.page.dart';
@@ -29,7 +30,12 @@ class RechargePlansPage extends ConsumerStatefulWidget {
   final String billerCode;
   final String circleCode;
 
-  RechargePlansPage({super.key, required this.billerName, required this.billerCode, required this.circleCode});
+  RechargePlansPage({
+    super.key,
+    required this.billerName,
+    required this.billerCode,
+    required this.circleCode,
+  });
   @override
   ConsumerState<RechargePlansPage> createState() => _RechargePlansPageState();
 }
@@ -455,7 +461,25 @@ class _RechargePlansPageState extends ConsumerState<RechargePlansPage> {
             );
           },
           error: (err, stack) {
-            return MobilePrepaid2(billerCode: widget.billerCode, billerName: widget.billerName, circleId: widget.circleCode);
+            return MobilePrepaid3(
+              body: FetchBodymodel(
+                path: "",
+                data: FetchBillModel(
+                  ipAddress: '127.0.0.1',
+                  macAddress: 'not founda',
+                  latitude: '42.000',
+                  longitude: '45.000',
+                  billerCode: widget.billerCode,
+                  billerName: widget.billerName,
+                  circleCode: widget.circleCode,
+                  param1: userBillerData.number.toString(),
+                  param2: '',
+                  param3: '',
+                  param4: '',
+                  param5: '',
+                ),
+              ),
+            );
           },
           loading: () => const Center(child: CircularProgressIndicator()),
         ),

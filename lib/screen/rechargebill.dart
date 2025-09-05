@@ -692,7 +692,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                                     builder:
                                         (_) => RechargePlansPage(
                                           billerName: selectedBiller.billerName,
-                                          billerCode: selectedBiller.billerName,
+                                          billerCode: selectedBiller.billerCode,
                                           circleCode:
                                               selectedCircle?.circleId ?? "",
                                         ),
@@ -747,7 +747,7 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                                   builder:
                                       (_) => RechargePlansPage(
                                         billerName: selectedBiller.billerName,
-                                        billerCode: selectedBiller.billerName,
+                                        billerCode: selectedBiller.billerCode,
                                         circleCode:
                                             selectedCircle?.circleId ?? "",
                                       ),

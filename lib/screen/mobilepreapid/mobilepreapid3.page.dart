@@ -274,30 +274,33 @@ class _MobilePrepaid3State extends ConsumerState<MobilePrepaid3> {
                   // ),
                   // _buildBillDetailsParamCard(params),
                   SizedBox(height: 30),
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 23 * scale),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 232, 243, 235),
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(10 * scale),
-                    ),
-                    child: Center(
-                      child: TextField(
-                        controller: _amountController,
-                        readOnly: false,
-                        showCursor: true,
-                        decoration: const InputDecoration.collapsed(
-                          hintText: '',
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 23 * scale),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 254, 254, 254),
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(10 * scale),
+                      ),
+                      child: Center(
+                        child: TextField(
+                          controller: _amountController,
+                          readOnly: false,
+                          showCursor: true,
+                          decoration: const InputDecoration.collapsed(
+                            hintText: 'Enter Amount',
+                          ),
+                          style: TextStyle(
+                            fontSize: 22 * scale,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {},
                         ),
-                        style: TextStyle(
-                          fontSize: 22 * scale,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {},
                       ),
                     ),
                   ),
@@ -577,7 +580,14 @@ class _MobilePrepaid3State extends ConsumerState<MobilePrepaid3> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (btnLoder == false) {
-                          if (_controller.text.isNotEmpty &&
+                          if(_amountController.text.isEmpty || _amountController.text.trim().isEmpty){
+                            Fluttertoast.showToast(
+                              msg: "Amount is required",
+                              backgroundColor: Colors.black,
+                              textColor: Colors.white,
+                            );
+                          } else {
+                           if (_controller.text.isNotEmpty &&
                               coupnApplyed == false) {
                             Fluttertoast.showToast(
                               msg: "Please apply coupon code first",
@@ -745,6 +755,7 @@ class _MobilePrepaid3State extends ConsumerState<MobilePrepaid3> {
                                 }
                               }
                             }
+                          }
                           }
                         }
                       },
