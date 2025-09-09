@@ -8,7 +8,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:home/config/utils/route.dart';
 import 'package:home/screen/home_page.dart';
 import 'package:home/screen/otp.dart';
-import 'package:home/screen/splashscreen.dart';
+import 'package:home/screen/splashscreen.dart'; 
 
 void main() async {
   // Ensures all Flutter bindings are initialized before any other code runs.
