@@ -1,15 +1,195 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
+import 'package:home/data/model/distrctBody.res.dart';
+import 'package:home/data/model/distubiterBody.res.dart';
+import 'package:home/data/model/lpgState.res.dart';
 import 'package:home/data/model/profile.provider.dart';
 import 'package:home/data/model/userupdateModel.dart';
+import 'package:home/data/model/stateList.provider.dart';
+import 'package:home/screen/lpg/lpg.page2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:io';
+
+// Providers for dropdowns (reusing from LPGPage2screen)
+final stateProvider = StateProvider<LpgStatesList?>((ref) => null);
+final districtProvider = StateProvider<LpgDistrictsList?>((ref) => null);
+final tehsilProvider = StateProvider<LpgDistributorsList?>((ref) => null);
+
+// Generic Dropdown Widget (based on LPGPage2screen dropdowns)
+class GenericDropdown<T> extends ConsumerStatefulWidget {
+  final String hintText;
+  final AsyncValue provider;
+  final String Function(T) displayText;
+  final String Function(T) idSelector;
+  final Function(T) callBack;
+
+  const GenericDropdown({
+    Key? key,
+    required this.hintText,
+    required this.provider,
+    required this.displayText,
+    required this.idSelector,
+    required this.callBack,
+  }) : super(key: key);
+
+  @override
+  _GenericDropdownState<T> createState() => _GenericDropdownState<T>();
+}
+
+class _GenericDropdownState<T> extends ConsumerState<GenericDropdown<T>> {
+  T? selectedItem;
+  String searchText = "";
+  bool isDropdownOpen = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    return widget.provider.when(
+      data: (snap) {
+        List<T> list;
+        if (T == LpgStatesList) {
+          list = snap.lpgStatesList as List<T>;
+        } else if (T == LpgDistrictsList) {
+          list = snap.lpgDistrictsList as List<T>;
+        } else if (T == LpgDistributorsList) {
+          list = snap.lpgDistributorsList as List<T>;
+        } else {
+          list = <T>[];
+        }
+
+        // Apply search filter
+        final filteredList =
+            list.where((e) {
+              return widget
+                  .displayText(e)
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase());
+            }).toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Main dropdown button
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isDropdownOpen = !isDropdownOpen;
+                });
+              },
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Icon(Icons.location_on, color: Colors.black),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            selectedItem != null
+                                ? widget.displayText(selectedItem!)
+                                : widget.hintText,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        isDropdownOpen
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Dropdown Panel
+            if (isDropdownOpen) ...[
+              const SizedBox(height: 8),
+              Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search ${widget.hintText}',
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: width * 0.05,
+                      vertical: width * 0.04,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child:
+                      filteredList.isEmpty
+                          ? const Center(child: Text("No items found"))
+                          : ListView.builder(
+                            itemCount: filteredList.length,
+                            itemBuilder: (context, index) {
+                              final e = filteredList[index];
+                              return ListTile(
+                                title: Text(widget.displayText(e)),
+                                onTap: () {
+                                  setState(() {
+                                    selectedItem = e;
+                                    isDropdownOpen = false;
+                                    searchText = "";
+                                    widget.callBack(e);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+      error: (err, stack) => const SizedBox(),
+      loading: () => const CircularProgressIndicator(),
+    );
+  }
+}
 
 class MyProfileScreen extends ConsumerStatefulWidget {
   const MyProfileScreen({super.key});
@@ -21,6 +201,20 @@ class MyProfileScreen extends ConsumerStatefulWidget {
 class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
   File? _profileImage;
   String? _selectedGender;
+  late final TextEditingController firstName;
+  late final TextEditingController lastName;
+  late final TextEditingController dobController;
+  late final TextEditingController addressController;
+  late final TextEditingController mobileNumber;
+  late final TextEditingController emailController;
+  late final TextEditingController adharController;
+  late final TextEditingController panNo;
+  late final TextEditingController pincodeController;
+  late final TextEditingController _stateIdController;
+  late final TextEditingController _districtIdController;
+  late final TextEditingController _tehsilIdController;
+
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(
@@ -52,7 +246,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
                       image: FileImage(_profileImage!),
-                      // fit: BoxFit.contain,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),
@@ -73,7 +267,6 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: const Color.fromARGB(255, 125, 125, 125)),
-            // color: isSelected ? Colors.green.shade50 : Colors.white,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +288,6 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                 gender,
                 style: GoogleFonts.inter(
                   fontSize: 15,
-
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -107,16 +299,6 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
   }
 
   bool btnLoder = false;
-  late final TextEditingController firstName;
-  late final TextEditingController lastName;
-  late final TextEditingController dobController;
-  late final TextEditingController addressController;
-  late final TextEditingController mobileNumber;
-  late final TextEditingController emailController;
-  late final TextEditingController adharController;
-  late final TextEditingController panNo;
-
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -131,6 +313,10 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
     emailController = TextEditingController();
     adharController = TextEditingController();
     panNo = TextEditingController();
+    pincodeController = TextEditingController();
+    _stateIdController = TextEditingController();
+    _districtIdController = TextEditingController();
+    _tehsilIdController = TextEditingController();
 
     // Load initial data only once
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -140,7 +326,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
 
   Future<void> _initializeFormData() async {
     final profileData = ref.watch(profileprovider).value;
-    if (profileData != null ) {
+    if (profileData != null) {
       log(profileData.userDetails.firstName.toString());
       setState(() {
         firstName.text = profileData.userDetails.firstName;
@@ -151,11 +337,15 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
         emailController.text = profileData.userDetails.emailId;
         adharController.text = profileData.userDetails.aadhaarNo;
         panNo.text = profileData.userDetails.panNo;
+        pincodeController.text =
+            profileData.userDetails.pinCode?.toString() ?? '';
 
         // Initialize gender
         ref
             .read(stringNotifierProvider.notifier)
             .update(profileData.userDetails.gender ?? 'M');
+
+        // Initialize dropdowns (handled by providers, so no direct initialization here)
       });
     }
   }
@@ -171,23 +361,35 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
     emailController.dispose();
     adharController.dispose();
     panNo.dispose();
+    pincodeController.dispose();
+    _stateIdController.dispose();
+    _districtIdController.dispose();
+    _tehsilIdController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(profileprovider);
-    // data.whenData((value) {
-    //   firstName.text = value.userDetails.firstName;
-    //   lastName.text = value.userDetails.lastName;
-    //   dobController.text = value.userDetails.dateOfBirth;
-    //   addressController.text = value.userDetails.address;
-    //   mobileNumber.text = value.userDetails.mobileNo;
-    //   emailController.text = value.userDetails.emailId;
-    //   adharController.text = value.userDetails.aadhaarNo;
-    //   panNo.text = value.userDetails.panNo;
-    // });
-    final genderSelected = ref.watch(stringNotifierProvider);
+    final selectedState = ref.watch(stateProvider);
+    final selectedDistrict = ref.watch(districtProvider);
+    final selectedGender = ref.watch(stringNotifierProvider);
+
+    // Providers for district and tehsil
+    final districtListProvider =
+        selectedState != null
+            ? ref.watch(getDistrictListProvider(selectedState.stateId))
+            : AsyncValue.data(null);
+    final tehsilListProvider =
+        selectedDistrict != null
+            ? ref.watch(
+              getDistrubterProvider({
+                "stateID": selectedState?.stateId ?? "",
+                "districtId": selectedDistrict.districtId,
+              }),
+            )
+            : AsyncValue.data(null);
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 236, 226),
       body: data.when(
@@ -228,7 +430,6 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             ),
                           ),
                         ),
-
                         Center(
                           child: Text(
                             "My Profile",
@@ -352,18 +553,15 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
-                                  ), // Default border color
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
-                                ),
-                                border:
-                                    OutlineInputBorder(), // Fallback default
+                                border: OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 10),
@@ -383,18 +581,15 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
-                                  ), // Default border color
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
-                                ),
-                                border:
-                                    OutlineInputBorder(), // Fallback default
+                                border: OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 10),
@@ -414,18 +609,15 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
-                                  ), // Default border color
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
-                                ),
-                                border:
-                                    OutlineInputBorder(), // Fallback default
+                                border: OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 10),
@@ -450,6 +642,170 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             ),
                             const SizedBox(height: 10),
 
+                            // State Dropdown
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 223, 236, 226),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Select State",
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    StateListDropdown(
+                                      callBack: (v) {
+                                        setState(() {
+                                          _stateIdController.text = v.stateId;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+
+                            // District Dropdown
+                            if (_stateIdController.text.trim().isNotEmpty) ...[
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(
+                                    255,
+                                    223,
+                                    236,
+                                    226,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Select District",
+                                            style: GoogleFonts.montserrat(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      DistrctListDropDown(
+                                        stateId: _stateIdController.text,
+                                        callBack: (v) {
+                                          setState(() {
+                                            _districtIdController.text =
+                                                v.districtId;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 10),
+                            // Tehsil Dropdown
+                            if (_districtIdController.text
+                                .trim()
+                                .isNotEmpty) ...[
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(
+                                    255,
+                                    223,
+                                    236,
+                                    226,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Select Tehsil",
+                                            style: GoogleFonts.montserrat(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      const SizedBox(height: 10),
+                                      DistibruterLisDropDown(
+                                        callBack: (e) {
+                                          setState(() {
+                                            _districtIdController.text =
+                                                e.distributorId;
+                                          });
+                                        },
+                                        stateId: _stateIdController.text,
+                                        districId: _districtIdController.text,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+
+                            Text(
+                              "Pincode",
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            TextFormField(
+                              controller: pincodeController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 125, 125, 125),
+                                  ),
+                                ),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "This field is required";
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+
                             Text(
                               "Address",
                               style: GoogleFonts.inter(
@@ -461,25 +817,24 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: addressController,
+                              maxLines: 3,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
-                                  ), // Default border color
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
-                                ),
-                                border:
-                                    OutlineInputBorder(), // Fallback default
+                                border: OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 10),
+
                             Text(
                               "Aadhaar No",
                               style: GoogleFonts.inter(
@@ -491,25 +846,24 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: adharController,
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
-                                  ), // Default border color
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
-                                ),
-                                border:
-                                    OutlineInputBorder(), // Fallback default
+                                border: OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 10),
+
                             Text(
                               "PAN No",
                               style: GoogleFonts.inter(
@@ -525,18 +879,15 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
-                                  ), // Default border color
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
-                                ),
-                                border:
-                                    OutlineInputBorder(), // Fallback default
+                                border: OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 20),
@@ -562,22 +913,20 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: mobileNumber,
+                              keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
-                                  ), // Default border color
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
-                                ),
-                                border:
-                                    OutlineInputBorder(), // Fallback default
+                                border: OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 10),
@@ -593,22 +942,20 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
-                                  ), // Default border color
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderSide: BorderSide(color: Colors.green, width: 2.0), // On focus
-                                ),
-                                border:
-                                    OutlineInputBorder(), // Fallback default
+                                border: OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 20),
@@ -617,12 +964,32 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             Center(
                               child: ElevatedButton(
                                 onPressed: () async {
-                                  // Save logic
-                                  // setState(() {
-                                  //   btnLoder = true;
-                                  // });
                                   if (snap.editAllow == true) {
                                     if (_formKey.currentState!.validate()) {
+                                      if (_stateIdController.text.isEmpty) {
+                                        Fluttertoast.showToast(
+                                          msg: "State is required",
+                                          backgroundColor: Colors.black,
+                                          textColor: Colors.white,
+                                        );
+                                        return;
+                                      }
+                                      if (_districtIdController.text.isEmpty) {
+                                        Fluttertoast.showToast(
+                                          msg: "District is required",
+                                          backgroundColor: Colors.black,
+                                          textColor: Colors.white,
+                                        );
+                                        return;
+                                      }
+                                      if (_tehsilIdController.text.isEmpty) {
+                                        Fluttertoast.showToast(
+                                          msg: "Tehsil is required",
+                                          backgroundColor: Colors.black,
+                                          textColor: Colors.white,
+                                        );
+                                        return;
+                                      }
                                       setState(() {
                                         btnLoder = true;
                                       });
@@ -636,23 +1003,31 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                               ipAddress: "152.59.109.59",
                                               firstName: firstName.text,
                                               lastName: lastName.text,
-                                              gender: genderSelected,
+                                              gender: selectedGender,
                                               dateOfBirth: dobController.text,
                                               emailId: emailController.text,
                                               aadhaarNo: int.parse(
                                                 adharController.text,
                                               ),
                                               panNo: panNo.text,
-                                              stateId: 23,
-                                              districtId: 471,
-                                              tehsilId: 1,
-                                              pinCode: 302003,
+                                              stateId: int.parse(
+                                                _stateIdController.text,
+                                              ),
+                                              districtId: int.parse(
+                                                _districtIdController.text,
+                                              ),
+                                              tehsilId: int.parse(
+                                                _tehsilIdController.text,
+                                              ),
+                                              pinCode: int.parse(
+                                                pincodeController.text,
+                                              ),
                                               address: addressController.text,
                                             ),
                                           );
+
                                       if (response.response.data['status'] ==
                                           true) {
-                                        // ref.read(boolStateProvider.notifier).setFalse();
                                         Fluttertoast.showToast(
                                           msg:
                                               response
@@ -664,12 +1039,10 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                         setState(() {
                                           btnLoder = false;
                                         });
-                                        // ref.refresh(profileprovider);
                                       } else {
                                         setState(() {
                                           btnLoder = false;
                                         });
-                                        //  ref.read(boolStateProvider.notifier).setFalse();
                                         Fluttertoast.showToast(
                                           msg:
                                               response
@@ -681,7 +1054,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                       }
                                     } else {
                                       Fluttertoast.showToast(
-                                        msg: "All fields are mendotory!",
+                                        msg: "All fields are mandatory!",
                                         backgroundColor: Colors.black,
                                         textColor: Colors.white,
                                       );
@@ -689,7 +1062,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                   } else {
                                     Fluttertoast.showToast(
                                       msg:
-                                          "Its not editable now contact to help desk!",
+                                          "It's not editable now. Contact help desk!",
                                       backgroundColor: Colors.black,
                                       textColor: Colors.white,
                                     );
@@ -742,12 +1115,10 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
 }
 
 class BoolStateNotifier extends StateNotifier<bool> {
-  BoolStateNotifier() : super(false); // default is false
+  BoolStateNotifier() : super(false);
 
   void toggle() => state = !state;
-
   void setTrue() => state = true;
-
   void setFalse() => state = false;
 }
 
@@ -755,7 +1126,6 @@ final boolStateProvider = StateNotifierProvider<BoolStateNotifier, bool>(
   (ref) => BoolStateNotifier(),
 );
 
-// StateNotifier which manages a String state
 class StringNotifier extends StateNotifier<String> {
   StringNotifier() : super('M');
 

@@ -11,10 +11,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:home/data/controller/fetchBills.provider.dart';
 import 'package:home/data/controller/mobilePrepaid.notifier.dart';
 import 'package:home/data/controller/mobilePrepaid.provider.dart';
+import 'package:home/data/model/electritysityModel.dart' hide BillersList, CircleList;
 import 'package:home/data/model/fetchBill.model.dart';
 import 'package:home/screen/home_page.dart';
 import 'package:home/screen/mobilepreapid/mobilepreapid3.page.dart';
 import 'package:home/screen/rechargebill2.dart';
+import 'package:home/screen/summerysPages/fastagBiller.page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../data/model/mobilePrepaid.res.dart';
@@ -242,38 +244,16 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.only(top: 20.0.h),
-                                child: Row(
-                                  children: [
-                                    Image.network(
-                                      snap.oldRecharges[index].transLogo,
-                                      height: 30,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                        snap.oldRecharges[index].serviceProvider,
-                                          style: GoogleFonts.inter(
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          snap.oldRecharges[index].serviceAccount,
-                                          style: GoogleFonts.inter(
-                                            fontSize: 13,
-                                            color: Color(0xFFB3B3B3),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                              final transaction = snap.oldRecharges[index];
+                              return TransactionCard(
+                                transaction: OldBill(
+                                  transId: transaction.transId,
+                                  transLogo: transaction.transLogo,
+                                  transDate: transaction.transDate,
+                                  transAmount: transaction.transAmount,
+                                  serviceProvider: transaction.serviceProvider,
+                                  serviceAccount: transaction.serviceAccount,
+                                  transStatus: transaction.transStatus,
                                 ),
                               );
                             },
