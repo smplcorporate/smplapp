@@ -48,6 +48,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
                 child: Text(
                   'OK',

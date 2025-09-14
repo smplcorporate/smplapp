@@ -71,7 +71,7 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
     String statusText = kyc.verifyStatus.toUpperCase();
     switch (kyc.verifyStatus.toLowerCase()) {
       case 'verified':
-        statusColor = const Color.fromARGB(255, 68, 128, 106);
+        statusColor =  Colors.green;
         break;
       case 'pending':
         statusColor = Colors.orange;
@@ -79,8 +79,11 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
       case 'rejected':
         statusColor = Colors.red;
         break;
+      case 'screening':
+        statusColor = Colors.blue;
+        break;
       default:
-        statusColor = Colors.yellow;
+        statusColor = Colors.grey;
     }
 
     return Container(
@@ -397,7 +400,7 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
                             vertical: 4,
                           ),
                           child: Text(
-                            '• $inst',
+                            '• ${inst['instructions']}',
                             style: GoogleFonts.inter(
                               fontSize: 12,
                               color: Colors.black87,

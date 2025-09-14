@@ -331,33 +331,40 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
     _gstinNoController = TextEditingController();
 
     // Load initial data only once
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ref.watch(profileprovider);
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   ref.watch(profileprovider);
+    //   await _initializeFormData();
+    // });
+    Future.microtask(() async {
+      
       await _initializeFormData();
     });
   }
 
   Future<void> _initializeFormData() async {
+
+    final api = APIStateNetwork(await createDio());
+    final response = await api.getProfilDetails();
     final profileData = ref.watch(profileprovider).value;
-    if (profileData != null) {
-      log(profileData.userDetails.firstName.toString());
+    if (response.userDetails != null) {
+      log(response.userDetails.firstName.toString());
       setState(() {
-        firstName.text = profileData.userDetails.firstName;
-        lastName.text = profileData.userDetails.lastName;
-        dobController.text = profileData.userDetails.dateOfBirth;
-        addressController.text = profileData.userDetails.address;
-        mobileNumber.text = profileData.userDetails.mobileNo;
-        emailController.text = profileData.userDetails.emailId;
-        adharController.text = profileData.userDetails.aadhaarNo;
-        panNo.text = profileData.userDetails.panNo;
+        firstName.text = response.userDetails.firstName;
+        lastName.text = response.userDetails.lastName;
+        dobController.text = response.userDetails.dateOfBirth;
+        addressController.text = response.userDetails.address;
+        mobileNumber.text = response.userDetails.mobileNo;
+        emailController.text = response.userDetails.emailId;
+        adharController.text = response.userDetails.aadhaarNo;
+        panNo.text = response.userDetails.panNo;
         pincodeController.text =
-            profileData.userDetails.pinCode?.toString() ?? '';
-        _fatherNameController.text = profileData.userDetails.fatherName ?? '';
+            response.userDetails.pinCode?.toString() ?? '';
+        _fatherNameController.text = response.userDetails.fatherName ?? '';
 
         // Initialize gender
         ref
             .read(stringNotifierProvider.notifier)
-            .update(profileData.userDetails.gender ?? 'M');
+            .update(response.userDetails.gender ?? 'M');
 
         // Initialize dropdowns (handled by providers, so no direct initialization here)
       });
