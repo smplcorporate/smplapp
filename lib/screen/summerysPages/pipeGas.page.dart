@@ -30,6 +30,14 @@ class _PipeGasPageState extends ConsumerState<PipeGasPage> {
   String billerCode = '';
   String circleCode = '';
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(pipGasProvider);
+    });
+  }
+  @override
   Widget build(BuildContext context) {
     final electricityProvider = ref.watch(pipGasProvider);
     final searchQuery = ref.watch(searchQueryProvider);

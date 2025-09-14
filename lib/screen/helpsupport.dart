@@ -29,7 +29,7 @@ bool _isInitialized = false;
 void didChangeDependencies() {
   super.didChangeDependencies();
 
-  ref.refresh(userAllTicketsProvider);
+  ref.invalidate(userAllTicketsProvider);
 }
   @override
   Widget build(BuildContext context) {

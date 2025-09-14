@@ -9,6 +9,7 @@ import 'package:home/screen/biller.dart';
 import 'package:home/screen/home_page.dart';
 import 'package:home/screen/lpg/lpg.page2.dart';
 import 'package:home/screen/watelbill2.dart';
+import 'package:http/http.dart';
 
 class BillerProvider {
   final String name;
@@ -30,6 +31,14 @@ class _LPGPage1State extends ConsumerState<LPGPage1> {
   String billerName = '';
   String billerCode = '';
   String circleCode = '';
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(getGasBillerProvider);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;

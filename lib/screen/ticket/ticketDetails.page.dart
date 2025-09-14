@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +19,15 @@ class TicketDetailsPage extends ConsumerStatefulWidget {
 
 class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
   final TextEditingController _messageController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(ticketDetailsProvider(widget.tiketId));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final ticketDetail = ref.watch(ticketDetailsProvider(widget.tiketId));
@@ -123,63 +133,85 @@ class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
                 ),
                 const SizedBox(height: 16),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: snap.ticketDetails[0].chatList.length,
-                    itemBuilder: (context, index) {
-                      final chat = snap.ticketDetails[0].chatList[index];
-                      final isUser = chat.replyBy == "RIGHT" ? true : false;
-                      return Align(
-                        alignment:
-                            isUser
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 8,
-                            horizontal: 12,
-                          ),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color:
-                                isUser
-                                    ? const Color.fromARGB(255, 68, 128, 106)
-                                    : Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment:
-                                isUser
-                                    ? CrossAxisAlignment.end
-                                    : CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                chat.description,
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  color: isUser ? Colors.white : Colors.black,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: snap.ticketDetails[0].chatList.length,
+                          itemBuilder: (context, index) {
+                            final chat = snap.ticketDetails[0].chatList[index];
+                            final isUser =
+                                chat.replyBy == "RIGHT" ? true : false;
+                            return Align(
+                              alignment:
+                                  isUser
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 12,
+                                ),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color:
+                                      isUser
+                                          ? const Color.fromARGB(
+                                            255,
+                                            68,
+                                            128,
+                                            106,
+                                          )
+                                          : Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      spreadRadius: 1,
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      isUser
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      chat.description,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        color:
+                                            isUser
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      chat.dateSupport,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 12,
+                                        color:
+                                            isUser
+                                                ? Colors.white70
+                                                : Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                chat.dateSupport,
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  color: isUser ? Colors.white70 : Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                        SizedBox(height: 100.h),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -201,6 +233,7 @@ class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: TextFormField(
+            inputFormatters: [LengthLimitingTextInputFormatter(200)],
             controller: _messageController,
             decoration: InputDecoration(
               hintText: 'Type your message...',

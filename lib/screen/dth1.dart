@@ -29,6 +29,15 @@ class _DTHPreapaidPage1State extends ConsumerState<DTHPreapaidPage1> {
   String billerName = '';
   String billerCode = '';
   String circleCode = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(dthPrepaidProvider);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;

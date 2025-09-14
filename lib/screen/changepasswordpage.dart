@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/model/passwordUpdatae.req.dart';
+import 'package:home/screen/elebillsummary.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   @override
@@ -94,6 +96,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           validator: validator,
           cursorColor: Colors.deepPurple,
           cursorWidth: 3,
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(
+              20,
+            ), // Restrict input to 20 characters
+            FilteringTextInputFormatter.deny(RegExp(r'\s')),
+            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+            UpperCaseTextFormatter(),
+          ],
           cursorHeight: 24,
           cursorRadius: Radius.circular(4),
           decoration: InputDecoration(
@@ -195,8 +205,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a new password';
-                          } else if (value.length < 8) {
-                            return 'Password must be at least 8 characters';
+                          } else if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          } else if (value.length > 20) {
+                            return 'Password cannot exceed 20 characters';
                           }
                           return null;
                         },
@@ -244,16 +256,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                            child: btnLoder ==false? Text(
-                              'Save Changes',
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: media.width * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ): Center(
-                              child: CircularProgressIndicator(color: Colors.white,),
-                            )
+                            child:
+                                btnLoder == false
+                                    ? Text(
+                                      'Save Changes',
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: media.width * 0.045,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                    : Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    ),
                           ),
                         ),
                       ),

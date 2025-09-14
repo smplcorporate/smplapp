@@ -27,6 +27,14 @@ class _InusrencePageState extends ConsumerState<InusrencePage> {
   String billerCode = '';
   String circleCode = '';
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(licProvider);
+    });
+  }
+  @override
   Widget build(BuildContext context) {
     final electricityProvider = ref.watch(licProvider);
     final searchQuery = ref.watch(searchQueryProvider);

@@ -21,6 +21,14 @@ class _LandlinePageState extends ConsumerState<LandlinePage> {
   String billerCode = '';
   String circleCode = '';
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(landlineProvider);
+    });
+  }
+  @override
   Widget build(BuildContext context) {
         final electricityProvider = ref.watch(landlineProvider);
     final searchQuery = ref.watch(searchQueryProvider);

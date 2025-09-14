@@ -46,6 +46,15 @@ class _LenderSelectionScreenState extends ConsumerState<LenderSelectionScreen> {
   String billerName = '';
   String billerCode = '';
   String circleCode = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(loanRepaynentProvider);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final loan = ref.watch(loanRepaynentProvider);

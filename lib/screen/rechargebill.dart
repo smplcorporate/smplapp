@@ -36,7 +36,11 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
   void initState() {
     super.initState();
     fetchContacts();
+    Future.microtask(() {
+      ref.invalidate(mobilePrepaidProvider);
+    });
   }
+  
 
   Future<void> fetchContacts() async {
     final status = await Permission.contacts.status;
@@ -110,347 +114,306 @@ class _RechargeBillPageState extends ConsumerState<RechargeBillPage> {
           }).toList();
     });
   }
-
+ 
   @override
-  Widget build(BuildContext context) {
-    final data = ref.watch(mobilePrepaidProvider);
-    final billerNotifier = ref.read(billerProvider.notifier);
-    return Scaffold(
+Widget build(BuildContext context) {
+  final data = ref.watch(mobilePrepaidProvider);
+  final billerNotifier = ref.read(billerProvider.notifier);
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 232, 243, 235),
+    appBar: AppBar(
       backgroundColor: const Color.fromARGB(255, 232, 243, 235),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 232, 243, 235),
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'Recharge Bill',
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+      elevation: 0,
+      centerTitle: true,
+      title: Text(
+        'Recharge Bill',
+        style: GoogleFonts.inter(
+          fontSize: 18.sp, // Use ScreenUtil for responsive font size
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
         ),
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: GestureDetector(
-            onTap: () {
-              if (Navigator.of(context).canPop()) {
-                Navigator.pop(context);
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => HomePage()),
-                );
-              }
-            },
-            child: Container(
-              height: 55,
-              width: 55,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: Colors.black,
-                  size: 20,
-                ),
+      ),
+      leading: Padding(
+        padding: EdgeInsets.only(left: 20.w),
+        child: GestureDetector(
+          onTap: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => HomePage()),
+              );
+            }
+          },
+          child: Container(
+            height: 55.h,
+            width: 55.w,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.black,
+                size: 20,
               ),
             ),
           ),
         ),
       ),
-      body: data.when(
-        data: (snap) {
-          return isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Search Box
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Container(
-                      height: 60,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      margin: const EdgeInsets.only(top: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(11),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.search,
-                            color: Colors.black,
-                            size: 30,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: SizedBox(
-                              height: 45,
+    ),
+    body: data.when(
+      data: (snap) {
+        return isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Search Box
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Container(
+                        height: 60.h,
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        margin: EdgeInsets.only(top: 12.h),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(11.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search,
+                              color: Colors.black,
+                              size: 30.sp,
+                            ),
+                            SizedBox(width: 10.w),
+                            Expanded(
                               child: TextFormField(
                                 controller: searchController,
                                 onChanged: filterContacts,
                                 style: GoogleFonts.inter(
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   color: Colors.black,
                                 ),
                                 decoration: InputDecoration(
                                   hintText: 'Search by name or number',
                                   hintStyle: GoogleFonts.inter(
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                     color: Color(0xFF9E9E9E),
                                   ),
                                   border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.only(
-                                    bottom: 10,
-                                  ),
+                                  contentPadding: EdgeInsets.only(bottom: 10.h),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10.h),
-                  // Recent Bill Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Recent Bill",
-                            style: GoogleFonts.inter(
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          ListView.builder(
-                            itemCount:
-                                snap.oldRecharges.length > 3
-                                    ? 3
-                                    : snap.oldRecharges.length,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              final transaction = snap.oldRecharges[index];
-                              return TransactionCard(
-                                transaction: OldBill(
-                                  transId: transaction.transId,
-                                  transLogo: transaction.transLogo,
-                                  transDate: transaction.transDate,
-                                  transAmount: transaction.transAmount,
-                                  serviceProvider: transaction.serviceProvider,
-                                  serviceAccount: transaction.serviceAccount,
-                                  transStatus: transaction.transStatus,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
 
-                  // Contact List (filtered)
-                  if (filteredContacts.isEmpty) ...[
+                    // Manual Input Field
                     Padding(
-                      padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
-                      child: SizedBox(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            margin: const EdgeInsets.only(top: 12),
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              borderRadius: BorderRadius.circular(11),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(11.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.dialer_sip,
+                              color: Colors.black,
+                              size: 30.sp,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.dialer_sip,
-                                    color: Colors.black,
-                                    size: 30,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 45,
-                                      child: TextFormField(
-                                        maxLength: 10,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                          LengthLimitingTextInputFormatter(10),
-                                        ],
-                                        style: GoogleFonts.inter(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                          counterText: "",
-                                          hintText:
-                                              'Enter Mobile Number manually',
-                                          hintStyle: GoogleFonts.inter(
-                                            fontSize: 16,
-                                            color: const Color(0xFF9E9E9E),
-                                          ),
-                                          border: InputBorder.none,
-                                          contentPadding: const EdgeInsets.only(
-                                            bottom: 10,
-                                          ),
-                                        ),
-
-                                        // ✅ Auto validate enable
-                                        autovalidateMode:
-                                            AutovalidateMode.onUserInteraction,
-
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "Please enter mobile number";
-                                          } else if (!RegExp(
-                                            r'^[6-9]\d{9}$',
-                                          ).hasMatch(value)) {
-                                            return "Enter valid 10-digit Indian mobile number";
-                                          }
-                                          return null;
-                                        },
-
-                                        textInputAction: TextInputAction.done,
-                                        onFieldSubmitted: (value) {
-                                          if (RegExp(
-                                            r'^[6-9]\d{9}$',
-                                          ).hasMatch(value)) {
-                                            billerNotifier.setNumber(value);
-                                            showBillerBottomSheet(
-                                              context,
-                                              snap.billersList,
-                                              snap.circleList ?? [],
-                                              ref,
-                                              snap.isPlanfetch,
-                                            );
-                                          } else {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  "Please enter valid 10-digit Indian mobile number",
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: TextFormField(
+                                maxLength: 10,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
                                 ],
+                                style: GoogleFonts.inter(
+                                  fontSize: 16.sp,
+                                  color: Colors.black,
+                                ),
+                                decoration: InputDecoration(
+                                  counterText: "",
+                                  hintText: 'Enter Mobile Number manually',
+                                  hintStyle: GoogleFonts.inter(
+                                    fontSize: 16.sp,
+                                    color: const Color(0xFF9E9E9E),
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.only(bottom: 10.h),
+                                ),
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Please enter mobile number";
+                                  } else if (!RegExp(r'^[6-9]\d{9}$').hasMatch(value)) {
+                                    return "Enter valid 10-digit Indian mobile number";
+                                  }
+                                  return null;
+                                },
+                                textInputAction: TextInputAction.done,
+                                onFieldSubmitted: (value) {
+                                  if (RegExp(r'^[6-9]\d{9}$').hasMatch(value)) {
+                                    billerNotifier.setNumber(value);
+                                    showBillerBottomSheet(
+                                      context,
+                                      snap.billersList,
+                                      snap.circleList ?? [],
+                                      ref,
+                                      snap.isPlanfetch,
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Please enter valid 10-digit Indian mobile number",
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 12,
+
+                    // Recent Bill Section
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        itemCount: filteredContacts.length,
-                        itemBuilder: (context, index) {
-                          final contact = filteredContacts[index];
-                          log(contact.phones.toString());
-                          final phone =
-                              contact.phones.isNotEmpty
-                                  ? contact.phones.first.number
-                                  : 'No number';
-                          return ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 3,
-                            ),
-                            leading: const CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Color.fromARGB(
-                                255,
-                                68,
-                                128,
-                                106,
-                              ),
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-                            title: Text(
-                              contact.displayName,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Recent Bill",
                               style: GoogleFonts.inter(
-                                fontSize: 16,
+                                fontSize: 15.sp,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            subtitle: Text(
-                              phone,
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: Color(0xFFB3B3B3),
-                                fontWeight: FontWeight.bold,
-                              ),
+                            SizedBox(height: 10.h),
+                            ListView.builder(
+                              itemCount: snap.oldRecharges.length > 3
+                                  ? 3
+                                  : snap.oldRecharges.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                final transaction = snap.oldRecharges[index];
+                                return TransactionCard(
+                                  transaction: OldBill(
+                                    transId: transaction.transId,
+                                    transLogo: transaction.transLogo,
+                                    transDate: transaction.transDate,
+                                    transAmount: transaction.transAmount,
+                                    serviceProvider: transaction.serviceProvider,
+                                    serviceAccount: transaction.serviceAccount,
+                                    transStatus: transaction.transStatus,
+                                  ),
+                                );
+                              },
                             ),
-                            onTap: () {
-                              if (phone != 'No number') {
-                                billerNotifier.setNumber(
-                                  stripCountryCode(phone),
-                                );
-                                showBillerBottomSheet(
-                                  context,
-                                  snap.billersList,
-                                  snap.circleList ?? [],
-                                  ref,
-                                  snap.isPlanfetch,
-                                );
-                              }
-                            },
-                          );
-                        },
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 10.h),
+
+                    // Contact List
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(40.r),
+                        ),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                          itemCount: filteredContacts.length,
+                          itemBuilder: (context, index) {
+                            final contact = filteredContacts[index];
+                            final phone = contact.phones.isNotEmpty
+                                ? contact.phones.first.number
+                                : 'No number';
+                            return ListTile(
+                              contentPadding: EdgeInsets.symmetric(vertical: 3.h),
+                              leading: CircleAvatar(
+                                radius: 30.r,
+                                backgroundColor: const Color.fromARGB(255, 68, 128, 106),
+                                child: const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                              title: Text(
+                                contact.displayName,
+                                style: GoogleFonts.inter(
+                                  fontSize: 16.sp,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text(
+                                phone,
+                                style: GoogleFonts.inter(
+                                  fontSize: 13.sp,
+                                  color: const Color(0xFFB3B3B3),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onTap: () {
+                                if (phone != 'No number') {
+                                  billerNotifier.setNumber(stripCountryCode(phone));
+                                  showBillerBottomSheet(
+                                    context,
+                                    snap.billersList,
+                                    snap.circleList ?? [],
+                                    ref,
+                                    snap.isPlanfetch,
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               );
-        },
-        error: (err, stack) {
-          return Center(child: Text("$err"));
-        },
-        loading: () => Center(child: CircularProgressIndicator()),
-      ),
-    );
-  }
+      },
+      error: (err, stack) {
+        return Center(child: Text("$err"));
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+    ),
+  );
+}
 
   void showBillerBottomSheet(
     BuildContext context,

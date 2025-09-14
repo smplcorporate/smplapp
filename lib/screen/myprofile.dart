@@ -331,8 +331,9 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
     _gstinNoController = TextEditingController();
 
     // Load initial data only once
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeFormData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref.watch(profileprovider);
+      await _initializeFormData();
     });
   }
 
@@ -564,6 +565,9 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: firstName,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(30)
+                              ],
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -592,6 +596,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: lastName,
+                              inputFormatters: [  LengthLimitingTextInputFormatter(30)],
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -620,6 +625,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: _fatherNameController,
+                              inputFormatters: [  LengthLimitingTextInputFormatter(40)],
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -645,6 +651,9 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: dobController,
+                              inputFormatters: [
+                                  LengthLimitingTextInputFormatter(10)
+                              ],
                               decoration: InputDecoration(
                                 hint: Text("DD/MM/YYYY"),
                                 enabledBorder: OutlineInputBorder(
@@ -932,7 +941,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 FilteringTextInputFormatter.allow(
                                   RegExp(r'[a-zA-Z0-9]'),
                                 ),
-                                LengthLimitingTextInputFormatter(15),
+                                LengthLimitingTextInputFormatter(10),
                                 UpperCaseTextFormatter(),
                               ],
                               decoration: InputDecoration(
@@ -961,6 +970,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: _gstinNoController,
+                              inputFormatters: [  LengthLimitingTextInputFormatter(15)],
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -995,6 +1005,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: mobileNumber,
+                              inputFormatters: [  LengthLimitingTextInputFormatter(10)],
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
@@ -1024,6 +1035,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: emailController,
+                              inputFormatters: [LengthLimitingTextInputFormatter(50),],
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
@@ -1056,6 +1068,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                           msg: "State is required",
                                           backgroundColor: Colors.black,
                                           textColor: Colors.white,
+                                         gravity: ToastGravity.TOP_LEFT
                                         );
                                         return;
                                       }
@@ -1066,6 +1079,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                           msg: "District is required",
                                           backgroundColor: Colors.black,
                                           textColor: Colors.white,
+                                          gravity: ToastGravity.TOP_LEFT
                                         );
                                         return;
                                       }
@@ -1076,7 +1090,9 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                           msg: "Tehsil is required",
                                           backgroundColor: Colors.black,
                                           textColor: Colors.white,
+                                          gravity: ToastGravity.TOP_LEFT
                                         );
+                                        
                                         return;
                                       }
                                       setState(() {
@@ -1119,9 +1135,11 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                               response
                                                   .response
                                                   .data["status_desc"],
-                                          backgroundColor: Colors.greenAccent,
+                                          backgroundColor: Colors.black,
                                           textColor: Colors.white,
+                                          gravity: ToastGravity.TOP_LEFT
                                         );
+                                        ref.invalidate(profileprovider);
                                         setState(() {
                                           btnLoder = false;
                                         });
@@ -1136,6 +1154,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                                   .data["status_desc"],
                                           backgroundColor: Colors.black,
                                           textColor: Colors.white,
+                                          gravity: ToastGravity.TOP_LEFT
                                         );
                                       }
                                     } else {
@@ -1143,6 +1162,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                         msg: "All fields are mandatory!",
                                         backgroundColor: Colors.black,
                                         textColor: Colors.white,
+                                        gravity: ToastGravity.TOP_LEFT
                                       );
                                     }
                                   } else {
@@ -1151,6 +1171,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                           "It's not editable now. Contact help desk!",
                                       backgroundColor: Colors.black,
                                       textColor: Colors.white,
+                                      gravity: ToastGravity.TOP_LEFT
                                     );
                                   }
                                 },

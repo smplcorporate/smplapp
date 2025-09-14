@@ -80,103 +80,107 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
         statusColor = Colors.red;
         break;
       default:
-        statusColor = Colors.grey;
+        statusColor = Colors.yellow;
     }
 
-    return GestureDetector(
-      onTap: () async {
-        if (kyc.kycUrl.isNotEmpty) {
-          final Uri url = Uri.parse(kyc.kycUrl);
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url, mode: LaunchMode.externalApplication);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Could not launch document URL')),
-            );
-          }
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color.fromARGB(255, 166, 192, 173)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color.fromARGB(255, 166, 192, 173)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 50,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 212, 238, 219),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
             ),
-          ],
-        ),
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 50,
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 212, 238, 219),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    kyc.documentType,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 68, 128, 106),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      kyc.documentType,
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 68, 128, 106),
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.1),
+                    border: Border.all(color: statusColor),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    statusText,
+                    style: TextStyle(
+                      color: statusColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
-                      border: Border.all(color: statusColor),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      statusText,
-                      style: TextStyle(
-                        color: statusColor,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildDetailRow('KYC ID:', kyc.kycId.toString()),
-                  _buildDetailRow('Upload Date:', kyc.uploadDate),
-                  _buildDetailRow(
-                    'Verify Date:',
-                    kyc.verifyDate.isEmpty ? 'N/A' : kyc.verifyDate,
-                  ),
-                  _buildDetailRow(
-                    'Remarks:',
-                    kyc.remarks.isEmpty ? 'N/A' : kyc.remarks,
-                  ),
-                  if (kyc.kycUrl.isNotEmpty)
-                    Padding(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDetailRow('Upload Date:', kyc.uploadDate),
+                _buildDetailRow(
+                  'Verify Date:',
+                  kyc.verifyDate.isEmpty ? 'N/A' : kyc.verifyDate,
+                ),
+                _buildDetailRow(
+                  'Remarks:',
+                  kyc.remarks.isEmpty ? 'N/A' : kyc.remarks,
+                ),
+                if (kyc.kycUrl.isNotEmpty)
+                  GestureDetector(
+                    onTap: () async {
+                      if (kyc.kycUrl.isNotEmpty) {
+                        final Uri url = Uri.parse(kyc.kycUrl);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(
+                            url,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Could not launch document URL'),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Row(
                         children: [
@@ -198,11 +202,11 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
                         ],
                       ),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -240,12 +244,6 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.invalidate(kycProvider);
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    ref.invalidate(kycProvider);
   }
 
   @override
@@ -373,7 +371,9 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
                           ),
                         ),
                       ),
-                      ...kycModel.kycList.map((kyc) => uploadedKycCard(kyc: kyc)),
+                      ...kycModel.kycList.map(
+                        (kyc) => uploadedKycCard(kyc: kyc),
+                      ),
                     ],
                     if (kycModel.instructionsList.isNotEmpty) ...[
                       Padding(
@@ -424,5 +424,4 @@ class _KYCVerificationScreenState extends ConsumerState<KYCVerificationScreen> {
       ),
     );
   }
-
 }

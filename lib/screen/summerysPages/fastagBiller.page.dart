@@ -33,6 +33,14 @@ class _FastTagBillerPageState extends ConsumerState<FastTagBillerPage> {
   String billerCode = '';
   String circleCode = '';
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(fastTagProvider);
+    });
+  }
+  @override
   Widget build(BuildContext context) {
     final electricityProvider = ref.watch(fastTagProvider);
     final searchQuery = ref.watch(searchQueryProvider);

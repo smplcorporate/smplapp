@@ -32,6 +32,15 @@ class _BoardBansPageState extends ConsumerState<BoardBansPage> {
   String billerCode = '';
   String circleCode = '';
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(broadbandProvider);
+    });
+  }
+  @override
+
   Widget build(BuildContext context) {
     final electricityProvider = ref.watch(broadbandProvider);
     final searchQuery = ref.watch(searchQueryProvider);

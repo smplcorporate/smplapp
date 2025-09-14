@@ -30,6 +30,16 @@ class _BillerState extends ConsumerState<Biller> {
   String billerName = '';
   String billerCode = '';
   String circleCode = '';
+  
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(electricityBillerProvider);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final electricityProvider = ref.watch(electricityBillerProvider);

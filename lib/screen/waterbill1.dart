@@ -29,6 +29,14 @@ class _WaterBillState extends ConsumerState<WaterBill> {
   String billerCode = '';
   String circleCode = '';
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(wattersBillerProvider);
+    });
+  }
+  @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final scale = width / 375;
