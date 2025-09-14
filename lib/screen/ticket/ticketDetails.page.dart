@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:home/config/network/api.state.dart';
+import 'package:home/config/utils/preety.dio.dart';
 import 'package:home/data/controller/ticketDetails.provider.dart';
+import 'package:home/data/model/ticketReply.req.dart';
 
 class TicketDetailsPage extends ConsumerStatefulWidget {
   final String tiketId;
@@ -13,6 +17,7 @@ class TicketDetailsPage extends ConsumerStatefulWidget {
 }
 
 class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
+  final TextEditingController _messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final ticketDetail = ref.watch(ticketDetailsProvider(widget.tiketId));
@@ -122,9 +127,7 @@ class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
                     itemCount: snap.ticketDetails[0].chatList.length,
                     itemBuilder: (context, index) {
                       final chat = snap.ticketDetails[0].chatList[index];
-                      final isUser = chat.replyBy.toLowerCase().contains(
-                        'user',
-                      );
+                      final isUser = chat.replyBy == "RIGHT" ? true : false;
                       return Align(
                         alignment:
                             isUser
@@ -172,13 +175,6 @@ class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
                                   color: isUser ? Colors.white70 : Colors.grey,
                                 ),
                               ),
-                              Text(
-                                'By: ${chat.replyBy}',
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  color: isUser ? Colors.white70 : Colors.grey,
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -204,7 +200,8 @@ class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
         color: const Color.fromARGB(255, 232, 243, 235),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: TextField(
+          child: TextFormField(
+            controller: _messageController,
             decoration: InputDecoration(
               hintText: 'Type your message...',
               hintStyle: GoogleFonts.inter(color: Colors.grey),
@@ -218,7 +215,40 @@ class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
                   Icons.send,
                   color: Color.fromARGB(255, 68, 128, 106),
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  if (_messageController.text.trim().isEmpty) {
+                    Fluttertoast.showToast(
+                      msg: "Message can't be empty",
+                      textColor: Colors.white,
+                      backgroundColor: Colors.black,
+                    );
+                  } else {
+                    final api = APIStateNetwork(await createDio());
+                    final response = await api.replyToTicket(
+                      TicketReplyRequest(
+                        ipAddress: "127.0.4.1",
+                        ticketId: widget.tiketId,
+                        replyMessage: _messageController.text,
+                      ),
+                    );
+                    if (response.response.statusCode == 200) {
+                      Fluttertoast.showToast(
+                        msg: "Message sent successfully",
+                        textColor: Colors.white,
+                        backgroundColor: Colors.black,
+                      );
+                      setState(() {
+                        _messageController.clear();
+                      });
+                      ref.invalidate(ticketDetailsProvider(widget.tiketId));
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: "Failed to send message",
+                        textColor: Colors.white,
+                        backgroundColor: Colors.black,
+                      );
+                    }
+                  }
                   // TODO: Implement send message functionality
                 },
               ),

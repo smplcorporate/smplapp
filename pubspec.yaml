@@ -40,7 +40,7 @@ dependencies:
   file_picker: ^10.1.2
   google_fonts: ^6.2.1
   image_picker: ^1.1.2
-  retrofit: ^4.4.2
+  retrofit: ^4.7.2
   logger: ^2.5.0
   json_annotation: ^4.9.0
   pretty_dio_logger: ^1.4.0

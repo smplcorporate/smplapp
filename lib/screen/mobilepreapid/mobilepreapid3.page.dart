@@ -289,6 +289,10 @@ class _MobilePrepaid3State extends ConsumerState<MobilePrepaid3> {
                           controller: _amountController,
                           readOnly: false,
                           showCursor: true,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(7),
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                           decoration: const InputDecoration.collapsed(
                             hintText: 'Enter Amount',
                           ),

@@ -2,17 +2,25 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/utils.dart';
 import 'package:home/config/network/api.state.dart';
 import 'package:home/config/utils/preety.dio.dart';
+import 'package:home/data/controller/common.controller.dart';
 import 'package:home/data/model/distrctBody.res.dart';
+import 'package:home/data/model/districtCommon.model.dart';
 import 'package:home/data/model/distubiterBody.res.dart';
 import 'package:home/data/model/lpgState.res.dart';
 import 'package:home/data/model/profile.provider.dart';
+import 'package:home/data/model/stateCommon.model.dart';
+import 'package:home/data/model/theshsilCommon.model.dart';
 import 'package:home/data/model/userupdateModel.dart';
 import 'package:home/data/model/stateList.provider.dart';
-import 'package:home/screen/lpg/lpg.page2.dart';
+import 'package:home/screen/elebillsummary.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -213,6 +221,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
   late final TextEditingController _stateIdController;
   late final TextEditingController _districtIdController;
   late final TextEditingController _tehsilIdController;
+  late final TextEditingController _fatherNameController;
+  late final TextEditingController _gstinNoController;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -317,6 +327,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
     _stateIdController = TextEditingController();
     _districtIdController = TextEditingController();
     _tehsilIdController = TextEditingController();
+    _fatherNameController = TextEditingController();
+    _gstinNoController = TextEditingController();
 
     // Load initial data only once
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -339,6 +351,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
         panNo.text = profileData.userDetails.panNo;
         pincodeController.text =
             profileData.userDetails.pinCode?.toString() ?? '';
+        _fatherNameController.text = profileData.userDetails.fatherName ?? '';
 
         // Initialize gender
         ref
@@ -365,6 +378,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
     _stateIdController.dispose();
     _districtIdController.dispose();
     _tehsilIdController.dispose();
+    _fatherNameController.dispose();
+    _gstinNoController.dispose();
     super.dispose();
   }
 
@@ -595,6 +610,31 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             const SizedBox(height: 10),
 
                             Text(
+                              "Father Name",
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            TextFormField(
+                              controller: _fatherNameController,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 125, 125, 125),
+                                  ),
+                                ),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+
+                            Text(
                               "Date of Birth",
                               style: GoogleFonts.inter(
                                 fontSize: 15,
@@ -606,6 +646,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             TextFormField(
                               controller: dobController,
                               decoration: InputDecoration(
+                                hint: Text("DD/MM/YYYY"),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
@@ -670,7 +711,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                     StateListDropdown(
                                       callBack: (v) {
                                         setState(() {
-                                          _stateIdController.text = v.stateId;
+                                          _stateIdController.text =
+                                              v.stateId.toString();
                                         });
                                       },
                                     ),
@@ -716,7 +758,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                         callBack: (v) {
                                           setState(() {
                                             _districtIdController.text =
-                                                v.districtId;
+                                                v.districtId.toString();
                                           });
                                         },
                                       ),
@@ -764,8 +806,8 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                       DistibruterLisDropDown(
                                         callBack: (e) {
                                           setState(() {
-                                            _districtIdController.text =
-                                                e.distributorId;
+                                            _tehsilIdController.text =
+                                                e.tehsilId.toString();
                                           });
                                         },
                                         stateId: _stateIdController.text,
@@ -797,6 +839,11 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 ),
                                 border: OutlineInputBorder(),
                               ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+
+                                LengthLimitingTextInputFormatter(6), //
+                              ],
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "This field is required";
@@ -818,7 +865,11 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             TextFormField(
                               controller: addressController,
                               maxLines: 3,
+                              maxLength:
+                                  250, // ✅ Ye limit 250 characters tak kar dega
                               decoration: InputDecoration(
+                                counterText:
+                                    "", // Agar aapko neeche counter text ("0/250") nahi dikhana hai to isko rakho
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color.fromARGB(255, 125, 125, 125),
@@ -847,6 +898,10 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             TextFormField(
                               controller: adharController,
                               keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(12),
+                              ],
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -856,9 +911,7 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border: OutlineInputBorder(),
                               ),
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
+                                
                                 return null;
                               },
                             ),
@@ -875,6 +928,13 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             SizedBox(height: 5),
                             TextFormField(
                               controller: panNo,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z0-9]'),
+                                ),
+                                LengthLimitingTextInputFormatter(15),
+                                UpperCaseTextFormatter(),
+                              ],
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -884,14 +944,36 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                 border: OutlineInputBorder(),
                               ),
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
+                                
                                 return null;
                               },
                             ),
                             const SizedBox(height: 20),
 
+                            Text(
+                              "GST NO",
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            TextFormField(
+                              controller: _gstinNoController,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 125, 125, 125),
+                                  ),
+                                ),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
                             Text(
                               "Contact Details",
                               style: GoogleFonts.inter(
@@ -964,9 +1046,12 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                             Center(
                               child: ElevatedButton(
                                 onPressed: () async {
+                                  log(_stateIdController.text);
                                   if (snap.editAllow == true) {
                                     if (_formKey.currentState!.validate()) {
-                                      if (_stateIdController.text.isEmpty) {
+                                      if (_stateIdController.text
+                                          .trim()
+                                          .isEmpty) {
                                         Fluttertoast.showToast(
                                           msg: "State is required",
                                           backgroundColor: Colors.black,
@@ -974,7 +1059,9 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                         );
                                         return;
                                       }
-                                      if (_districtIdController.text.isEmpty) {
+                                      if (_districtIdController.text
+                                          .trim()
+                                          .isEmpty) {
                                         Fluttertoast.showToast(
                                           msg: "District is required",
                                           backgroundColor: Colors.black,
@@ -982,7 +1069,9 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                         );
                                         return;
                                       }
-                                      if (_tehsilIdController.text.isEmpty) {
+                                      if (_tehsilIdController.text
+                                          .trim()
+                                          .isEmpty) {
                                         Fluttertoast.showToast(
                                           msg: "Tehsil is required",
                                           backgroundColor: Colors.black,
@@ -1010,18 +1099,15 @@ class _MyProfileScreenState extends ConsumerState<MyProfileScreen> {
                                                 adharController.text,
                                               ),
                                               panNo: panNo.text,
-                                              stateId: int.parse(
-                                                _stateIdController.text,
-                                              ),
-                                              districtId: int.parse(
-                                                _districtIdController.text,
-                                              ),
-                                              tehsilId: int.parse(
-                                                _tehsilIdController.text,
-                                              ),
+                                              stateId: _stateIdController.text,
+                                              districtId:
+                                                  _districtIdController.text,
+                                              tehsilId:
+                                                  _tehsilIdController.text,
                                               pinCode: int.parse(
                                                 pincodeController.text,
                                               ),
+                                              gstinNo: _gstinNoController.text,
                                               address: addressController.text,
                                             ),
                                           );
@@ -1139,3 +1225,470 @@ final stringNotifierProvider = StateNotifierProvider<StringNotifier, String>((
 ) {
   return StringNotifier();
 });
+
+class StateListDropdown extends ConsumerStatefulWidget {
+  final Function(StateList) callBack;
+
+  const StateListDropdown({super.key, required this.callBack});
+
+  @override
+  _StateListDropdownState createState() => _StateListDropdownState();
+}
+
+class _StateListDropdownState extends ConsumerState<StateListDropdown> {
+  StateList? selectedCircle;
+  String searchText = "";
+  bool isDropdownOpen = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final stateListProvider = ref.watch(commonStateListProvider);
+
+    return stateListProvider.when(
+      data: (snap) {
+        // apply search filter
+        final filteredList =
+            snap.stateList.where((e) {
+              return e.stateName.toLowerCase().contains(
+                searchText.toLowerCase(),
+              );
+            }).toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // main dropdown button
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isDropdownOpen = !isDropdownOpen;
+                });
+              },
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Icon(Icons.gas_meter, color: Colors.black),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            selectedCircle?.stateName ?? "Select State",
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        isDropdownOpen
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Dropdown Panel
+            if (isDropdownOpen) ...[
+              const SizedBox(height: 8),
+              Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search State',
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: width * 0.05,
+                      vertical: width * 0.04,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child:
+                      filteredList.isEmpty
+                          ? const Center(child: Text("No states found"))
+                          : ListView.builder(
+                            itemCount: filteredList.length,
+                            itemBuilder: (context, index) {
+                              final e = filteredList[index];
+                              return ListTile(
+                                title: Text(e.stateName),
+                                onTap: () {
+                                  setState(() {
+                                    selectedCircle = e;
+                                    isDropdownOpen = false;
+                                    searchText = "";
+                                    widget.callBack(e);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+      error: (err, stack) => const SizedBox(),
+      loading: () => const CircularProgressIndicator(),
+    );
+  }
+}
+
+class DistrctListDropDown extends ConsumerStatefulWidget {
+  final String stateId;
+  final Function(DistrictList) callBack;
+
+  const DistrctListDropDown({
+    super.key,
+    required this.callBack,
+    required this.stateId,
+  });
+
+  @override
+  _DistrctListDropDownState createState() => _DistrctListDropDownState();
+}
+
+class _DistrctListDropDownState extends ConsumerState<DistrctListDropDown> {
+  DistrictList? selectedCircle;
+  String searchText = "";
+  bool isDropdownOpen = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final stateListProvider = ref.watch(
+      commonDistrictListProvider(widget.stateId.toString()),
+    );
+
+    return stateListProvider.when(
+      data: (snap) {
+        // apply search filter
+        final filteredList =
+            snap.districtList.where((e) {
+              return e.districtName.toLowerCase().contains(
+                searchText.toLowerCase(),
+              );
+            }).toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // main dropdown button
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isDropdownOpen = !isDropdownOpen;
+                });
+              },
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Icon(Icons.gas_meter, color: Colors.black),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            selectedCircle?.districtName ?? "Select District",
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        isDropdownOpen
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Dropdown Panel
+            if (isDropdownOpen) ...[
+              const SizedBox(height: 8),
+              Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search State',
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: width * 0.05,
+                      vertical: width * 0.04,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child:
+                      filteredList.isEmpty
+                          ? const Center(child: Text("No states found"))
+                          : ListView.builder(
+                            itemCount: filteredList.length,
+                            itemBuilder: (context, index) {
+                              final e = filteredList[index];
+                              return ListTile(
+                                title: Text(e.districtName),
+                                onTap: () {
+                                  setState(() {
+                                    selectedCircle = e;
+                                    isDropdownOpen = false;
+                                    searchText = "";
+                                    widget.callBack(e);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+      error: (err, stack) => const SizedBox(),
+      loading: () => const CircularProgressIndicator(),
+    );
+  }
+}
+
+class DistibruterLisDropDown extends ConsumerStatefulWidget {
+  final String stateId;
+  final String districId;
+  final Function(TehsilList) callBack;
+
+  const DistibruterLisDropDown({
+    super.key,
+    required this.callBack,
+    required this.stateId,
+    required this.districId,
+  });
+
+  @override
+  _DistibruterLisDropDownState createState() => _DistibruterLisDropDownState();
+}
+
+class _DistibruterLisDropDownState
+    extends ConsumerState<DistibruterLisDropDown> {
+  TehsilList? selectedCircle;
+  String searchText = "";
+  bool isDropdownOpen = false;
+  late Map<String, dynamic> bofy;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final stateListProvider = ref.watch(
+      commonTehsilListProvider(int.parse(widget.districId)),
+    );
+
+    return stateListProvider.when(
+      data: (snap) {
+        // apply search filter
+        final filteredList =
+            snap.tehsilList.where((e) {
+              return e.tehsilName.toLowerCase().contains(
+                searchText.toLowerCase(),
+              );
+            }).toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // main dropdown button
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isDropdownOpen = !isDropdownOpen;
+                });
+              },
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Icon(Icons.gas_meter, color: Colors.black),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            selectedCircle?.tehsilName ?? "Select Tehsil",
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        isDropdownOpen
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Dropdown Panel
+            if (isDropdownOpen) ...[
+              const SizedBox(height: 8),
+              Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search State',
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: width * 0.05,
+                      vertical: width * 0.04,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child:
+                      filteredList.isEmpty
+                          ? const Center(child: Text("No states found"))
+                          : ListView.builder(
+                            itemCount: filteredList.length,
+                            itemBuilder: (context, index) {
+                              final e = filteredList[index];
+                              return ListTile(
+                                title: Text(e.tehsilName),
+                                onTap: () {
+                                  setState(() {
+                                    selectedCircle = e;
+                                    isDropdownOpen = false;
+                                    searchText = "";
+                                    widget.callBack(e);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+      error: (err, stack) => const SizedBox(),
+      loading: () => const CircularProgressIndicator(),
+    );
+  }
+}
+
+void showErrorMessage({required String name}) {
+  Fluttertoast.showToast(
+    msg: "$name is required",
+    backgroundColor: Colors.black,
+    textColor: Colors.white,
+  );
+}

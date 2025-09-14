@@ -9,11 +9,12 @@ class UserUpdateeModel {
   final int aadhaarNo; // Fixed: 12 digits, Required
   final String panNo; // Fixed: 10, Required
   final String? gstinNo; // Max: 30, Optional
-  final int stateId; // Required
-  final int districtId; // Required
-  final int tehsilId; // Required
+  final String stateId; // Required
+  final String districtId; // Required
+  final String tehsilId; // Required
   final int pinCode; // Fixed: 6, Required
-  final String address; // Min: 10, Max: 200, Required
+  final String address;
+ // Min: 10, Max: 200, Required
 
   UserUpdateeModel({
     required this.ipAddress,
@@ -31,6 +32,7 @@ class UserUpdateeModel {
     required this.tehsilId,
     required this.pinCode,
     required this.address,
+  
   });
 
   factory UserUpdateeModel.fromJson(Map<String, dynamic> json) {
